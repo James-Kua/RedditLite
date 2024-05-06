@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
+
 interface FeedProps {
   subreddit: string;
 }
@@ -61,6 +62,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700"
+                style={{ overflow: "scroll" }}
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.selftext_html),
                 }}
