@@ -24,6 +24,7 @@ interface RedditComment {
   parent_id: string;
   author_flair_text?: string;
   link_id: string;
+  media_metadata: [];
 }
 
 const SinglePost = ({
@@ -37,6 +38,7 @@ const SinglePost = ({
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<RedditComment[]>([]);
+  const [mediaMetadata, setMediaMetadata] = useState<any>({});
 
   useEffect(() => {
     fetch(
@@ -51,10 +53,14 @@ const SinglePost = ({
         const fetchedComments = data[1].data.children.map(
           (child: { data: RedditComment }) => child.data
         );
+
+        const mediaMetadata = fetchedPosts[0]?.media_metadata || {};
+
         setPosts(fetchedPosts);
         setComments(fetchedComments);
+        setMediaMetadata(mediaMetadata);
       });
-  }, []);
+  }, [subreddit, postId, title]);
 
   return (
     <div className="w-full mx-auto 2xl:max-w-7xl flex flex-col justify-center relative p-8">
@@ -96,6 +102,7 @@ const SinglePost = ({
           </li>
         </ol>
       </nav>
+
       {posts.map((post) => (
         <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
@@ -117,6 +124,23 @@ const SinglePost = ({
           </div>
         </a>
       ))}
+
+      {mediaMetadata && Object.keys(mediaMetadata).length > 0 && (
+        <div className="w-full mb-8">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Object.keys(mediaMetadata).map((key) => (
+              <div key={key} className="relative">
+                <img
+                  src={`https://i.redd.it/${key}.jpg`}
+                  alt={`Media ${key}`}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {comments.map((comment) => (
         <div
           key={comment.id}
