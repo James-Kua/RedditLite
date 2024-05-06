@@ -1,30 +1,12 @@
-# React + TypeScript + Vite
+# RedditLite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img width="1624" alt="image" src="https://github.com/James-Kua/RedditLite/assets/61898455/06276fe7-e131-4ad5-b38d-bc991a024ec3">
 
-Currently, two official plugins are available:
+This is a minimalist React application that fetches data from a specified Reddit subreddit and displays a list of posts. The application caches the JSON response in the browser's `localStorage` to reduce redundant API requests and improve performance when the same subreddit is visited again.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+- Fetches a list of posts from a specified subreddit.
+- Caches the JSON response in `localStorage` to improve loading time for repeated visits.
+- Displays basic post information, reducing load time
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Try it out [here](https://reddit-lite.pages.dev/nus)
