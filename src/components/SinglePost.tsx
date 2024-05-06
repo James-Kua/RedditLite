@@ -26,13 +26,21 @@ interface RedditComment {
   link_id: string;
 }
 
-const SinglePost = () => {
+const SinglePost = ({
+  subreddit,
+  postId,
+  title,
+}: {
+  subreddit: string;
+  postId: string;
+  title: string;
+}) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<RedditComment[]>([]);
 
   useEffect(() => {
     fetch(
-      `https://www.reddit.com/r/nus/comments/1cli17c/whats_the_differences_between_the_houses.json`
+      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}.json`
     )
       .then((response) => response.json())
       .then((data) => {
