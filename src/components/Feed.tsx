@@ -29,7 +29,8 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   }, [subreddit]);
 
   return (
-    <div className="w-full mx-auto 2xl:max-w-7xl flex flex-col justify-center py-24 relative p-8">
+    <div className="w-full mx-auto 2xl:max-w-7xl flex flex-col justify-center relative p-8">
+      <h1 className="text-gray-500 font-bold text-4xl mb-5">{subreddit}</h1>
       {posts.map((post) => (
         <a
           href={`/${subreddit}/comments/${post.id}/${post.title}}`}
@@ -37,7 +38,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
         >
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
             <h3>{post.author}</h3>
-            <h2 className="text-3xl font-semibold">{post.title}</h2>
+            <h2 className="text-xl font-semibold my-1">{post.title}</h2>
             {post.link_flair_text && (
               <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
                 {post.link_flair_text}

@@ -31,7 +31,7 @@ const FeedWrapper = () => {
 };
 
 const SinglePostWrapper = () => {
-  const { subreddit = "", id = "", title = ""} = useParams();
+  const { subreddit = "", id = "", title = "" } = useParams();
 
   return <SinglePost subreddit={subreddit} postId={id} title={title} />;
 };
