@@ -2,12 +2,14 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Feed from "./components/Feed";
 import Error from "./components/Error";
 import Home from "./components/Home";
+import SinglePost from "./components/SinglePost";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/:subreddit" element={<FeedWrapper />} />
+        <Route path="/test" element={<SinglePost />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Error />} />
       </Routes>
