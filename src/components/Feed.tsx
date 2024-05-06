@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import he from "he"; 
 
 interface FeedProps {
   subreddit: string;
@@ -8,7 +9,7 @@ interface Post {
   id: string;
   author: string;
   title: string;
-  selftext: string;
+  selftext_html?: string;
   permalink: string;
   link_flair_text?: string;
 }
@@ -39,7 +40,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 {post.link_flair_text}
               </span>
             )}
-            <p className="mt-1 text-md text-gray-700">{post.selftext}</p>
+            {post.selftext_html && (
+              <div
+                className="mt-1 text-md text-gray-700"
+                dangerouslySetInnerHTML={{
+                  __html: he.decode(post.selftext_html),
+                }}
+              />
+            )}
           </div>
         </a>
       ))}
