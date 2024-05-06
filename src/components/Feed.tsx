@@ -16,16 +16,25 @@ interface Post {
 
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const cacheKey = `reddit_${subreddit}`;
 
   useEffect(() => {
-    fetch(`https://www.reddit.com/r/${subreddit}.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedPosts = data.data.children.map(
-          (child: { data: Post }) => child.data
-        );
-        setPosts(fetchedPosts);
-      });
+    const cachedData = localStorage.getItem(cacheKey);
+
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      setPosts(parsedData);
+    } else {
+      fetch(`https://www.reddit.com/r/${subreddit}.json`)
+        .then((response) => response.json())
+        .then((data) => {
+          const fetchedPosts = data.data.children.map(
+            (child: { data: Post }) => child.data
+          );
+          setPosts(fetchedPosts);
+          localStorage.setItem(cacheKey, JSON.stringify(fetchedPosts));
+        });
+    }
   }, [subreddit]);
 
   return (
@@ -33,14 +42,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       <h1 className="text-gray-500 font-bold text-4xl mb-5">{subreddit}</h1>
       {posts.map((post) => (
         <a
-          href={`/${subreddit}/comments/${post.id}/${post.title}}`}
+          href={`/${subreddit}/comments/${post.id}/${post.title}`}
           key={post.id}
         >
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
             <h3>{post.author}</h3>
             <h2 className="text-xl font-semibold my-1">{post.title}</h2>
             {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700">
                 {post.link_flair_text}
               </span>
             )}
