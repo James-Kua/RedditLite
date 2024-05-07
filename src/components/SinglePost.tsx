@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import { parseUnixTimestamp } from "../utils/datetime";
+import { parseImageType } from "../utils/parser";
 import type { Post } from "../types/post";
 import type { Comment } from "../types/comment";
 
@@ -93,7 +94,11 @@ const SinglePost = ({
                   <img
                     src={`https://i.redd.it/${
                       Object.keys(post.media_metadata)[0]
-                    }.jpg`}
+                    }.${parseImageType(
+                      post.media_metadata[
+                        Object.keys(post.media_metadata)[0] as unknown as number
+                      ]?.m
+                    )}`}
                     className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                     alt="Image"
                   />
