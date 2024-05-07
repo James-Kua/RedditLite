@@ -13,6 +13,9 @@ interface Post {
   selftext_html?: string;
   permalink: string;
   link_flair_text?: string;
+  url_overridden_by_dest: string;
+  thumbnail?: string;
+  media_metadata?: [];
 }
 
 function parsePermalink(permalink: string) {
@@ -56,6 +59,33 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 {post.link_flair_text}
               </span>
             )}
+
+            {post.media_metadata ? (
+              <div>
+                <div className="relative mt-2">
+                  <img
+                    src={`https://i.redd.it/${
+                      Object.keys(post.media_metadata)[0]
+                    }.jpg`}
+                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                    alt="Image"
+                  />
+                </div>
+              </div>
+            ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
+              <img
+                src={post.thumbnail}
+                alt="thumbnail"
+                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+              />
+            ) : post.url_overridden_by_dest &&
+              post.url_overridden_by_dest.endsWith(".jpg") ? (
+              <img
+                src={post.url_overridden_by_dest}
+                alt="url_overridden_by_dest"
+                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+              />
+            ) : null}
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"
