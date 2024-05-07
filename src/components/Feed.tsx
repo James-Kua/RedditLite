@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
+import { parseUnixTimestamp } from "../utils/datetime";
 
 interface FeedProps {
   subreddit: string;
@@ -9,6 +10,7 @@ interface FeedProps {
 interface Post {
   id: string;
   author: string;
+  created: number;
   title: string;
   selftext_html?: string;
   permalink: string;
@@ -56,7 +58,8 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
-            <h3>{post.author}</h3>
+            <h3 className="font-semibold">{post.author}</h3>
+            <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-xl font-semibold my-1">{post.title}</h2>
             {post.link_flair_text && (
               <span
