@@ -145,28 +145,34 @@ const SinglePost = ({
         </div>
       )}
 
-      {comments.map((comment) => (
-        <div
-          key={comment.id}
-          className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10"
-        >
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold">{comment.author}</h3>
-            <h3 className="text-sm">
-              🕔 {parseUnixTimestamp(comment.created)}
-            </h3>
-          </div>
+      {comments.map((comment) => {
+        if (typeof comment.body_html !== "string") {
+          return null;
+        }
+
+        return (
           <div
-            className="mt-1 text-md text-gray-700 overflow-auto"
-            dangerouslySetInnerHTML={{
-              __html: he.decode(comment.body_html),
-            }}
-          />
-          <div className="text-gray-500 text-sm mt-2">
-            🔼 {comment.score} upvotes
+            key={comment.id}
+            className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10"
+          >
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold">{comment.author}</h3>
+              <h3 className="text-sm">
+                🕔 {parseUnixTimestamp(comment.created)}
+              </h3>
+            </div>
+            <div
+              className="mt-1 text-md text-gray-700 overflow-auto"
+              dangerouslySetInnerHTML={{
+                __html: he.decode(comment.body_html),
+              }}
+            />
+            <div className="text-gray-500 text-sm mt-2">
+              🔼 {comment.score} upvotes
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
