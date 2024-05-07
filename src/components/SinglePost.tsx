@@ -64,13 +64,13 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="w-full mx-auto 2xl:max-w-4xl flex flex-col justify-center relative p-8">
+    <div className="w-full mx-auto 2xl:max-w-4xl flex flex-col justify-center relative p-4">
       <nav aria-label="Breadcrumb" className="flex justify-between mb-5">
         <ol className="flex overflow-hidden rounded-lg border border-gray-200 text-gray-600">
           <li className="flex items-center">
             <a
               href="/"
-              className="flex h-10 items-center gap-1.5 bg-gray-100 px-4 transition hover:text-gray-900"
+              className="flex h-8 items-center gap-1.5 bg-gray-100 px-4 transition hover:text-gray-900"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -90,10 +90,10 @@ const SinglePost = ({
             </a>
           </li>
           <li className="relative flex items-center">
-            <span className="absolute inset-y-0 -start-px h-10 w-4 bg-gray-100 [clip-path:_polygon(0_0,_0%_100%,_100%_50%)] rtl:rotate-180"></span>
+            <span className="absolute inset-y-0 -start-px h-8 w-4 bg-gray-100 [clip-path:_polygon(0_0,_0%_100%,_100%_50%)] rtl:rotate-180"></span>
             <a
               href={`/${subreddit}`}
-              className="flex h-10 items-center bg-white pe-4 ps-8 text-xs font-medium transition hover:text-gray-900"
+              className="flex h-8 items-center bg-white pe-4 ps-8 text-xs font-medium transition hover:text-gray-900"
             >
               {subreddit}
             </a>
@@ -104,7 +104,7 @@ const SinglePost = ({
       {posts.map((post) => (
         <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
-            <h3>{post.author}</h3>
+            <h3 className="font-semibold">{post.author}</h3>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-3xl my-2 font-semibold">{post.title}</h2>
             {post.link_flair_text && (
@@ -151,13 +151,13 @@ const SinglePost = ({
           className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10"
         >
           <div className="flex justify-between items-center">
-            <h3>{comment.author}</h3>
+            <h3 className="font-semibold">{comment.author}</h3>
             <h3 className="text-sm">
               🕔 {parseUnixTimestamp(comment.created)}
             </h3>
           </div>
           <div
-            className="mt-1 text-md text-gray-700"
+            className="mt-1 text-md text-gray-700 overflow-auto"
             dangerouslySetInnerHTML={{
               __html: he.decode(comment.body_html),
             }}
