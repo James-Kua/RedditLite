@@ -14,11 +14,12 @@ interface Post {
   num_comments: number;
 }
 
-interface RedditComment {
+interface Comment {
   id: string;
   body_html: string;
   author: string;
   author_fullname: string;
+  created: number;
   permalink: string;
   score: number;
   created_utc: number;
@@ -37,7 +38,7 @@ const SinglePost = ({
   title: string;
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [comments, setComments] = useState<RedditComment[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [mediaMetadata, setMediaMetadata] = useState<any>({});
 
   useEffect(() => {
@@ -51,7 +52,7 @@ const SinglePost = ({
         );
 
         const fetchedComments = data[1].data.children.map(
-          (child: { data: RedditComment }) => child.data
+          (child: { data: Comment }) => child.data
         );
 
         const mediaMetadata = fetchedPosts[0]?.media_metadata || {};
@@ -98,7 +99,6 @@ const SinglePost = ({
             </a>
           </li>
         </ol>
-
       </nav>
 
       {posts.map((post) => (
@@ -122,8 +122,7 @@ const SinglePost = ({
             )}
             {
               <div className="text-gray-500 text-sm mt-2">
-                🔼 {post.score} upvotes
-                💬 {post.num_comments} comments
+                🔼 {post.score} upvotes 💬 {post.num_comments} comments
               </div>
             }
           </div>
@@ -151,7 +150,12 @@ const SinglePost = ({
           key={comment.id}
           className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10"
         >
-          <h3>{comment.author}</h3>
+          <div className="flex justify-between items-center">
+            <h3>{comment.author}</h3>
+            <h3 className="text-sm">
+              🕔 {parseUnixTimestamp(comment.created)}
+            </h3>
+          </div>
           <div
             className="mt-1 text-md text-gray-700"
             dangerouslySetInnerHTML={{

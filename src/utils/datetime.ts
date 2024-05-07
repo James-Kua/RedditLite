@@ -24,6 +24,6 @@ export function parseUnixTimestamp(created: number): string {
     } else if (minutes > 0) {
         return minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
     } else {
-        return "just now";
+        return "Just Now";
     }
   }
