@@ -13,18 +13,14 @@ interface Post {
 
 interface RedditComment {
   id: string;
-  body: string;
   body_html: string;
   author: string;
   author_fullname: string;
   permalink: string;
   score: number;
-  ups: number;
-  downs: number;
   created_utc: number;
   parent_id: string;
   author_flair_text?: string;
-  link_id: string;
   media_metadata: [];
 }
 
@@ -159,6 +155,9 @@ const SinglePost = ({
               __html: he.decode(comment.body_html),
             }}
           />
+          <div className="text-gray-500 text-sm mt-2">
+            🔼 {comment.score} upvotes
+          </div>
         </div>
       ))}
     </div>
