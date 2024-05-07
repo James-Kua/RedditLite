@@ -1,33 +1,8 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import { parseUnixTimestamp } from "../utils/datetime";
-
-interface Post {
-  id: string;
-  author: string;
-  created: number;
-  title: string;
-  selftext_html?: string;
-  permalink: string;
-  url_overridden_by_dest: string;
-  thumbnail?: string;
-  media_metadata?: [];
-  link_flair_text?: string;
-  score: number;
-  num_comments: number;
-}
-
-interface Comment {
-  id: string;
-  body_html: string;
-  author: string;
-  created: number;
-  permalink: string;
-  score: number;
-  created_utc: number;
-  parent_id: string;
-  author_flair_text?: string;
-}
+import type { Post } from "../types/post";
+import type { Comment } from "../types/comment";
 
 const SinglePost = ({
   subreddit,

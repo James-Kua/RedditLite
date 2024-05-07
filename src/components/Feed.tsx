@@ -1,34 +1,12 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
-import { parseUnixTimestamp } from "../utils/datetime";
+import { parseUnixTimestamp  } from "../utils/datetime";
+import { parsePermalink } from "../utils/parser";
+import { Post } from "../types/post";
 
 interface FeedProps {
   subreddit: string;
-}
-
-interface Post {
-  id: string;
-  author: string;
-  created: number;
-  title: string;
-  selftext_html?: string;
-  permalink: string;
-  link_flair_text?: string;
-  url_overridden_by_dest: string;
-  thumbnail?: string;
-  media_metadata?: [];
-  score: number;
-  num_comments: number;
-}
-
-function parsePermalink(permalink: string) {
-  const parts = permalink.split("/").filter(Boolean);
-  if (parts.length >= 2) {
-    return `/${parts.slice(1).join("/")}`;
-  }
-
-  return permalink;
 }
 
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
@@ -62,9 +40,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-xl font-semibold my-1">{post.title}</h2>
             {post.link_flair_text && (
-              <span
-                className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block"
-              >
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
                 {post.link_flair_text}
               </span>
             )}
