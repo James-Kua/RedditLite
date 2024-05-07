@@ -109,7 +109,7 @@ const SinglePost = ({
             <h3>{post.author}</h3>
             <h2 className="text-3xl my-2 font-semibold">{post.title}</h2>
             {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-full bg-purple-100 px-2.5 py-0.5 text-sm text-purple-700">
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700">
                 {post.link_flair_text}
               </span>
             )}
