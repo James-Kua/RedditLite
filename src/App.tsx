@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Feed from "./components/Feed";
-import Error from "./components/Error";
-import Home from "./components/Home";
+import Error from "./views/Error";
+import Home from "./views/Home";
 import SinglePost from "./components/SinglePost";
 
 function App() {
