@@ -59,7 +59,9 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             <h3>{post.author}</h3>
             <h2 className="text-xl font-semibold my-1">{post.title}</h2>
             {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700">
+              <span
+                className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block"
+              >
                 {post.link_flair_text}
               </span>
             )}
@@ -100,8 +102,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             )}
             {
               <div className="text-gray-500 text-sm mt-2">
-                🔼 {post.score} upvotes
-                💬 {post.num_comments} comments
+                🔼 {post.score} upvotes 💬 {post.num_comments} comments
               </div>
             }
           </div>
