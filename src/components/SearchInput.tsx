@@ -29,6 +29,7 @@ const SearchInput = () => {
 
       <input
         type="text"
+        id="subreddit-search"
         value={search}
         onChange={handleSearch}
         onKeyDown={handleKeyDown}
