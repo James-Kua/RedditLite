@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import he from "he";
-import SearchInput from "./SearchInput";
 
 interface Post {
   id: string;
@@ -98,9 +97,6 @@ const SinglePost = ({
           </li>
         </ol>
 
-        <div className="flex justify-end">
-          <SearchInput />
-        </div>
       </nav>
 
       {posts.map((post) => (
