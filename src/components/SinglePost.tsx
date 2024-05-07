@@ -36,7 +36,7 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="w-full mx-auto 2xl:max-w-4xl flex flex-col justify-center relative p-4">
+    <div className="w-full mx-auto max-w-4xl flex flex-col justify-center relative p-4">
       <nav aria-label="Breadcrumb" className="flex justify-between mb-5">
         <ol className="flex overflow-hidden rounded-lg border border-gray-200 text-gray-600">
           <li className="flex items-center">
@@ -115,7 +115,7 @@ const SinglePost = ({
             ) : null}
             {post.selftext_html && (
               <div
-                className="mt-1 text-md text-gray-700"
+                className="mt-1 text-md text-gray-700 overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.selftext_html),
                 }}
