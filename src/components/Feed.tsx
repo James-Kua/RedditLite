@@ -38,7 +38,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
             <h3 className="font-semibold">{post.author}</h3>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
-            <h2 className="text-xl font-semibold my-1">{post.title}</h2>
+            <h2 className="text-xl font-semibold my-1">{he.decode(post.title)}</h2>
             {post.link_flair_text && (
               <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
                 {post.link_flair_text}
