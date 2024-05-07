@@ -1,9 +1,45 @@
 import { useEffect, useState } from "react";
 import he from "he";
 import { parseUnixTimestamp } from "../utils/datetime";
+import { Post } from "../types/post";
+import { Comment, Children2 } from "../types/comment";
 import { parseImageType } from "../utils/parser";
-import type { Post } from "../types/post";
-import type { Comment } from "../types/comment";
+
+const CommentComponent = ({ comment }: { comment: Comment }) => {
+  if (!comment) return null;
+  if (!comment.body_html) return null;
+
+  return (
+    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold">{comment.author || "Unknown Author"}</h3>
+        <h3 className="text-sm">
+          🕔 {parseUnixTimestamp(comment.created_utc)}
+        </h3>
+      </div>
+      <div
+        className="mt-1 text-md text-gray-700 overflow-auto"
+        dangerouslySetInnerHTML={{
+          __html: he.decode(comment.body_html),
+        }}
+      />
+      <div className="text-gray-500 text-sm mt-2">
+        🔼 {comment.score || 0} upvotes
+      </div>
+
+      {comment.replies?.data?.children?.map((childWrapper: Children2) => {
+        const child = childWrapper.data;
+        if (!child) return null;
+
+        return (
+          <div key={child.id} className="ml-5 mt-4 pl-2">
+            <CommentComponent comment={child} />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const SinglePost = ({
   subreddit,
@@ -126,43 +162,16 @@ const SinglePost = ({
                 }}
               />
             )}
-            {
-              <div className="text-gray-500 text-sm mt-2">
-                🔼 {post.score} upvotes 💬 {post.num_comments} comments
-              </div>
-            }
+            <div className="text-gray-500 text-sm mt-2">
+              🔼 {post.score} upvotes 💬 {post.num_comments} comments
+            </div>
           </div>
         </a>
       ))}
 
-      {comments.map((comment) => {
-        if (typeof comment.body_html !== "string") {
-          return null;
-        }
-
-        return (
-          <div
-            key={comment.id}
-            className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10"
-          >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold">{comment.author}</h3>
-              <h3 className="text-sm">
-                🕔 {parseUnixTimestamp(comment.created)}
-              </h3>
-            </div>
-            <div
-              className="mt-1 text-md text-gray-700 overflow-auto"
-              dangerouslySetInnerHTML={{
-                __html: he.decode(comment.body_html),
-              }}
-            />
-            <div className="text-gray-500 text-sm mt-2">
-              🔼 {comment.score} upvotes
-            </div>
-          </div>
-        );
-      })}
+      {comments.map((comment) => (
+        <CommentComponent key={comment.id} comment={comment} />
+      ))}
     </div>
   );
 };
