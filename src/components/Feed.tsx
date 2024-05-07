@@ -16,6 +16,7 @@ interface Post {
   url_overridden_by_dest: string;
   thumbnail?: string;
   media_metadata?: [];
+  score: number;
 }
 
 function parsePermalink(permalink: string) {
@@ -39,6 +40,8 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
         );
         setPosts(fetchedPosts);
       });
+
+    document.title = `🤖 ${subreddit}`;
   }, [subreddit]);
 
   return (
@@ -94,6 +97,11 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 }}
               />
             )}
+            {
+              <div className="text-gray-500 text-sm mt-2">
+                🔼 {post.score} upvotes
+              </div>
+            }
           </div>
         </a>
       ))}
