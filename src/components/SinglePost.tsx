@@ -63,7 +63,7 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="w-full mx-auto 2xl:max-w-7xl flex flex-col justify-center relative p-8">
+    <div className="w-full mx-auto 2xl:max-w-4xl flex flex-col justify-center relative p-8">
       <nav aria-label="Breadcrumb" className="flex mb-5">
         <ol className="flex overflow-hidden rounded-lg border border-gray-200 text-gray-600">
           <li className="flex items-center">

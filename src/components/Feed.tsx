@@ -42,7 +42,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   }, [subreddit]);
 
   return (
-    <div className="w-full max-w-[90vw] mx-auto 2xl:max-w-7xl flex flex-col justify-center relative lg:p-8">
+    <div className="w-full max-w-[90vw] mx-auto 2xl:max-w-4xl flex flex-col justify-center relative lg:p-8">
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-gray-500 font-bold text-4xl mr-1">{subreddit}</h1>
         <div>
