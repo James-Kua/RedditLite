@@ -15,6 +15,15 @@ interface Post {
   link_flair_text?: string;
 }
 
+function parsePermalink(permalink: string) {
+  const parts = permalink.split("/").filter(Boolean);
+  if (parts.length >= 2) {
+    return `/${parts.slice(1).join("/")}`;
+  }
+
+  return permalink;
+}
+
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -38,10 +47,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
         </div>
       </div>
       {posts.map((post) => (
-        <a
-          href={`/${subreddit}/comments/${post.id}/${post.title}`}
-          key={post.id}
-        >
+        <a href={parsePermalink(post.permalink)} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
             <h3>{post.author}</h3>
             <h2 className="text-xl font-semibold my-1">{post.title}</h2>
