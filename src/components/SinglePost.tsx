@@ -9,6 +9,9 @@ interface Post {
   title: string;
   selftext_html?: string;
   permalink: string;
+  url_overridden_by_dest: string;
+  thumbnail?: string;
+  media_metadata?: [];
   link_flair_text?: string;
   score: number;
   num_comments: number;
@@ -18,14 +21,12 @@ interface Comment {
   id: string;
   body_html: string;
   author: string;
-  author_fullname: string;
   created: number;
   permalink: string;
   score: number;
   created_utc: number;
   parent_id: string;
   author_flair_text?: string;
-  media_metadata: [];
 }
 
 const SinglePost = ({
@@ -39,7 +40,6 @@ const SinglePost = ({
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [mediaMetadata, setMediaMetadata] = useState<any>({});
 
   useEffect(() => {
     fetch(
@@ -55,11 +55,8 @@ const SinglePost = ({
           (child: { data: Comment }) => child.data
         );
 
-        const mediaMetadata = fetchedPosts[0]?.media_metadata || {};
-
         setPosts(fetchedPosts);
         setComments(fetchedComments);
-        setMediaMetadata(mediaMetadata);
       });
   }, [subreddit, postId, title]);
 
@@ -112,6 +109,32 @@ const SinglePost = ({
                 {post.link_flair_text}
               </span>
             )}
+            {post.media_metadata ? (
+              <div>
+                <div className="relative mt-2">
+                  <img
+                    src={`https://i.redd.it/${
+                      Object.keys(post.media_metadata)[0]
+                    }.jpg`}
+                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                    alt="Image"
+                  />
+                </div>
+              </div>
+            ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
+              <img
+                src={post.thumbnail}
+                alt="thumbnail"
+                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+              />
+            ) : post.url_overridden_by_dest &&
+              post.url_overridden_by_dest.endsWith(".jpg") ? (
+              <img
+                src={post.url_overridden_by_dest}
+                alt="url_overridden_by_dest"
+                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+              />
+            ) : null}
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700"
@@ -128,22 +151,6 @@ const SinglePost = ({
           </div>
         </a>
       ))}
-
-      {mediaMetadata && Object.keys(mediaMetadata).length > 0 && (
-        <div className="w-full mb-8">
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {Object.keys(mediaMetadata).map((key) => (
-              <div key={key} className="relative">
-                <img
-                  src={`https://i.redd.it/${key}.jpg`}
-                  alt={`Media ${key}`}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {comments.map((comment) => {
         if (typeof comment.body_html !== "string") {
