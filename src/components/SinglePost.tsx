@@ -9,6 +9,7 @@ interface Post {
   permalink: string;
   link_flair_text?: string;
   score: number;
+  num_comments: number;
 }
 
 interface RedditComment {
@@ -121,6 +122,7 @@ const SinglePost = ({
             {
               <div className="text-gray-500 text-sm mt-2">
                 🔼 {post.score} upvotes
+                💬 {post.num_comments} comments
               </div>
             }
           </div>

@@ -17,6 +17,7 @@ interface Post {
   thumbnail?: string;
   media_metadata?: [];
   score: number;
+  num_comments: number;
 }
 
 function parsePermalink(permalink: string) {
@@ -100,6 +101,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             {
               <div className="text-gray-500 text-sm mt-2">
                 🔼 {post.score} upvotes
+                💬 {post.num_comments} comments
               </div>
             }
           </div>
