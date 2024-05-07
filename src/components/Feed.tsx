@@ -17,25 +17,16 @@ interface Post {
 
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const cacheKey = `reddit_${subreddit}`;
 
   useEffect(() => {
-    const cachedData = localStorage.getItem(cacheKey);
-
-    if (cachedData) {
-      const parsedData = JSON.parse(cachedData);
-      setPosts(parsedData);
-    } else {
-      fetch(`https://www.reddit.com/r/${subreddit}.json`)
-        .then((response) => response.json())
-        .then((data) => {
-          const fetchedPosts = data.data.children.map(
-            (child: { data: Post }) => child.data
-          );
-          setPosts(fetchedPosts);
-          localStorage.setItem(cacheKey, JSON.stringify(fetchedPosts));
-        });
-    }
+    fetch(`https://www.reddit.com/r/${subreddit}.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedPosts = data.data.children.map(
+          (child: { data: Post }) => child.data
+        );
+        setPosts(fetchedPosts);
+      });
   }, [subreddit]);
 
   return (
@@ -61,8 +52,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             )}
             {post.selftext_html && (
               <div
-                className="mt-1 text-md text-gray-700"
-                style={{ overflow: "scroll" }}
+                className="mt-1 text-md text-gray-700 overflow-scroll"
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.selftext_html),
                 }}
