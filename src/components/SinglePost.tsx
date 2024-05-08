@@ -33,7 +33,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
         if (!child) return null;
 
         return (
-          <div key={child.id} className="ml-5 mt-4 pl-2">
+          <div key={child.id} className="ml-3 md:ml-4 lg:ml-5 mt-4">
             <CommentComponent comment={child} />
           </div>
         );
