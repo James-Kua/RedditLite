@@ -10,7 +10,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   if (!comment.body_html) return null;
 
   return (
-    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
+    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4">
       <div className="flex justify-between items-center">
         <h3 className="font-semibold">{comment.author || "Unknown Author"}</h3>
         <h3 className="text-sm">
