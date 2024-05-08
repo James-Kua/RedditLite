@@ -153,7 +153,7 @@ const SinglePost = ({
                   />
                 </div>
               </div>
-            ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
+            ) : !(post.thumbnail === "self" || post.thumbnail === "default" || post.thumbnail === "") ? (
               post.thumbnail === "nsfw" ? (
                 <NSFWTag />
               ) : (

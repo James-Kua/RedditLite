@@ -64,7 +64,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                   />
                 </div>
               </div>
-            ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
+            ) : !(post.thumbnail === "self" || post.thumbnail === "default" || post.thumbnail === "") ? (
               post.thumbnail === "nsfw" ? (
                 <NSFWTag />
               ) : (
