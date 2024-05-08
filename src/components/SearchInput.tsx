@@ -22,7 +22,7 @@ const SearchInput = () => {
   };
 
   return (
-    <div className="relative mt-2">
+    <div className="relative">
       <label htmlFor="search-input" className="sr-only">
         Search
       </label>

@@ -74,7 +74,7 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="mx-auto lg:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
+    <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
       <nav aria-label="Breadcrumb" className="flex justify-between mb-5">
         <ol className="flex overflow-hidden rounded-lg border border-gray-200 text-gray-600">
           <li className="flex items-center">
@@ -116,7 +116,7 @@ const SinglePost = ({
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
             <h3 className="font-semibold">{post.author}</h3>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
-            <h2 className="text-3xl my-2 font-semibold">
+            <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
 
