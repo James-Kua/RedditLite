@@ -4,6 +4,7 @@ import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
 import { parseImageType } from "../utils/parser";
+import NSFWTag from "./NSFWTag";
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
   if (!comment) return null;
@@ -120,7 +121,7 @@ const SinglePost = ({
             </h2>
 
             {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700">
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
                 {post.link_flair_text}
               </span>
             )}
@@ -141,11 +142,15 @@ const SinglePost = ({
                 </div>
               </div>
             ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
-              <img
-                src={post.thumbnail}
-                alt="thumbnail"
-                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
-              />
+              post.thumbnail === "nsfw" ? (
+                <NSFWTag />
+              ) : (
+                <img
+                  src={post.thumbnail}
+                  alt="thumbnail"
+                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+                />
+              )
             ) : post.url_overridden_by_dest &&
               post.url_overridden_by_dest.endsWith(".jpg") ? (
               <img

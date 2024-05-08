@@ -4,6 +4,7 @@ import SearchInput from "./SearchInput";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { parsePermalink, parseImageType } from "../utils/parser";
 import { Post } from "../types/post";
+import NSFWTag from "./NSFWTag";
 
 interface FeedProps {
   subreddit: string;
@@ -64,11 +65,15 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 </div>
               </div>
             ) : post.thumbnail !== "self" && post.thumbnail !== "default" ? (
-              <img
-                src={post.thumbnail}
-                alt="thumbnail"
-                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
-              />
+              post.thumbnail === "nsfw" ? (
+                <NSFWTag />
+              ) : (
+                <img
+                  src={post.thumbnail}
+                  alt="thumbnail"
+                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+                />
+              )
             ) : post.url_overridden_by_dest &&
               post.url_overridden_by_dest.endsWith(".jpg") ? (
               <img
