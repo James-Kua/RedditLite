@@ -3,7 +3,7 @@ import he from "he";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
-import { parseImageType } from "../utils/parser";
+import { isImage, parseImageType } from "../utils/parser";
 import NSFWTag from "./NSFWTag";
 
 const CommentComponent = ({ comment }: { comment: Comment }) => {
@@ -153,6 +153,12 @@ const SinglePost = ({
                   />
                 </div>
               </div>
+            ) : post.url_overridden_by_dest && isImage(post.url_overridden_by_dest) ? (
+              <img
+                src={post.url_overridden_by_dest}
+                alt="url_overridden_by_dest"
+                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
+              />
             ) : !(post.thumbnail === "self" || post.thumbnail === "default" || post.thumbnail === "") ? (
               post.thumbnail === "nsfw" ? (
                 <NSFWTag />
@@ -160,17 +166,10 @@ const SinglePost = ({
                 <img
                   src={post.thumbnail}
                   alt="thumbnail"
-                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
+                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
                 />
               )
-            ) : post.url_overridden_by_dest &&
-              post.url_overridden_by_dest.endsWith(".jpg") ? (
-              <img
-                src={post.url_overridden_by_dest}
-                alt="url_overridden_by_dest"
-                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[150px] w-[184px] block mt-2"
-              />
-            ) : null}
+            ) : null }
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"

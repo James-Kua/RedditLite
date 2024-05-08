@@ -17,3 +17,7 @@ export function parseImageType(imageType?: string): string {
 
   return parts.length === 2 ? parts[1] : "jpg";
 }
+
+export function isImage(url: string) {
+  return url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".jpeg");
+}
