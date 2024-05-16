@@ -1,6 +1,7 @@
 export type Post = {
   id: string;
   author: string;
+  author_flair_text?: string;
   created: number;
   title: string;
   selftext_html?: string;

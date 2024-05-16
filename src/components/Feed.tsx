@@ -29,7 +29,9 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
       <div className="flex justify-between items-center mb-5">
-        <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">{subreddit}</h1>
+        <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
+          {subreddit}
+        </h1>
         <div className="ml-1">
           <SearchInput />
         </div>
@@ -37,7 +39,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
-            <h3 className="font-semibold">{post.author}</h3>
+            <div className="flex items-center space-x-2">
+              <h3 className="font-semibold">{post.author}</h3>
+              {post.author_flair_text && (
+                <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+                  {post.author_flair_text}
+                </span>
+              )}
+            </div>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-xl font-semibold my-1">
               {he.decode(post.title)}
@@ -90,7 +99,9 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"
                 dangerouslySetInnerHTML={{
-                  __html: he.decode(post.selftext_html).replace(/\n\n/g, '<br>'),
+                  __html: he
+                    .decode(post.selftext_html)
+                    .replace(/\n\n/g, "<br>"),
                 }}
               />
             )}

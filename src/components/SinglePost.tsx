@@ -12,16 +12,23 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
 
   return (
     <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4">
-      <div className="flex justify-between items-center">
-        <h3 className="font-semibold">{comment.author || "Unknown Author"}</h3>
-        <h3 className="text-sm">
+      <div className="flex justify-between items-center w-full max-w-[100vw]">
+        <div className="flex items-center space-x-2 overflow-hidden">
+          <h3 className="font-semibold">{comment.author}</h3>
+          {comment.author_flair_text && (
+            <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 overflow-x-auto">
+              {comment.author_flair_text}
+            </span>
+          )}
+        </div>
+        <h3 className="text-sm whitespace-nowrap ml-1">
           🕔 {parseUnixTimestamp(comment.created_utc)}
         </h3>
       </div>
       <div
         className="mt-1 text-md text-gray-700 overflow-auto"
         dangerouslySetInnerHTML={{
-          __html: he.decode(comment.body_html.replace(/\n\n/g, '<br>')),
+          __html: he.decode(comment.body_html.replace(/\n\n/g, "<br>")),
         }}
       />
       <div className="text-gray-500 text-sm mt-2">
@@ -126,7 +133,14 @@ const SinglePost = ({
       {posts.map((post) => (
         <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
-            <h3 className="font-semibold">{post.author}</h3>
+            <div className="flex items-center space-x-2">
+              <h3 className="font-semibold">{post.author}</h3>
+              {post.author_flair_text && (
+                <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+                  {post.author_flair_text}
+                </span>
+              )}
+            </div>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
@@ -153,13 +167,18 @@ const SinglePost = ({
                   />
                 </div>
               </div>
-            ) : post.url_overridden_by_dest && isImage(post.url_overridden_by_dest) ? (
+            ) : post.url_overridden_by_dest &&
+              isImage(post.url_overridden_by_dest) ? (
               <img
                 src={post.url_overridden_by_dest}
                 alt="url_overridden_by_dest"
                 className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
               />
-            ) : !(post.thumbnail === "self" || post.thumbnail === "default" || post.thumbnail === "") ? (
+            ) : !(
+                post.thumbnail === "self" ||
+                post.thumbnail === "default" ||
+                post.thumbnail === ""
+              ) ? (
               post.thumbnail === "nsfw" ? (
                 <NSFWTag />
               ) : (
@@ -169,12 +188,14 @@ const SinglePost = ({
                   className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
                 />
               )
-            ) : null }
+            ) : null}
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"
                 dangerouslySetInnerHTML={{
-                  __html: he.decode(post.selftext_html.replace(/\n\n/g, '<br>')),
+                  __html: he.decode(
+                    post.selftext_html.replace(/\n\n/g, "<br>")
+                  ),
                 }}
               />
             )}
