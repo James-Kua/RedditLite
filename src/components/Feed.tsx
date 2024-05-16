@@ -90,7 +90,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"
                 dangerouslySetInnerHTML={{
-                  __html: he.decode(post.selftext_html),
+                  __html: he.decode(post.selftext_html).replace(/\n\n/g, '<br>'),
                 }}
               />
             )}
