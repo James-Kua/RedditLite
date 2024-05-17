@@ -11,7 +11,7 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
   if (!comment.body_html) return null;
 
   return (
-    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4">
+    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-1 hover:bg-slate-100 lg:hover:bg-transparent px-1 rounded-md">
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <h3 className="font-semibold">{comment.author}</h3>
@@ -132,7 +132,7 @@ const SinglePost = ({
 
       {posts.map((post) => (
         <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
-          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
+          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8">
             <div className="flex items-center space-x-2">
               <h3 className="font-semibold">{post.author}</h3>
               {post.author_flair_text && (
