@@ -1,0 +1,23 @@
+export type User = {
+  subreddit: string;
+  id: string;
+  num_comments: number;
+  body?: string;
+  body_html?: string;
+  selftext?: string;
+  score: number;
+  collapsed_reason: any;
+  permalink: string;
+  link_permalink?: string;
+  name: string;
+  subreddit_name_prefixed: string;
+  author_flair_text?: string;
+  created: number;
+  created_utc: number;
+  link_url?: string;
+  title?: string;
+  link_flair_text?: string;
+  thumbnail?: string;
+  selftext_html?: string;
+  url?: string;
+};

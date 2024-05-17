@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Feed from "./components/Feed";
 import Error from "./views/Error";
 import Home from "./views/Home";
-import SinglePost from "./components/SinglePost";
+import UserPost from "./components/UserPost";
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
           path="/:subreddit/comments/:id/:title"
           element={<SinglePostWrapper />}
         />
+        <Route path="/user/:username" element={<UserProfileWrapper />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Error />} />
       </Routes>
@@ -23,6 +24,7 @@ function App() {
 export default App;
 
 import { useParams } from "react-router-dom";
+import SinglePost from "./components/SinglePost";
 
 const FeedWrapper = () => {
   const { subreddit } = useParams();
@@ -34,4 +36,10 @@ const SinglePostWrapper = () => {
   const { subreddit = "", id = "", title = "" } = useParams();
 
   return <SinglePost subreddit={subreddit} postId={id} title={title} />;
+};
+
+const UserProfileWrapper = () => {
+  const { username } = useParams();
+
+  return <UserPost username={username ?? ""} />;
 };

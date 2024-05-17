@@ -14,7 +14,9 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
     <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent px-1 rounded-md">
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
-          <h3 className="font-semibold">{comment.author}</h3>
+          <a href={`/user/${comment.author}`}>
+            <h3 className="font-semibold">{comment.author}</h3>
+          </a>
           {comment.author_flair_text && (
             <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 overflow-x-auto">
               {comment.author_flair_text}
@@ -131,16 +133,18 @@ const SinglePost = ({
       </nav>
 
       {posts.map((post) => (
-        <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
-          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8">
-            <div className="flex items-center space-x-2">
+        <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8">
+          <div className="flex items-center space-x-2">
+            <a href={`/user/${post.author}`}>
               <h3 className="font-semibold">{post.author}</h3>
-              {post.author_flair_text && (
-                <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
-                  {post.author_flair_text}
-                </span>
-              )}
-            </div>
+            </a>
+            {post.author_flair_text && (
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+                {post.author_flair_text}
+              </span>
+            )}
+          </div>
+          <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
@@ -199,11 +203,11 @@ const SinglePost = ({
                 }}
               />
             )}
-            <div className="text-gray-500 text-sm mt-2">
-              🔼 {post.score} upvotes 💬 {post.num_comments} comments
-            </div>
+          </a>
+          <div className="text-gray-500 text-sm mt-2">
+            🔼 {post.score} upvotes 💬 {post.num_comments} comments
           </div>
-        </a>
+        </div>
       ))}
 
       {comments.map((comment) => (
