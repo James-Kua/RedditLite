@@ -9,6 +9,7 @@ export type User = {
   collapsed_reason: any;
   permalink: string;
   link_permalink?: string;
+  link_title?: string;
   name: string;
   subreddit_name_prefixed: string;
   author_flair_text?: string;
