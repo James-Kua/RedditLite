@@ -6,9 +6,16 @@ import { Comment, Children2 } from "../types/comment";
 import { isImage, parseImageType } from "../utils/parser";
 import NSFWTag from "./NSFWTag";
 
-const CommentComponent = ({ comment }: { comment: Comment }) => {
-  if (!comment) return null;
-  if (!comment.body_html) return null;
+const CommentComponent = ({
+  comment,
+  postAuthor,
+}: {
+  comment: Comment;
+  postAuthor: string;
+}) => {
+  if (!comment?.body_html) return null;
+
+  const decodedBodyHtml = he.decode(comment.body_html.replace(/\n\n/g, "<br>"));
 
   return (
     <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent px-1 rounded-md">
@@ -17,6 +24,11 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
           <a href={`/user/${comment.author}`}>
             <h3 className="font-semibold">{comment.author}</h3>
           </a>
+          {comment.author === postAuthor && (
+            <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-sm text-blue-700 overflow-x-auto">
+              OP
+            </span>
+          )}
           {comment.author_flair_text && (
             <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 overflow-x-auto">
               {comment.author_flair_text}
@@ -29,23 +41,18 @@ const CommentComponent = ({ comment }: { comment: Comment }) => {
       </div>
       <div
         className="mt-1 text-md text-gray-700 overflow-auto"
-        dangerouslySetInnerHTML={{
-          __html: he.decode(comment.body_html.replace(/\n\n/g, "<br>")),
-        }}
+        dangerouslySetInnerHTML={{ __html: decodedBodyHtml }}
       />
       <div className="text-gray-500 text-sm mt-2">
         🔼 {comment.score || 0} upvotes
       </div>
-
       {comment.replies?.data?.children?.map((childWrapper: Children2) => {
         const child = childWrapper.data;
-        if (!child) return null;
-
-        return (
+        return child ? (
           <div key={child.id} className="ml-3 md:ml-4 lg:ml-5 mt-4">
-            <CommentComponent comment={child} />
+            <CommentComponent comment={child} postAuthor={postAuthor} />
           </div>
-        );
+        ) : null;
       })}
     </div>
   );
@@ -69,16 +76,15 @@ const SinglePost = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        const fetchedPosts = data[0].data.children.map(
-          (child: { data: Post }) => child.data
+        const [postList, commentList] = data;
+        setPosts(
+          postList.data.children.map((child: { data: Post }) => child.data)
         );
-
-        const fetchedComments = data[1].data.children.map(
-          (child: { data: Comment }) => child.data
+        setComments(
+          commentList.data.children.map(
+            (child: { data: Comment }) => child.data
+          )
         );
-
-        setPosts(fetchedPosts);
-        setComments(fetchedComments);
       });
   }, [subreddit, postId, title]);
 
@@ -97,15 +103,14 @@ const SinglePost = ({
                 stroke="currentColor"
               >
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                 />
               </svg>
             </a>
           </li>
-
           <li className="rtl:rotate-180">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -114,13 +119,12 @@ const SinglePost = ({
               fill="currentColor"
             >
               <path
-                fill-rule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a 1 0 010 1.414l-4 4a1 0 01-1.414 0z"
+                clipRule="evenodd"
               />
             </svg>
           </li>
-
           <li>
             <a
               href={`/${subreddit}`}
@@ -144,32 +148,29 @@ const SinglePost = ({
               </span>
             )}
           </div>
-          <a href={`https://www.reddit.com${post.permalink}`} key={post.id}>
+          <a href={`https://www.reddit.com${post.permalink}`}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
-
             {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
+              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
                 {post.link_flair_text}
               </span>
             )}
             {post.media_metadata ? (
-              <div>
-                <div className="relative mt-2">
-                  <img
-                    src={`https://i.redd.it/${
-                      Object.keys(post.media_metadata)[0]
-                    }.${parseImageType(
-                      post.media_metadata[
-                        Object.keys(post.media_metadata)[0] as unknown as number
-                      ]?.m
-                    )}`}
-                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                    alt="Image"
-                  />
-                </div>
+              <div className="relative mt-2">
+                <img
+                  src={`https://i.redd.it/${
+                    Object.keys(post.media_metadata)[0]
+                  }.${parseImageType(
+                    post.media_metadata[
+                      Object.keys(post.media_metadata)[0] as unknown as number
+                    ]?.m
+                  )}`}
+                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                  alt="Image"
+                />
               </div>
             ) : post.url_overridden_by_dest &&
               isImage(post.url_overridden_by_dest) ? (
@@ -211,7 +212,11 @@ const SinglePost = ({
       ))}
 
       {comments.map((comment) => (
-        <CommentComponent key={comment.id} comment={comment} />
+        <CommentComponent
+          key={comment.id}
+          comment={comment}
+          postAuthor={posts[0].author}
+        />
       ))}
     </div>
   );
