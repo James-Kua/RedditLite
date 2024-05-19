@@ -61,7 +61,7 @@ const UserPost = ({ username }: { username: string }) => {
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.body_html.replace(/\n\n/g, "<br>")),
                 }}
-                className="mt-2"
+                className="mt-2 overflow-scroll"
               />
             )}
             {post.selftext && (
@@ -69,7 +69,7 @@ const UserPost = ({ username }: { username: string }) => {
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.selftext.replace(/\n/g, "<br>")),
                 }}
-                className="mt-2"
+                className="mt-2 overflow-scroll"
               />
             )}
             <div className="text-gray-500 text-sm mt-2">
