@@ -47,8 +47,15 @@ const UserPost = ({ username }: { username: string }) => {
                 : post.permalink.split("/r/")[1]
             }`}
           >
-            <h1 className="text-xl font-medium">{post.title}</h1>
-            <h1 className="text-md font-medium">{post.link_title}</h1>
+            <h1 className="text-xl font-medium text-gray-800">{post.title}</h1>
+            {post.link_title && (
+              <div className="bg-gray-100 rounded-lg py-2 pl-2">
+                <h1 className="text-md font-medium text-gray-600">
+                  {post.link_title}
+                </h1>
+              </div>
+            )}
+
             {post.body_html && (
               <div
                 dangerouslySetInnerHTML={{
