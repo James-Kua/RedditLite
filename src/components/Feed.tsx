@@ -56,7 +56,6 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       .then((data) => {
         setSubredditInfo(data.data);
       });
-    console.log(subredditInfo?.community_icon);
 
     document.title = `🤖 ${subreddit}`;
   }, [subreddit]);

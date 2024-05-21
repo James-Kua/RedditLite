@@ -169,10 +169,20 @@ const SinglePost = ({
               <h3 className="font-semibold">{post.author}</h3>
             </a>
             {post.author_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
-                {post.author_flair_text}
-              </span>
-            )}
+                  <div
+                    className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
+                    style={{
+                      backgroundColor: `${
+                        post.author_flair_background_color ?? ""
+                      }`,
+                      color: `${parseLinkFlairTextColor(
+                        post.author_flair_background_color ?? ""
+                      )}`,
+                    }}
+                  >
+                    {post.author_flair_text}
+                  </div>
+                )}
           </div>
           <a href={`https://www.reddit.com${post.permalink}`}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
