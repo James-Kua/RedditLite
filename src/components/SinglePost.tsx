@@ -36,7 +36,7 @@ const CommentComponent = ({
           )}
           {comment.author_flair_text && (
             <div
-              className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
+              className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
               style={{
                 backgroundColor: `${
                   comment.author_flair_background_color ?? ""
@@ -193,7 +193,21 @@ const SinglePost = ({
               </div>
             }
 
-            {post.media_metadata ? (
+            {post.secure_media_embed?.media_domain_url ? (
+              <div
+                className="mt-4 aspect-auto flex justify-center items-center max-w-full"
+                style={{
+                  width: `${post.secure_media_embed.width}px`,
+                  height: `${post.secure_media_embed.height}px`,
+                }}
+              >
+                <iframe
+                  src={post.secure_media_embed.media_domain_url}
+                  allowFullScreen
+                  className="w-full h-full aspect-auto"
+                ></iframe>
+              </div>
+            ) : post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
                   <Slider {...settings} className="mb-8">

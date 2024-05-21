@@ -9,6 +9,8 @@ export type Post = {
   permalink: string;
   url_overridden_by_dest: string;
   thumbnail?: string;
+  media: Media
+  secure_media_embed: SecureMediaEmbed
   media_metadata?: any[];
   link_flair_text: string;
   link_flair_text_color: string;
@@ -28,4 +30,16 @@ interface GalleryItem {
   outbound_url: string
   media_id: string
   id: number
+}
+
+export interface Media {
+  type: string
+}
+
+export interface SecureMediaEmbed {
+  content: string
+  width: number
+  scrolling: boolean
+  media_domain_url: string
+  height: number
 }
