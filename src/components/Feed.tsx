@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
 import { parseUnixTimestamp } from "../utils/datetime";
@@ -12,6 +12,25 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [after, setAfter] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const sentinel = useRef(null);
+
+  const fetchPosts = useCallback(() => {
+    if (!hasMore) return;
+
+    fetch(`https://www.reddit.com/r/${subreddit}.json?after=${after}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedPosts = data.data.children.map(
+          (child: { data: Post }) => child.data
+        );
+        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+        setAfter(data.data.after);
+        setHasMore(!!data.data.after);
+      });
+  }, [subreddit, after, hasMore]);
 
   useEffect(() => {
     fetch(`https://www.reddit.com/r/${subreddit}.json`)
@@ -21,10 +40,32 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
           (child: { data: Post }) => child.data
         );
         setPosts(fetchedPosts);
+        setAfter(data.data.after);
+        setHasMore(!!data.data.after);
       });
 
     document.title = `🤖 ${subreddit}`;
   }, [subreddit]);
+
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+
+    const options = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0,
+    };
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchPosts();
+      }
+    }, options);
+
+    if (observer.current && sentinel.current) {
+      observer.current.observe(sentinel.current);
+    }
+  }, [fetchPosts, hasMore]);
 
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
@@ -113,6 +154,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
           </div>
         </a>
       ))}
+      <div ref={sentinel} className="h-1"></div>
     </div>
   );
 };
