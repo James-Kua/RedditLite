@@ -3,6 +3,8 @@ import Feed from "./components/Feed";
 import Error from "./views/Error";
 import Home from "./views/Home";
 import UserPost from "./components/UserPost";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   return (

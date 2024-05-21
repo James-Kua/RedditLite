@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import he from "he";
+import Slider from "react-slick";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
@@ -88,6 +89,14 @@ const SinglePost = ({
       });
   }, [subreddit, postId, title]);
 
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 200,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
       <nav aria-label="Breadcrumb" className="mb-5">
@@ -165,18 +174,21 @@ const SinglePost = ({
             {post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
-                  <div className="flex flex-wrap gap-2">
+                  <Slider {...settings} className="mb-8">
                     {post.gallery_data.items.map((item) => (
-                      <img
-                        key={item.media_id}
-                        src={`https://i.redd.it/${item.media_id}.${parseImageType(
-                          post.media_metadata[item.media_id]?.m
-                        )}`}
-                        className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak w-96 h-auto block mt-2"
-                        alt="Gallery Image"
-                      />
+                      <div key={item.media_id} className="h-full w-full flex items-center z-50">
+                        <img
+                          src={`https://i.redd.it/${
+                            item.media_id
+                          }.${parseImageType(
+                            post.media_metadata?.[(item.media_id as unknown) as number]?.m ?? ''
+                          )}`}
+                          className="relative rounded-lg overflow-hidden w-full h-auto block mt-2"
+                          alt="Gallery Image"
+                        />
+                      </div>
                     ))}
-                  </div>
+                  </Slider>
                 ) : (
                   <img
                     src={`https://i.redd.it/${
