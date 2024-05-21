@@ -13,7 +13,7 @@ const SearchInput = () => {
 
   const handleButtonClick = () => {
     if (search.trim() !== "") {
-      navigate(`/${search}`);
+      navigate(`/${search}`, { replace: true });
       if (isMobile) {
         setIsExpanded(false);
         setSearch("");

@@ -41,6 +41,10 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   }, [subreddit, after, hasMore]);
 
   useEffect(() => {
+    setPosts([]);
+    setAfter(null);
+    setHasMore(true);
+
     fetch(`https://www.reddit.com/r/${subreddit}.json`)
       .then((response) => response.json())
       .then((data) => {
