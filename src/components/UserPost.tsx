@@ -1,10 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { User } from "../types/user";
 import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
+  const [after, setAfter] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const sentinel = useRef(null);
+
+  const fetchPosts = useCallback(() => {
+    if (!hasMore) return;
+
+    fetch(`https://www.reddit.com/user/${username}.json?after=${after}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedPosts = data.data.children.map(
+          (child: { data: User }) => child.data
+        );
+        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+        setAfter(data.data.after);
+        setHasMore(!!data.data.after);
+      });
+  }, [username, after, hasMore]);
 
   useEffect(() => {
     fetch(`https://www.reddit.com/user/${username}.json`)
@@ -13,10 +32,31 @@ const UserPost = ({ username }: { username: string }) => {
         const fetchedPosts = data.data.children.map(
           (child: { data: User }) => child.data
         );
-
         setPosts(fetchedPosts);
+        setAfter(data.data.after);
+        setHasMore(!!data.data.after);
       });
   }, [username]);
+
+  useEffect(() => {
+    if (observer.current) observer.current.disconnect();
+
+    const options = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0,
+    };
+
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchPosts();
+      }
+    }, options);
+
+    if (observer.current && sentinel.current) {
+      observer.current.observe(sentinel.current);
+    }
+  }, [fetchPosts, hasMore]);
 
   return (
     <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
@@ -78,6 +118,7 @@ const UserPost = ({ username }: { username: string }) => {
           </a>
         </div>
       ))}
+      <div ref={sentinel} className="h-1"></div>
     </div>
   );
 };
