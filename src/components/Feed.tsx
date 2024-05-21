@@ -6,12 +6,12 @@ import {
   parsePermalink,
   parseImageType,
   isImage,
-  parseLinkFlairTextColor,
 } from "../utils/parser";
 import { Post } from "../types/post";
 import NSFWTag from "./NSFWTag";
 import { Subreddit } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
+import LinkFlairText from "./LinkFlairText";
 
 interface FeedProps {
   subreddit: string;
@@ -153,19 +153,11 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
               <h2 className="text-xl font-semibold my-1">
                 {he.decode(post.title)}
               </h2>
-              {
-                <div
-                  className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
-                  style={{
-                    backgroundColor: `${post.link_flair_background_color}`,
-                    color: `${parseLinkFlairTextColor(
-                      post.link_flair_text_color
-                    )}`,
-                  }}
-                >
-                  {post.link_flair_text}
-                </div>
-              }
+              <LinkFlairText
+                link_flair_richtext={post.link_flair_richtext}
+                link_flair_text={post.link_flair_text}
+                link_flair_background_color={post.link_flair_background_color}
+              />
               {post.thumbnail === "spoiler" && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <span className="text-black text-xl font-bold">SPOILER</span>

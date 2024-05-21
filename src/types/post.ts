@@ -14,6 +14,7 @@ export type Post = {
   secure_media_embed: SecureMediaEmbed
   media_metadata?: any[];
   link_flair_text: string;
+  link_flair_richtext: LinkFlairRichtext[];
   link_flair_text_color: string;
   link_flair_background_color: string;
   score: number;
@@ -46,6 +47,13 @@ export interface SecureMediaEmbed {
 }
 
 export interface AuthorFlairRichtext {
+  e: string
+  t?: string
+  a?: string
+  u?: string
+}
+
+export interface LinkFlairRichtext {
   e: string
   t?: string
   a?: string

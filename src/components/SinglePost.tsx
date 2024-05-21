@@ -7,10 +7,10 @@ import { Comment, Children2 } from "../types/comment";
 import {
   isImage,
   parseImageType,
-  parseLinkFlairTextColor,
 } from "../utils/parser";
 import NSFWTag from "./NSFWTag";
 import AuthorFlairText from "./AuthorFlairText";
+import LinkFlairText from "./LinkFlairText";
 
 const CommentComponent = ({
   comment,
@@ -159,41 +159,22 @@ const SinglePost = ({
             <a href={`/user/${post.author}`}>
               <h3 className="font-semibold">{post.author}</h3>
             </a>
-            {post.author_flair_text && (
-              <div
-                className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
-                style={{
-                  backgroundColor: `${
-                    post.author_flair_background_color ?? ""
-                  }`,
-                  color: `${parseLinkFlairTextColor(
-                    post.author_flair_background_color ?? ""
-                  )}`,
-                }}
-              >
-                {post.author_flair_text}
-              </div>
-            )}
+            <AuthorFlairText
+              author_flair_richtext={post.author_flair_richtext}
+              author_flair_text={post.author_flair_text}
+              author_flair_background_color={post.author_flair_background_color}
+            />
           </div>
           <a href={`https://www.reddit.com${post.permalink}`}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
-            {
-              <div
-                className={`rounded-lg px-2 py-1 text-sm overflow-x-auto w-fit font-medium`}
-                style={{
-                  backgroundColor: `${post.link_flair_background_color}`,
-                  color: `${parseLinkFlairTextColor(
-                    post.link_flair_text_color
-                  )}`,
-                }}
-              >
-                {post.link_flair_text}
-              </div>
-            }
-
+            <LinkFlairText
+              link_flair_richtext={post.link_flair_richtext}
+              link_flair_text={post.link_flair_text}
+              link_flair_background_color={post.link_flair_background_color}
+            />
             {post.secure_media_embed?.media_domain_url ? (
               <div
                 className="mt-4 aspect-auto flex justify-center items-center max-w-full"

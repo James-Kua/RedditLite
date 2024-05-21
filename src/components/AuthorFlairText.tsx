@@ -23,7 +23,7 @@ const AuthorFlairText = ({
         {author_flair_richtext.length > 0 ? (
           author_flair_richtext.map(
             (flair: AuthorFlairRichtext, index: number) => (
-              <span key={index} className="ml-1">
+              <span key={index}>
                 {flair.e === "emoji" ? (
                   <img
                     src={flair.u}
@@ -34,7 +34,7 @@ const AuthorFlairText = ({
                   />
                 ) : (
                   <span
-                    className="rounded-lg pr-1 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+                    className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
                     style={{
                       backgroundColor: author_flair_background_color || "",
                       color: parseLinkFlairTextColor(
@@ -50,7 +50,7 @@ const AuthorFlairText = ({
           )
         ) : (
           <span
-            className="rounded-lg py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+            className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
             style={{
               backgroundColor: author_flair_background_color || "",
               color: parseLinkFlairTextColor(
