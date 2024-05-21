@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const SearchInput = () => {
   const isMobile = window.innerWidth <= 767;
   const [search, setSearch] = useState("");
-  const [isExpanded, setIsExpanded] = useState(!isMobile);
+  const [isExpanded, setIsExpanded] = useState(!isMobile || window.location.pathname === "/");
   const navigate = useNavigate();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,9 @@ const SearchInput = () => {
   };
 
   const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+    if (window.location.pathname !== "/") {
+      setIsExpanded(!isExpanded);
+    }
   };
 
   return (
