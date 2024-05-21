@@ -107,6 +107,15 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
           <SearchInput />
         </div>
       </div>
+
+      <div className="mb-6">
+        <div
+          className="text-gray-500 text-sm font-medium overflow-scroll"
+          dangerouslySetInnerHTML={{
+            __html: he.decode(subredditInfo?.public_description_html || ""),
+          }}
+        />
+      </div>
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
           <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
