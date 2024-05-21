@@ -110,11 +110,24 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
 
       <div className="mb-6">
         <div
-          className="text-gray-500 text-sm font-medium overflow-scroll"
+          className="text-gray-500 text-sm overflow-scroll"
           dangerouslySetInnerHTML={{
             __html: he.decode(subredditInfo?.public_description_html || ""),
           }}
         />
+
+        <div>
+          {subredditInfo?.subscribers && (
+            <>
+              <p className="text-gray-500 text-sm font-medium mt-4">
+                🫂 {subredditInfo.subscribers.toLocaleString("en-US")} Members
+              </p>
+              <p className="text-gray-500 text-sm font-medium mt-1">
+                🟢 {subredditInfo.accounts_active.toLocaleString("en-US")} Online
+              </p>
+            </>
+          )}
+        </div>
       </div>
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
