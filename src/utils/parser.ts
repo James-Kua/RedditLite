@@ -8,7 +8,6 @@ export function parsePermalink(permalink: string) {
 }
 
 export function parseImageType(imageType?: string): string {
-  console.log(imageType);
   if (!imageType) {
     return "jpg";
   }

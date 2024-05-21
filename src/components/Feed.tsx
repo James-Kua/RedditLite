@@ -5,6 +5,7 @@ import { parseUnixTimestamp } from "../utils/datetime";
 import { parsePermalink, parseImageType, isImage } from "../utils/parser";
 import { Post } from "../types/post";
 import NSFWTag from "./NSFWTag";
+import { Subreddit } from "../types/subreddit";
 
 interface FeedProps {
   subreddit: string;
@@ -12,6 +13,7 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -44,6 +46,13 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
         setHasMore(!!data.data.after);
       });
 
+    fetch(`https://www.reddit.com/r/${subreddit}/about.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSubredditInfo(data.data);
+      });
+    console.log(subredditInfo?.community_icon);
+
     document.title = `🤖 ${subreddit}`;
   }, [subreddit]);
 
@@ -75,9 +84,25 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
       <div className="flex justify-between items-center mb-5">
-        <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
-          {subreddit}
-        </h1>
+        <div className="flex items-center">
+          {subredditInfo?.community_icon ? (
+            <img
+              src={subredditInfo.community_icon.replace("&amp;", "&")}
+              alt="community_icon"
+              className="w-8 h-8 rounded-lg mr-2"
+            />
+          ) : subredditInfo?.icon_img ? (
+            <img
+              src={subredditInfo.icon_img.replace("&amp;", "&")}
+              alt="icon_img"
+              className="w-8 h-8 rounded-lg mr-2"
+            />
+          ) : null}
+          <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
+            {subreddit}
+          </h1>
+        </div>
+
         <div className="ml-1">
           <SearchInput />
         </div>
