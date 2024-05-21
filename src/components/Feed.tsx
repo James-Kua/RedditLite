@@ -11,6 +11,7 @@ import {
 import { Post } from "../types/post";
 import NSFWTag from "./NSFWTag";
 import { Subreddit } from "../types/subreddit";
+import AuthorFlairText from "./AuthorFlairText";
 
 interface FeedProps {
   subreddit: string;
@@ -140,21 +141,13 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             <div>
               <div className="flex items-center space-x-2">
                 <h3 className="font-semibold">{post.author}</h3>
-                {post.author_flair_text && (
-                  <div
-                    className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
-                    style={{
-                      backgroundColor: `${
-                        post.author_flair_background_color ?? ""
-                      }`,
-                      color: `${parseLinkFlairTextColor(
-                        post.author_flair_background_color ?? ""
-                      )}`,
-                    }}
-                  >
-                    {post.author_flair_text}
-                  </div>
-                )}
+                <AuthorFlairText
+                  author_flair_richtext={post.author_flair_richtext}
+                  author_flair_text={post.author_flair_text}
+                  author_flair_background_color={
+                    post.author_flair_background_color
+                  }
+                />
               </div>
               <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
               <h2 className="text-xl font-semibold my-1">

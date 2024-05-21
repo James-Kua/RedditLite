@@ -10,6 +10,7 @@ import {
   parseLinkFlairTextColor,
 } from "../utils/parser";
 import NSFWTag from "./NSFWTag";
+import AuthorFlairText from "./AuthorFlairText";
 
 const CommentComponent = ({
   comment,
@@ -34,21 +35,11 @@ const CommentComponent = ({
               OP
             </span>
           )}
-          {comment.author_flair_text && (
-            <div
-              className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
-              style={{
-                backgroundColor: `${
-                  comment.author_flair_background_color ?? ""
-                }`,
-                color: `${parseLinkFlairTextColor(
-                  comment.author_flair_background_color ?? ""
-                )}`,
-              }}
-            >
-              {comment.author_flair_text}
-            </div>
-          )}
+          <AuthorFlairText
+            author_flair_richtext={comment.author_flair_richtext}
+            author_flair_text={comment.author_flair_text}
+            author_flair_background_color={comment.author_flair_background_color}
+          />
         </div>
         <h3 className="text-sm whitespace-nowrap ml-1">
           🕔 {parseUnixTimestamp(comment.created_utc)}
@@ -169,20 +160,20 @@ const SinglePost = ({
               <h3 className="font-semibold">{post.author}</h3>
             </a>
             {post.author_flair_text && (
-                  <div
-                    className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
-                    style={{
-                      backgroundColor: `${
-                        post.author_flair_background_color ?? ""
-                      }`,
-                      color: `${parseLinkFlairTextColor(
-                        post.author_flair_background_color ?? ""
-                      )}`,
-                    }}
-                  >
-                    {post.author_flair_text}
-                  </div>
-                )}
+              <div
+                className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap`}
+                style={{
+                  backgroundColor: `${
+                    post.author_flair_background_color ?? ""
+                  }`,
+                  color: `${parseLinkFlairTextColor(
+                    post.author_flair_background_color ?? ""
+                  )}`,
+                }}
+              >
+                {post.author_flair_text}
+              </div>
+            )}
           </div>
           <a href={`https://www.reddit.com${post.permalink}`}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>

@@ -9,6 +9,8 @@ export type Comment = {
   parent_id: string;
   author_flair_text?: string;
   author_flair_background_color?: string;
+  author_flair_richtext: AuthorFlairRichtext[]
+  author_flair_text_color?: string;
   replies: Replies;
 };
 
@@ -29,4 +31,11 @@ export interface Children2 {
 export type Replies = {
   kind: string;
   data: Data2;
+}
+
+export interface AuthorFlairRichtext {
+  e: string
+  t?: string
+  a?: string
+  u?: string
 }

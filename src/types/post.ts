@@ -3,6 +3,7 @@ export type Post = {
   author: string;
   author_flair_text?: string;
   author_flair_background_color?: string;
+  author_flair_richtext: AuthorFlairRichtext[]
   created: number;
   title: string;
   selftext_html?: string;
@@ -42,4 +43,11 @@ export interface SecureMediaEmbed {
   scrolling: boolean
   media_domain_url: string
   height: number
+}
+
+export interface AuthorFlairRichtext {
+  e: string
+  t?: string
+  a?: string
+  u?: string
 }
