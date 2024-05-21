@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const SearchInput = () => {
+  const isMobile = window.innerWidth <= 767;
   const [search, setSearch] = useState("");
+  const [isExpanded, setIsExpanded] = useState(!isMobile);
   const navigate = useNavigate();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,8 +13,12 @@ const SearchInput = () => {
 
   const handleButtonClick = () => {
     if (search.trim() !== "") {
-        navigate(`/${search}`);
+      navigate(`/${search}`);
+      if (isMobile) {
+        setIsExpanded(false);
+        setSearch("");
       }
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -21,29 +27,39 @@ const SearchInput = () => {
     }
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="relative">
       <label htmlFor="search-input" className="sr-only">
         Search
       </label>
-
-      <input
-        type="text"
-        id="subreddit-search"
-        value={search}
-        onChange={handleSearch}
-        onKeyDown={handleKeyDown}
-        placeholder="Search for subreddit"
-        className="w-full rounded-md border-gray-200 py-2.5 pl-2 pr-10 shadow-sm sm:text-sm"
-      />
-
-      <span className="absolute inset-y-0 right-0 grid w-10 place-content-center">
+      <div
+        className={`flex items-center transition-all duration-300 ease-in-out ${
+          isExpanded ? "w-full" : "w-12 lg:w-full"
+        }`}
+      >
+        <input
+          type="text"
+          id="subreddit-search"
+          value={search}
+          onChange={handleSearch}
+          onKeyDown={handleKeyDown}
+          placeholder="Search for subreddit"
+          className={`transition-all duration-300 ease-in-out ${
+            isExpanded
+              ? "opacity-100 pl-2 pr-10 py-2.5"
+              : "opacity-0 pl-0 pr-0 py-0 lg:opacity-100 lg:pl-2 lg:pr-10 lg:py-2.5"
+          } w-full rounded-md border-gray-200 shadow-sm sm:text-sm`}
+        />
         <button
           type="button"
-          onClick={handleButtonClick}
-          className="text-gray-600 hover:text-gray-700"
+          onClick={toggleExpand}
+          className="text-gray-600 hover:text-gray-700 ml-2 lg:hidden"
         >
-          <span className="sr-only">Search</span>
+          <span className="sr-only">Expand</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -59,7 +75,16 @@ const SearchInput = () => {
             />
           </svg>
         </button>
-      </span>
+        <button
+          type="button"
+          onClick={toggleExpand}
+          className={`absolute inset-y-0 right-0 flex items-center justify-center w-10 text-gray-600 hover:text-gray-700 transition-opacity duration-300 ${
+            isExpanded ? "opacity-100" : "opacity-0 lg:opacity-100"
+          }`}
+        >
+          <span className="sr-only">Search</span>
+        </button>
+      </div>
     </div>
   );
 };
