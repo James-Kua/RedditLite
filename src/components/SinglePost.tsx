@@ -137,7 +137,10 @@ const SinglePost = ({
       </nav>
 
       {posts.map((post) => (
-        <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8">
+        <div
+          key={post.id}
+          className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8"
+        >
           <div className="flex items-center space-x-2">
             <a href={`/user/${post.author}`}>
               <h3 className="font-semibold">{post.author}</h3>
@@ -158,19 +161,35 @@ const SinglePost = ({
                 {post.link_flair_text}
               </span>
             )}
+
             {post.media_metadata ? (
               <div className="relative mt-2">
-                <img
-                  src={`https://i.redd.it/${
-                    Object.keys(post.media_metadata)[0]
-                  }.${parseImageType(
-                    post.media_metadata[
-                      Object.keys(post.media_metadata)[0] as unknown as number
-                    ]?.m
-                  )}`}
-                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                  alt="Image"
-                />
+                {post.gallery_data ? (
+                  <div className="flex flex-wrap gap-2">
+                    {post.gallery_data.items.map((item) => (
+                      <img
+                        key={item.media_id}
+                        src={`https://i.redd.it/${item.media_id}.${parseImageType(
+                          post.media_metadata[item.media_id]?.m
+                        )}`}
+                        className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak w-96 h-auto block mt-2"
+                        alt="Gallery Image"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <img
+                    src={`https://i.redd.it/${
+                      Object.keys(post.media_metadata)[0]
+                    }.${parseImageType(
+                      post.media_metadata[
+                        Object.keys(post.media_metadata)[0] as unknown as number
+                      ]?.m
+                    )}`}
+                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                    alt="Image"
+                  />
+                )}
               </div>
             ) : post.url_overridden_by_dest &&
               isImage(post.url_overridden_by_dest) ? (

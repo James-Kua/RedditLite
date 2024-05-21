@@ -12,4 +12,17 @@ export type Post = {
   link_flair_text: string;
   score: number;
   num_comments: number;
+  gallery_data?: GalleryData
 };
+
+interface GalleryData {
+  items: GalleryItem[]
+}
+
+
+interface GalleryItem {
+  caption: string
+  outbound_url: string
+  media_id: string
+  id: number
+}
