@@ -67,6 +67,11 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
     }
   }, [fetchPosts, hasMore]);
 
+  const truncateHtmlBody = (text: string, lines: number): string => {
+    const truncated = text.split("\n").slice(0, lines).join("\n");
+    return truncated;
+  };
+
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
       <div className="flex justify-between items-center mb-5">
@@ -79,25 +84,26 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       </div>
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
-          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10">
-            <div className="flex items-center space-x-2">
-              <h3 className="font-semibold">{post.author}</h3>
-              {post.author_flair_text && (
-                <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
-                  {post.author_flair_text}
-                </span>
+          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-semibold">{post.author}</h3>
+                {post.author_flair_text && (
+                  <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+                    {post.author_flair_text}
+                  </span>
+                )}
+              </div>
+              <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
+              <h2 className="text-xl font-semibold my-1">
+                {he.decode(post.title)}
+              </h2>
+              {post.thumbnail === "spoiler" && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <span className="text-black text-xl font-bold">SPOILER</span>
+                </div>
               )}
             </div>
-            <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
-            <h2 className="text-xl font-semibold my-1">
-              {he.decode(post.title)}
-            </h2>
-            {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
-                {post.link_flair_text}
-              </span>
-            )}
-
             {post.media_metadata ? (
               <div>
                 <div className="relative mt-2">
@@ -124,6 +130,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             ) : !(
                 post.thumbnail === "self" ||
                 post.thumbnail === "default" ||
+                post.thumbnail === "spoiler" ||
                 post.thumbnail === ""
               ) ? (
               post.thumbnail === "nsfw" ? (
@@ -138,11 +145,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             ) : null}
             {post.selftext_html && (
               <div
-                className="mt-1 text-md text-gray-700 overflow-scroll"
+                className={`mt-1 text-md text-gray-700 overflow-scroll ${
+                  post.thumbnail === "spoiler" ? "blur p-2" : ""
+                }`}
                 dangerouslySetInnerHTML={{
-                  __html: he
-                    .decode(post.selftext_html)
-                    .replace(/\n\n/g, "<br>"),
+                  __html:
+                    post.thumbnail === "spoiler"
+                      ? truncateHtmlBody(he.decode(post.selftext_html), 10)
+                      : he.decode(post.selftext_html).replace(/\n\n/g, "<br>"),
                 }}
               />
             )}

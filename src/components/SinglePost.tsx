@@ -213,6 +213,7 @@ const SinglePost = ({
             ) : !(
                 post.thumbnail === "self" ||
                 post.thumbnail === "default" ||
+                post.thumbnail === "spoiler" ||
                 post.thumbnail === ""
               ) ? (
               post.thumbnail === "nsfw" ? (
