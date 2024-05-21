@@ -2,7 +2,12 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
 import { parseUnixTimestamp } from "../utils/datetime";
-import { parsePermalink, parseImageType, isImage } from "../utils/parser";
+import {
+  parsePermalink,
+  parseImageType,
+  isImage,
+  parseLinkFlairTextColor,
+} from "../utils/parser";
 import { Post } from "../types/post";
 import NSFWTag from "./NSFWTag";
 import { Subreddit } from "../types/subreddit";
@@ -123,7 +128,8 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 🫂 {subredditInfo.subscribers.toLocaleString("en-US")} Members
               </p>
               <p className="text-gray-500 text-sm font-medium mt-1">
-                🟢 {subredditInfo.accounts_active.toLocaleString("en-US")} Online
+                🟢 {subredditInfo.accounts_active.toLocaleString("en-US")}{" "}
+                Online
               </p>
             </>
           )}
@@ -136,15 +142,38 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
               <div className="flex items-center space-x-2">
                 <h3 className="font-semibold">{post.author}</h3>
                 {post.author_flair_text && (
-                  <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+                  <div
+                    className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
+                    style={{
+                      backgroundColor: `${
+                        post.author_flair_background_color ?? ""
+                      }`,
+                      color: `${parseLinkFlairTextColor(
+                        post.author_flair_background_color ?? ""
+                      )}`,
+                    }}
+                  >
                     {post.author_flair_text}
-                  </span>
+                  </div>
                 )}
               </div>
               <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
               <h2 className="text-xl font-semibold my-1">
                 {he.decode(post.title)}
               </h2>
+              {
+                <div
+                  className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
+                  style={{
+                    backgroundColor: `${post.link_flair_background_color}`,
+                    color: `${parseLinkFlairTextColor(
+                      post.link_flair_text_color
+                    )}`,
+                  }}
+                >
+                  {post.link_flair_text}
+                </div>
+              }
               {post.thumbnail === "spoiler" && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <span className="text-black text-xl font-bold">SPOILER</span>

@@ -8,6 +8,7 @@ export type Comment = {
   created_utc: number;
   parent_id: string;
   author_flair_text?: string;
+  author_flair_background_color?: string;
   replies: Replies;
 };
 

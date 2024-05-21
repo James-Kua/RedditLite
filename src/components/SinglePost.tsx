@@ -4,7 +4,11 @@ import Slider from "react-slick";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
-import { isImage, parseImageType } from "../utils/parser";
+import {
+  isImage,
+  parseImageType,
+  parseLinkFlairTextColor,
+} from "../utils/parser";
 import NSFWTag from "./NSFWTag";
 
 const CommentComponent = ({
@@ -31,9 +35,19 @@ const CommentComponent = ({
             </span>
           )}
           {comment.author_flair_text && (
-            <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 overflow-x-auto">
+            <div
+              className={`rounded-lg px-2 py-1 text-xs overflow-x-auto w-fit font-medium`}
+              style={{
+                backgroundColor: `${
+                  comment.author_flair_background_color ?? ""
+                }`,
+                color: `${parseLinkFlairTextColor(
+                  comment.author_flair_background_color ?? ""
+                )}`,
+              }}
+            >
               {comment.author_flair_text}
-            </span>
+            </div>
           )}
         </div>
         <h3 className="text-sm whitespace-nowrap ml-1">
@@ -165,23 +179,36 @@ const SinglePost = ({
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
-            {post.link_flair_text && (
-              <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto">
+            {
+              <div
+                className={`rounded-lg px-2 py-1 text-sm overflow-x-auto w-fit font-medium`}
+                style={{
+                  backgroundColor: `${post.link_flair_background_color}`,
+                  color: `${parseLinkFlairTextColor(
+                    post.link_flair_text_color
+                  )}`,
+                }}
+              >
                 {post.link_flair_text}
-              </span>
-            )}
+              </div>
+            }
 
             {post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
                   <Slider {...settings} className="mb-8">
                     {post.gallery_data.items.map((item) => (
-                      <div key={item.media_id} className="h-full w-full flex items-center z-50">
+                      <div
+                        key={item.media_id}
+                        className="h-full w-full flex items-center z-50"
+                      >
                         <img
                           src={`https://i.redd.it/${
                             item.media_id
                           }.${parseImageType(
-                            post.media_metadata?.[(item.media_id as unknown) as number]?.m ?? ''
+                            post.media_metadata?.[
+                              item.media_id as unknown as number
+                            ]?.m ?? ""
                           )}`}
                           className="relative rounded-lg overflow-hidden w-full h-auto block mt-2"
                           alt="Gallery Image"

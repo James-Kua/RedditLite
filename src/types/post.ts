@@ -2,6 +2,7 @@ export type Post = {
   id: string;
   author: string;
   author_flair_text?: string;
+  author_flair_background_color?: string;
   created: number;
   title: string;
   selftext_html?: string;
@@ -10,6 +11,8 @@ export type Post = {
   thumbnail?: string;
   media_metadata?: any[];
   link_flair_text: string;
+  link_flair_text_color: string;
+  link_flair_background_color: string;
   score: number;
   num_comments: number;
   gallery_data?: GalleryData

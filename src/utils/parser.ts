@@ -20,3 +20,11 @@ export function parseImageType(imageType?: string): string {
 export function isImage(url: string) {
   return url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".jpeg");
 }
+
+export function parseLinkFlairTextColor(color: string) {
+  if (color === "dark") {
+    return "black";
+  }
+
+  return "white";
+}
