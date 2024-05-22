@@ -240,6 +240,14 @@ const SinglePost = ({
                   />
                 )}
               </div>
+            ) : post.preview && post.preview.images && post.preview.images[0].resolutions.length > 0 ? (
+              <div className="relative mt-2">
+                <img
+                  src={post.preview.images[0].source.url.replace(/&amp;/g, '&')}
+                  alt="source_url"
+                  className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                />
+              </div>
             ) : post.url_overridden_by_dest &&
               isImage(post.url_overridden_by_dest) ? (
               <img

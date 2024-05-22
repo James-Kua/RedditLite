@@ -8,6 +8,7 @@ export type Post = {
   title: string;
   selftext_html?: string;
   permalink: string;
+  preview: Preview
   url_overridden_by_dest: string;
   thumbnail?: string;
   media: Media
@@ -68,4 +69,26 @@ export interface RedditVideo {
   fallback_url: string
   height: number
   width: number
+}
+
+export interface Preview {
+  images: Image[]
+}
+
+export interface Image {
+  source: Source
+  resolutions: Resolution[]
+  id: string
+}
+
+export interface Source {
+  url: string
+  width: number
+  height: number
+}
+
+export interface Resolution {
+  url: string
+  width: number
+  height: number
 }
