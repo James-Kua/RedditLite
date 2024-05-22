@@ -16,8 +16,8 @@ const SearchInput = () => {
       navigate(`/${search}`, { replace: true });
       if (isMobile) {
         setIsExpanded(false);
-        setSearch("");
       }
+      setSearch("");
     }
   };
 
