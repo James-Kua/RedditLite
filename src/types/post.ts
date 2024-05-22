@@ -11,6 +11,7 @@ export type Post = {
   url_overridden_by_dest: string;
   thumbnail?: string;
   media: Media
+  secure_media?: SecureMedia
   secure_media_embed: SecureMediaEmbed
   media_metadata?: any[];
   link_flair_text: string;
@@ -25,7 +26,6 @@ export type Post = {
 interface GalleryData {
   items: GalleryItem[]
 }
-
 
 interface GalleryItem {
   caption: string
@@ -58,4 +58,14 @@ export interface LinkFlairRichtext {
   t?: string
   a?: string
   u?: string
+}
+
+export interface SecureMedia {
+  reddit_video: RedditVideo
+}
+
+export interface RedditVideo {
+  fallback_url: string
+  height: number
+  width: number
 }

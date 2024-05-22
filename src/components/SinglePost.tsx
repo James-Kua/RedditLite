@@ -189,6 +189,20 @@ const SinglePost = ({
                   className="w-full h-full aspect-auto"
                 ></iframe>
               </div>
+            ) : post.secure_media ? (
+              <div
+                className="mt-4 aspect-auto flex justify-center items-center max-w-full"
+                style={{
+                  width: `${post.secure_media.reddit_video.width}px`,
+                  height: `${post.secure_media.reddit_video.height}px`,
+                }}
+              >
+                <iframe
+                  src={post.secure_media.reddit_video.fallback_url}
+                  allowFullScreen
+                  className="w-full h-full aspect-auto"
+                ></iframe>
+              </div>
             ) : post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
