@@ -6,7 +6,6 @@ export type User = {
   body_html?: string;
   selftext?: string;
   score: number;
-  collapsed_reason: any;
   permalink: string;
   link_permalink?: string;
   link_title?: string;
