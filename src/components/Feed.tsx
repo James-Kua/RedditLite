@@ -8,7 +8,7 @@ import {
   isImage,
 } from "../utils/parser";
 import { Post } from "../types/post";
-import NSFWTag from "./NSFWTag";
+import CustomTag from "./CustomTag";
 import { Subreddit } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
@@ -206,7 +206,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 post.thumbnail === ""
               ) ? (
               post.thumbnail === "nsfw" ? (
-                <NSFWTag />
+                <CustomTag fontSize="text-xs" color="text-white" backgroundColor="bg-red-500" content="🔞 NSFW"/>
               ) : (
                 <img
                   src={post.thumbnail}
