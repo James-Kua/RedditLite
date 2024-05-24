@@ -4,4 +4,4 @@
 
 This is a minimalist Reddit client provides a clean and simple user interface, for a more streamlined browsing experience.
 
-Try it out [here](https://reddit-lite.pages.dev/nus)
+Try it out [here](https://reddit-lite.pages.dev/r/nus)

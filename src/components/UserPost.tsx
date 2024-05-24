@@ -68,7 +68,7 @@ const UserPost = ({ username }: { username: string }) => {
       {posts.map((post) => (
         <div key={post.id} className="mb-8">
           <a
-            href={`/${post.subreddit}`}
+            href={`/r/${post.subreddit}`}
             target="_blank"
             rel="noreferrer"
             className="text-blue-500"
@@ -81,7 +81,7 @@ const UserPost = ({ username }: { username: string }) => {
             🕔 {parseUnixTimestamp(post.created)}
           </h3>
           <a
-            href={`/${
+            href={`/r/${
               post.link_permalink
                 ? post.link_permalink.split("/r/")[1]
                 : post.permalink.split("/r/")[1]

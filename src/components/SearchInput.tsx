@@ -14,7 +14,7 @@ const SearchInput = () => {
   const handleButtonClick = () => {
     if (search.trim() !== "") {
       if (search.startsWith("/r/")) {
-        navigate(`/${search.replace('/r/', '')}`, { replace: true });
+        navigate(`${search}`, { replace: true });
       } else {
         const encodedQuery = encodeURIComponent(search);
         navigate(`/search/?q=${encodedQuery}`, { replace: true });

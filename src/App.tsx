@@ -10,9 +10,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/:subreddit" element={<FeedWrapper />} />
+        <Route path="/r/:subreddit" element={<FeedWrapper />} />
         <Route
-          path="/:subreddit/comments/:id/:title"
+          path="/r/:subreddit/comments/:id/:title"
           element={<SinglePostWrapper />}
         />
         <Route path="/search" element={<SearchWrapper />} />
