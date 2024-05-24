@@ -4,13 +4,11 @@ import Slider from "react-slick";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
-import {
-  isImage,
-  parseImageType,
-} from "../utils/parser";
+import { isImage, parseImageType } from "../utils/parser";
 import CustomTag from "./CustomTag";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
+import SearchInput from "./SearchInput";
 
 const CommentComponent = ({
   comment,
@@ -38,7 +36,9 @@ const CommentComponent = ({
           <AuthorFlairText
             author_flair_richtext={comment.author_flair_richtext}
             author_flair_text={comment.author_flair_text}
-            author_flair_background_color={comment.author_flair_background_color}
+            author_flair_background_color={
+              comment.author_flair_background_color
+            }
           />
         </div>
         <h3 className="text-sm whitespace-nowrap ml-1">
@@ -104,7 +104,10 @@ const SinglePost = ({
 
   return (
     <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
-      <nav aria-label="Breadcrumb" className="mb-5">
+      <nav
+        aria-label="Breadcrumb"
+        className="flex items-center justify-between mb-5"
+      >
         <ol className="flex items-center gap-1 text-sm text-gray-600">
           <li>
             <a href="/" className="block transition hover:text-gray-700">
@@ -141,13 +144,16 @@ const SinglePost = ({
           </li>
           <li>
             <a
-              href={`/${subreddit}`}
+              href={`/r/${subreddit}`}
               className="flex h-8 items-center bg-white text-gray-500 text-lg font-bold"
             >
               {subreddit}
             </a>
           </li>
         </ol>
+        <div className="search-input">
+          <SearchInput />
+        </div>
       </nav>
 
       {posts.map((post) => (
@@ -240,10 +246,12 @@ const SinglePost = ({
                   />
                 )}
               </div>
-            ) : post.preview && post.preview.images && post.preview.images[0].resolutions.length > 0 ? (
+            ) : post.preview &&
+              post.preview.images &&
+              post.preview.images[0].resolutions.length > 0 ? (
               <div className="relative mt-2">
                 <img
-                  src={post.preview.images[0].source.url.replace(/&amp;/g, '&')}
+                  src={post.preview.images[0].source.url.replace(/&amp;/g, "&")}
                   alt="source_url"
                   className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                 />
@@ -262,7 +270,12 @@ const SinglePost = ({
                 post.thumbnail === ""
               ) ? (
               post.thumbnail === "nsfw" ? (
-                <CustomTag fontSize="text-xs" color="text-white" backgroundColor="bg-red-500" content="🔞 NSFW"/>
+                <CustomTag
+                  fontSize="text-xs"
+                  color="text-white"
+                  backgroundColor="bg-red-500"
+                  content="🔞 NSFW"
+                />
               ) : (
                 <img
                   src={post.thumbnail}
