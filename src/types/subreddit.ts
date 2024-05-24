@@ -1,5 +1,7 @@
 export interface Subreddit {
   title: string;
+  display_name: string;
+  display_name_prefixed: string;
   icon_img: string;
   accounts_active: number;
   subscribers: number;

@@ -1,11 +1,59 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Subreddit } from "../types/subreddit";
 
-const SearchInput = () => {
+const SearchInput: React.FC = () => {
   const isMobile = window.innerWidth <= 767;
   const [search, setSearch] = useState("");
-  const [isExpanded, setIsExpanded] = useState(!isMobile || window.location.pathname === "/");
+  const [isExpanded, setIsExpanded] = useState(
+    !isMobile || window.location.pathname === "/"
+  );
+  const [subredditSuggestions, setSubredditSuggestions] = useState<Subreddit[]>(
+    []
+  );
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    if (search.trim() !== "") {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(() => {
+        fetchSubredditSuggestions();
+      }, 300); 
+    } else {
+      setSubredditSuggestions([]);
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+
+  }, [search]);
+  
+
+  const fetchSubredditSuggestions = async () => {
+    try {
+      const response = await fetch(
+        `https://www.reddit.com/subreddits/search.json?q=${search}`
+      );
+      const data = await response.json();
+      if (data && data.data && data.data.children) {
+        const suggestions: Subreddit[] = data.data.children.map(
+          (child: any) => ({
+            ...child.data,
+          })
+        );
+        setSubredditSuggestions(suggestions);
+      }
+    } catch (error) {
+      console.error("Error fetching subreddit suggestions:", error);
+    }
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -92,6 +140,40 @@ const SearchInput = () => {
           <span className="sr-only"></span>
         </button>
       </div>
+      {subredditSuggestions.length > 0 && (
+        <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-10">
+          <ul>
+            {subredditSuggestions.slice(0, 5).map((subreddit, index) => (
+              <a
+                href={`/${subreddit.display_name_prefixed}`}
+                className="text-gray-800"
+              >
+                <li
+                  key={index}
+                  className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                >
+                  {subreddit?.community_icon ? (
+                    <img
+                      src={subreddit.community_icon.replace("&amp;", "&")}
+                      alt="community_icon"
+                      className="w-6 h-6 rounded-lg mr-2"
+                    />
+                  ) : subreddit?.icon_img ? (
+                    <img
+                      src={subreddit.icon_img.replace("&amp;", "&")}
+                      alt="icon_img"
+                      className="w-6 h-6 rounded-lg mr-2"
+                    />
+                  ) : null}
+                  <p className="font-medium text-xs">
+                    {subreddit.display_name_prefixed}
+                  </p>
+                </li>
+              </a>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
