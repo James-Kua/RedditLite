@@ -20,6 +20,7 @@ export type Post = {
   link_flair_text_color: string;
   link_flair_background_color: string;
   score: number;
+  subreddit_name_prefixed: string;
   num_comments: number;
   gallery_data?: GalleryData
 };

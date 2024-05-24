@@ -106,6 +106,13 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
                   }
                 />
               </div>
+              <div className="bg-slate-100 p-1 w-fit rounded-lg">
+                <span className="text-gray-500 text-sm font-semibold">
+                  <a href={`/${post.subreddit_name_prefixed}`}>
+                    {post.subreddit_name_prefixed}
+                  </a>
+                </span>
+              </div>
               <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
               <h2 className="text-xl font-semibold my-1">
                 {he.decode(post.title)}
