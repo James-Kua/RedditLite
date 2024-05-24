@@ -13,7 +13,12 @@ const SearchInput = () => {
 
   const handleButtonClick = () => {
     if (search.trim() !== "") {
-      navigate(`/${search}`, { replace: true });
+      if (search.startsWith("/r/")) {
+        navigate(`/${search.replace('/r/', '')}`, { replace: true });
+      } else {
+        const encodedQuery = encodeURIComponent(search);
+        navigate(`/search/?q=${encodedQuery}`, { replace: true });
+      }
       if (isMobile) {
         setIsExpanded(false);
       }
@@ -49,7 +54,7 @@ const SearchInput = () => {
           value={search}
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
-          placeholder="Search for subreddit"
+          placeholder="Search Reddit"
           className={`transition-all duration-300 ease-in-out ${
             isExpanded
               ? "opacity-100 pl-2 pr-10 py-2.5"
@@ -84,7 +89,7 @@ const SearchInput = () => {
             isExpanded ? "opacity-100" : "opacity-0 lg:opacity-100"
           }`}
         >
-          <span className="sr-only">Search</span>
+          <span className="sr-only"></span>
         </button>
       </div>
     </div>

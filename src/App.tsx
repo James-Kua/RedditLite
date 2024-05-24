@@ -15,6 +15,7 @@ function App() {
           path="/:subreddit/comments/:id/:title"
           element={<SinglePostWrapper />}
         />
+        <Route path="/search" element={<SearchWrapper />} />
         <Route path="/user/:username" element={<UserProfileWrapper />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Error />} />
@@ -25,8 +26,9 @@ function App() {
 
 export default App;
 
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import SinglePost from "./components/SinglePost";
+import SearchPage from "./components/SearchPage";
 
 const FeedWrapper = () => {
   const { subreddit } = useParams();
@@ -44,4 +46,13 @@ const UserProfileWrapper = () => {
   const { username } = useParams();
 
   return <UserPost username={username ?? ""} />;
+};
+
+const SearchWrapper = () => {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q");
+
+  const encodedQuery = query ? encodeURIComponent(query) : "";
+
+  return <SearchPage query={encodedQuery ?? ''} />;
 };
