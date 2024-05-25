@@ -5,11 +5,11 @@ import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
 import { isImage, parseImageType } from "../utils/parser";
-import CustomTag from "./CustomTag";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
 import SearchInput from "./SearchInput";
 import { FetchImage } from "../utils/image";
+import Thumbnail from "./Thumbnail";
 
 const CommentComponent = ({
   comment,
@@ -267,27 +267,9 @@ const SinglePost = ({
               ) : (
                 <FetchImage url={post.url_overridden_by_dest} />
               )
-            ) : !(
-                post.thumbnail === "self" ||
-                post.thumbnail === "default" ||
-                post.thumbnail === "spoiler" ||
-                post.thumbnail === ""
-              ) ? (
-              post.thumbnail === "nsfw" ? (
-                <CustomTag
-                  fontSize="text-xs"
-                  color="text-white"
-                  backgroundColor="bg-red-500"
-                  content="🔞 NSFW"
-                />
-              ) : (
-                <img
-                  src={post.thumbnail}
-                  alt="thumbnail"
-                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                />
-              )
-            ) : null}
+            ) : (
+              <Thumbnail thumbnail={post.thumbnail || ""} />
+            )}
             {post.selftext_html && (
               <div
                 className="mt-1 text-md text-gray-700 overflow-scroll"

@@ -4,11 +4,11 @@ import SearchInput from "./SearchInput";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { parsePermalink, parseImageType, isImage } from "../utils/parser";
 import { Post } from "../types/post";
-import CustomTag from "./CustomTag";
 import { Subreddit } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
 import { FetchImage } from "../utils/image";
+import Thumbnail from "./Thumbnail";
 
 interface FeedProps {
   subreddit: string;
@@ -194,35 +194,17 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 </div>
               ) : post.url_overridden_by_dest ? (
                 isImage(post.url_overridden_by_dest) ? (
-                <img
-                  src={post.url_overridden_by_dest}
-                  alt="url_overridden_by_dest"
-                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                />
+                  <img
+                    src={post.url_overridden_by_dest}
+                    alt="url_overridden_by_dest"
+                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                  />
                 ) : (
                   <FetchImage url={post.url_overridden_by_dest} />
                 )
-              ) : !(
-                  post.thumbnail === "self" ||
-                  post.thumbnail === "default" ||
-                  post.thumbnail === "spoiler" ||
-                  post.thumbnail === ""
-                ) ? (
-                post.thumbnail === "nsfw" ? (
-                  <CustomTag
-                    fontSize="text-xs"
-                    color="text-white"
-                    backgroundColor="bg-red-500"
-                    content="🔞 NSFW"
-                  />
-                ) : (
-                  <img
-                    src={post.thumbnail}
-                    alt="thumbnail"
-                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                  />
-                )
-              ) : null}
+              ) : (
+                <Thumbnail thumbnail={post.thumbnail || ""} />
+              )}
               {post.selftext_html && (
                 <div
                   className="mt-1 text-md text-gray-700 overflow-scroll"
