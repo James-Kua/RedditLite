@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { User } from "../types/user";
+import { User, UserProfile } from "../types/user";
 import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -36,6 +37,13 @@ const UserPost = ({ username }: { username: string }) => {
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
+
+    fetch(`https://www.reddit.com/user/${username}/about.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUserProfile(data.data);
+      });
+    console.log(userProfile);
   }, [username]);
 
   useEffect(() => {
@@ -64,13 +72,35 @@ const UserPost = ({ username }: { username: string }) => {
         <div className="flex h-8 items-center bg-white text-gray-500 text-lg font-bold">
           u/{username}
         </div>
+        {userProfile && (
+          <div className="mt-2">
+            {userProfile.icon_img && (
+              <img
+                src={userProfile.icon_img.replace(/&amp;/g, "&")}
+                alt={username}
+                className="h-12 w-12 rounded-lg"
+              />
+            )}
+            <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-2">
+              {userProfile.total_karma && (
+                <span>
+                  🏆 {userProfile.total_karma.toLocaleString("en-US")} post karma
+                </span>
+              )}
+            </div>
+            <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-1">
+              {userProfile.comment_karma && (
+                <span>
+                  💬 {userProfile.comment_karma.toLocaleString("en-US")} comment karma
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
       {posts.map((post) => (
         <div key={post.id} className="mb-8">
-          <a
-            href={`/r/${post.subreddit}`}
-            className="text-blue-500"
-          >
+          <a href={`/r/${post.subreddit}`} className="text-blue-500">
             <span className="whitespace-nowrap rounded-lg bg-slate-100 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
               {post.subreddit_name_prefixed}
             </span>
@@ -85,7 +115,7 @@ const UserPost = ({ username }: { username: string }) => {
                 : post.permalink.split("/r/")[1]
             }`}
           >
-            <h1 className="text-xl font-medium text-gray-800">{post.title}</h1>
+            <h1 className="text-xl font-semibold text-gray-800">{he.decode(post.title ?? '')}</h1>
             {post.link_title && (
               <div className="bg-slate-100 rounded-md py-2 pl-2">
                 <h1 className="text-md font-medium text-gray-800">
