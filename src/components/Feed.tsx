@@ -8,6 +8,7 @@ import CustomTag from "./CustomTag";
 import { Subreddit } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
+import { FetchImage } from "../utils/image";
 
 interface FeedProps {
   subreddit: string;
@@ -191,13 +192,16 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                     className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                   />
                 </div>
-              ) : post.url_overridden_by_dest &&
+              ) : post.url_overridden_by_dest ? (
                 isImage(post.url_overridden_by_dest) ? (
                 <img
                   src={post.url_overridden_by_dest}
                   alt="url_overridden_by_dest"
                   className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
                 />
+                ) : (
+                  <FetchImage url={post.url_overridden_by_dest} />
+                )
               ) : !(
                   post.thumbnail === "self" ||
                   post.thumbnail === "default" ||
