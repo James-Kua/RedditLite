@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import he from "he";
-import Slider from "react-slick";
 import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
-import { isImage, parseImageType } from "../utils/parser";
+import { isImage } from "../utils/parser";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
 import SearchInput from "./SearchInput";
@@ -16,6 +15,7 @@ import ArrowIcon from "../static/ArrowIcon";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
 import SelfTextHtml from "./SelfTextHtml";
+import PostGallery from "./PostGallery";
 
 const CommentComponent = ({
   comment,
@@ -96,14 +96,6 @@ const SinglePost = ({
       });
   }, [subreddit, postId, title]);
 
-  const settings = {
-    dots: true,
-    infinite: false,
-    speed: 200,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-
   return (
     <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
       <nav
@@ -166,39 +158,11 @@ const SinglePost = ({
             ) : post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
-                  <Slider {...settings} className="mb-8">
-                    {post.gallery_data.items.map((item) => (
-                      <div
-                        key={item.media_id}
-                        className="h-full w-full flex items-center z-50"
-                      >
-                        <img
-                          src={`https://i.redd.it/${
-                            item.media_id
-                          }.${parseImageType(
-                            post.media_metadata?.[
-                              item.media_id as unknown as number
-                            ]?.m ?? ""
-                          )}`}
-                          className="relative rounded-lg overflow-hidden w-full h-auto block mt-2"
-                          alt="Gallery Image"
-                        />
-                      </div>
-                    ))}
-                  </Slider>
-                ) : (
-                  <img
-                    src={`https://i.redd.it/${
-                      Object.keys(post.media_metadata)[0]
-                    }.${parseImageType(
-                      post.media_metadata[
-                        Object.keys(post.media_metadata)[0] as unknown as number
-                      ]?.m
-                    )}`}
-                    className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                    alt="Image"
+                  <PostGallery
+                    galleryData={post.gallery_data}
+                    mediaMetadata={post.media_metadata}
                   />
-                )}
+                ) : null}
               </div>
             ) : post.preview &&
               post.preview.images &&
