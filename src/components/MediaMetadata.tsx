@@ -1,19 +1,20 @@
 import { parseImageType } from "../utils/parser";
 
 type MediaMetadataProps = {
-  mediaMetadata?: any[];
+  media_metadata?: any[];
 };
 
-const MediaMetadata: React.FC<MediaMetadataProps> = ({ mediaMetadata }) => {
-  if (!mediaMetadata || mediaMetadata.length === 0) {
+const MediaMetadata: React.FC<MediaMetadataProps> = ({ media_metadata }) => {
+  if (!media_metadata || media_metadata.length === 0) {
     return null;
   }
 
-  const firstMetadata = mediaMetadata[0];
-  const m = firstMetadata?.m || "";
-
-  const imageType = parseImageType(m);
-  const imageUrl = `https://i.redd.it/${firstMetadata}/${imageType}`;
+  const imageType = parseImageType(
+    media_metadata[Object.keys(media_metadata)[0] as unknown as number]?.m
+  );
+  const imageUrl = `https://i.redd.it/${
+    Object.keys(media_metadata)[0]
+  }.${imageType}`;
 
   return (
     <div>

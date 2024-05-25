@@ -122,7 +122,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
             </div>
             <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
               {post.media_metadata ? (
-                <MediaMetadata mediaMetadata={post.media_metadata} />
+                <MediaMetadata media_metadata={post.media_metadata} />
               ) : post.preview &&
                 post.preview.images &&
                 post.preview.images[0].resolutions.length > 0 ? (
