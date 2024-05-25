@@ -69,11 +69,9 @@ const UserPost = ({ username }: { username: string }) => {
         <div key={post.id} className="mb-8">
           <a
             href={`/r/${post.subreddit}`}
-            target="_blank"
-            rel="noreferrer"
             className="text-blue-500"
           >
-            <span className="whitespace-nowrap rounded-lg bg-purple-100 px-2 py-1 text-sm text-purple-700 max-w-[90vw] overflow-x-auto display: inline-block">
+            <span className="whitespace-nowrap rounded-lg bg-slate-100 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
               {post.subreddit_name_prefixed}
             </span>
           </a>
@@ -89,8 +87,8 @@ const UserPost = ({ username }: { username: string }) => {
           >
             <h1 className="text-xl font-medium text-gray-800">{post.title}</h1>
             {post.link_title && (
-              <div className="bg-gray-100 rounded-lg py-2 pl-2">
-                <h1 className="text-md font-medium text-gray-600">
+              <div className="bg-slate-100 rounded-md py-2 pl-2">
+                <h1 className="text-md font-medium text-gray-800">
                   {post.link_title}
                 </h1>
               </div>
@@ -109,7 +107,7 @@ const UserPost = ({ username }: { username: string }) => {
                 dangerouslySetInnerHTML={{
                   __html: he.decode(post.selftext.replace(/\n/g, "<br>")),
                 }}
-                className="mt-2 overflow-scroll"
+                className="mt-2 overflow-scroll text-gray-600"
               />
             )}
             <div className="text-gray-500 text-sm mt-2">
