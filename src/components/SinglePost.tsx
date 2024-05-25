@@ -14,6 +14,7 @@ import BodyHtml from "./BodyHtml";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import SecureMediaEmbed from "./SecureMediaEmbed";
+import SecureMedia from "./SecureMedia";
 
 const CommentComponent = ({
   comment,
@@ -160,19 +161,7 @@ const SinglePost = ({
             {post.secure_media_embed ? (
               <SecureMediaEmbed {...post.secure_media_embed} />
             ) : post.secure_media ? (
-              <div
-                className="mt-4 aspect-auto flex justify-center items-center max-w-full"
-                style={{
-                  width: `${post.secure_media.reddit_video.width}px`,
-                  height: `${post.secure_media.reddit_video.height}px`,
-                }}
-              >
-                <iframe
-                  src={post.secure_media.reddit_video.fallback_url}
-                  allowFullScreen
-                  className="w-full h-full aspect-auto"
-                ></iframe>
-              </div>
+              <SecureMedia {...post.secure_media} />
             ) : post.media_metadata ? (
               <div className="relative mt-2">
                 {post.gallery_data ? (
