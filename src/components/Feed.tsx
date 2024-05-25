@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
 import { parseUnixTimestamp } from "../utils/datetime";
-import { parsePermalink, parseImageType, isImage } from "../utils/parser";
+import { parsePermalink, isImage } from "../utils/parser";
 import { Post } from "../types/post";
 import { Subreddit } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
@@ -11,6 +11,7 @@ import { FetchImage } from "../utils/image";
 import Thumbnail from "./Thumbnail";
 import SubredditInfo from "./SubredditInfo";
 import SubredditIcon from "./SubredditIcon";
+import MediaMetadata from "./MediaMetadata";
 
 interface FeedProps {
   subreddit: string;
@@ -142,23 +143,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
             </div>
             <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
               {post.media_metadata ? (
-                <div>
-                  <div className="relative mt-2">
-                    <img
-                      src={`https://i.redd.it/${
-                        Object.keys(post.media_metadata)[0]
-                      }.${parseImageType(
-                        post.media_metadata[
-                          Object.keys(
-                            post.media_metadata
-                          )[0] as unknown as number
-                        ]?.m
-                      )}`}
-                      className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                      alt="Image"
-                    />
-                  </div>
-                </div>
+                <MediaMetadata mediaMetadata={post.media_metadata} />
               ) : post.preview &&
                 post.preview.images &&
                 post.preview.images[0].resolutions.length > 0 ? (

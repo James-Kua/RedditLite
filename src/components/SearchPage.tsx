@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import SearchInput from "./SearchInput";
 import { Post } from "../types/post";
-import { isImage, parseImageType, parsePermalink } from "../utils/parser";
+import { isImage, parsePermalink } from "../utils/parser";
 import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 import LinkFlairText from "./LinkFlairText";
 import AuthorFlairText from "./AuthorFlairText";
 import Thumbnail from "./Thumbnail";
+import MediaMetadata from "./MediaMetadata";
 
 interface SearchPageProps {
   query: string;
@@ -124,24 +125,8 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
               />
             </div>
             <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-              {post.media_metadata ? (
-                <div>
-                  <div className="relative mt-2">
-                    <img
-                      src={`https://i.redd.it/${
-                        Object.keys(post.media_metadata)[0]
-                      }.${parseImageType(
-                        post.media_metadata[
-                          Object.keys(
-                            post.media_metadata
-                          )[0] as unknown as number
-                        ]?.m
-                      )}`}
-                      className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                      alt="Image"
-                    />
-                  </div>
-                </div>
+            {post.media_metadata ? (
+                <MediaMetadata mediaMetadata={post.media_metadata} />
               ) : post.preview &&
                 post.preview.images &&
                 post.preview.images[0].resolutions.length > 0 ? (
