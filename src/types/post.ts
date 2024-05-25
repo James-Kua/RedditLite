@@ -9,6 +9,7 @@ export type Post = {
   selftext_html?: string;
   permalink: string;
   preview: Preview
+  url: string;
   url_overridden_by_dest: string;
   thumbnail?: string;
   media: Media

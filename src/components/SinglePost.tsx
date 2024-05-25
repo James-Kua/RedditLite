@@ -172,7 +172,7 @@ const SinglePost = ({
               author_flair_background_color={post.author_flair_background_color}
             />
           </div>
-          <a href={`https://www.reddit.com${post.permalink}`}>
+          <a href={`${post.url_overridden_by_dest ?? post.url}`}>
             <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
