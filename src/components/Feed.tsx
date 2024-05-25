@@ -174,7 +174,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                           )[0] as unknown as number
                         ]?.m
                       )}`}
-                      className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                      className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                       alt="Image"
                     />
                   </div>
@@ -189,7 +189,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                       "&"
                     )}
                     alt="source_url"
-                    className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                    className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                   />
                 </div>
               ) : post.url_overridden_by_dest ? (
@@ -197,7 +197,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 <img
                   src={post.url_overridden_by_dest}
                   alt="url_overridden_by_dest"
-                  className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
+                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
                 />
                 ) : (
                   <FetchImage url={post.url_overridden_by_dest} />
@@ -219,7 +219,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                   <img
                     src={post.thumbnail}
                     alt="thumbnail"
-                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
+                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
                   />
                 )
               ) : null}

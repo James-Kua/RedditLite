@@ -20,6 +20,7 @@ export type User = {
   thumbnail?: string;
   selftext_html?: string;
   url?: string;
+  url_overridden_by_dest?: string;
 };
 
 export type UserProfile = {

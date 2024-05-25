@@ -2,6 +2,8 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { User, UserProfile } from "../types/user";
 import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
+import { FetchImage } from "../utils/image";
+import { isImage } from "../utils/parser";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -84,14 +86,16 @@ const UserPost = ({ username }: { username: string }) => {
             <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-2">
               {userProfile.total_karma && (
                 <span>
-                  🏆 {userProfile.total_karma.toLocaleString("en-US")} post karma
+                  🏆 {userProfile.total_karma.toLocaleString("en-US")} post
+                  karma
                 </span>
               )}
             </div>
             <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-1">
               {userProfile.comment_karma && (
                 <span>
-                  💬 {userProfile.comment_karma.toLocaleString("en-US")} comment karma
+                  💬 {userProfile.comment_karma.toLocaleString("en-US")} comment
+                  karma
                 </span>
               )}
             </div>
@@ -115,7 +119,9 @@ const UserPost = ({ username }: { username: string }) => {
                 : post.permalink.split("/r/")[1]
             }`}
           >
-            <h1 className="text-xl font-semibold text-gray-800">{he.decode(post.title ?? '')}</h1>
+            <h1 className="text-xl font-semibold text-gray-800">
+              {he.decode(post.title ?? "")}
+            </h1>
             {post.link_title && (
               <div className="bg-slate-100 rounded-md py-2 pl-2">
                 <h1 className="text-md font-medium text-gray-800">
@@ -123,6 +129,17 @@ const UserPost = ({ username }: { username: string }) => {
                 </h1>
               </div>
             )}
+
+            {post.url_overridden_by_dest &&
+              (isImage(post.url_overridden_by_dest) ? (
+                <img
+                  src={post.url_overridden_by_dest}
+                  alt="url_overridden_by_dest"
+                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                />
+              ) : (
+                <FetchImage url={post.url_overridden_by_dest} />
+              ))}
 
             {post.body_html && (
               <div

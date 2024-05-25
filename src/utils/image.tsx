@@ -19,7 +19,7 @@ export const FetchImage = ({ url }: { url: string }) => {
     <img
       src={image}
       alt="metafy image"
-      className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
+      className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
     />
   );
 };
