@@ -4,6 +4,7 @@ import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
+import UserKarma from "./UserKarma";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -76,29 +77,12 @@ const UserPost = ({ username }: { username: string }) => {
         </div>
         {userProfile && (
           <div className="mt-2">
-            {userProfile.icon_img && (
-              <img
-                src={userProfile.icon_img.replace(/&amp;/g, "&")}
-                alt={username}
-                className="h-12 w-12 rounded-lg"
-              />
-            )}
-            <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-2">
-              {userProfile.total_karma && (
-                <span>
-                  🏆 {userProfile.total_karma.toLocaleString("en-US")} post
-                  karma
-                </span>
-              )}
-            </div>
-            <div className="flex items-center bg-white text-gray-500 text-sm font-medium mt-1">
-              {userProfile.comment_karma && (
-                <span>
-                  💬 {userProfile.comment_karma.toLocaleString("en-US")} comment
-                  karma
-                </span>
-              )}
-            </div>
+            <UserKarma
+              iconImg={userProfile.icon_img}
+              username={username}
+              totalKarma={userProfile.total_karma}
+              commentKarma={userProfile.comment_karma}
+            />
           </div>
         )}
       </nav>
