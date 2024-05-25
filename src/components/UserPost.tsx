@@ -81,8 +81,8 @@ const UserPost = ({ username }: { username: string }) => {
             <UserKarma
               iconImg={userProfile.icon_img}
               username={username}
-              totalKarma={userProfile.total_karma}
-              commentKarma={userProfile.comment_karma}
+              total_karma={userProfile.total_karma}
+              comment_karma={userProfile.comment_karma}
             />
           </div>
         )}
