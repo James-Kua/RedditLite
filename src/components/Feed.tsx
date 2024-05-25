@@ -9,6 +9,7 @@ import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
 import { FetchImage } from "../utils/image";
 import Thumbnail from "./Thumbnail";
+import SubredditInfo from "./SubredditInfo";
 
 interface FeedProps {
   subreddit: string;
@@ -115,26 +116,11 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       </div>
 
       <div className="mb-6">
-        <div
-          className="text-gray-500 text-sm overflow-scroll"
-          dangerouslySetInnerHTML={{
-            __html: he.decode(subredditInfo?.public_description_html || ""),
-          }}
+        <SubredditInfo
+          public_description_html={subredditInfo?.public_description_html}
+          accounts_active={subredditInfo?.accounts_active}
+          subscribers={subredditInfo?.subscribers}
         />
-
-        <div>
-          {subredditInfo?.subscribers && (
-            <>
-              <p className="text-gray-500 text-sm font-medium mt-4">
-                🫂 {subredditInfo.subscribers.toLocaleString("en-US")} Members
-              </p>
-              <p className="text-gray-500 text-sm font-medium mt-1">
-                🟢 {subredditInfo.accounts_active.toLocaleString("en-US")}{" "}
-                Online
-              </p>
-            </>
-          )}
-        </div>
       </div>
       {posts.map((post) => (
         <a href={parsePermalink(post.permalink)} key={post.id}>
