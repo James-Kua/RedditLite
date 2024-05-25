@@ -10,6 +10,7 @@ import LinkFlairText from "./LinkFlairText";
 import { FetchImage } from "../utils/image";
 import Thumbnail from "./Thumbnail";
 import SubredditInfo from "./SubredditInfo";
+import SubredditIcon from "./SubredditIcon";
 
 interface FeedProps {
   subreddit: string;
@@ -92,19 +93,12 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
       <div className="flex justify-between items-center mb-5">
         <div className="flex items-center">
-          {subredditInfo?.community_icon ? (
-            <img
-              src={subredditInfo.community_icon.replace("&amp;", "&")}
-              alt="community_icon"
-              className="w-8 h-8 rounded-lg mr-2"
+          {
+            <SubredditIcon
+              community_icon={subredditInfo?.community_icon}
+              icon_img={subredditInfo?.icon_img}
             />
-          ) : subredditInfo?.icon_img ? (
-            <img
-              src={subredditInfo.icon_img.replace("&amp;", "&")}
-              alt="icon_img"
-              className="w-8 h-8 rounded-lg mr-2"
-            />
-          ) : null}
+          }
           <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
             {subreddit}
           </h1>
