@@ -13,6 +13,7 @@ import Thumbnail from "./Thumbnail";
 import BodyHtml from "./BodyHtml";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
+import SecureMediaEmbed from "./SecureMediaEmbed";
 
 const CommentComponent = ({
   comment,
@@ -156,20 +157,8 @@ const SinglePost = ({
               link_flair_text={post.link_flair_text}
               link_flair_background_color={post.link_flair_background_color}
             />
-            {post.secure_media_embed?.media_domain_url ? (
-              <div
-                className="mt-4 aspect-auto flex justify-center items-center max-w-full"
-                style={{
-                  width: `${post.secure_media_embed.width}px`,
-                  height: `${post.secure_media_embed.height}px`,
-                }}
-              >
-                <iframe
-                  src={post.secure_media_embed.media_domain_url}
-                  allowFullScreen
-                  className="w-full h-full aspect-auto"
-                ></iframe>
-              </div>
+            {post.secure_media_embed ? (
+              <SecureMediaEmbed {...post.secure_media_embed} />
             ) : post.secure_media ? (
               <div
                 className="mt-4 aspect-auto flex justify-center items-center max-w-full"
