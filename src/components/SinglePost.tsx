@@ -10,6 +10,7 @@ import LinkFlairText from "./LinkFlairText";
 import SearchInput from "./SearchInput";
 import { FetchImage } from "../utils/image";
 import Thumbnail from "./Thumbnail";
+import BodyHtml from "./BodyHtml";
 
 const CommentComponent = ({
   comment,
@@ -19,8 +20,6 @@ const CommentComponent = ({
   postAuthor: string;
 }) => {
   if (!comment?.body_html) return null;
-
-  const decodedBodyHtml = he.decode(comment.body_html.replace(/\n\n/g, "<br>"));
 
   return (
     <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent px-1 rounded-md">
@@ -46,10 +45,7 @@ const CommentComponent = ({
           🕔 {parseUnixTimestamp(comment.created_utc)}
         </h3>
       </div>
-      <div
-        className="mt-1 text-md text-gray-700 overflow-auto"
-        dangerouslySetInnerHTML={{ __html: decodedBodyHtml }}
-      />
+      <BodyHtml body_html={comment.body_html} />
       <div className="text-gray-500 text-sm mt-2">
         🔼 {comment.score || 0} upvotes
       </div>

@@ -5,6 +5,7 @@ import he from "he";
 import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
 import UserKarma from "./UserKarma";
+import BodyHtml from "./BodyHtml";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -126,12 +127,7 @@ const UserPost = ({ username }: { username: string }) => {
               ))}
 
             {post.body_html && (
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: he.decode(post.body_html.replace(/\n\n/g, "<br>")),
-                }}
-                className="mt-2 overflow-scroll"
-              />
+              <BodyHtml body_html={post.body_html} />
             )}
             {post.selftext && (
               <div
