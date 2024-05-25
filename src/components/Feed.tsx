@@ -12,6 +12,7 @@ import Thumbnail from "./Thumbnail";
 import SubredditInfo from "./SubredditInfo";
 import SubredditIcon from "./SubredditIcon";
 import MediaMetadata from "./MediaMetadata";
+import SelfTextHtml from "./SelfTextHtml";
 
 interface FeedProps {
   subreddit: string;
@@ -84,11 +85,6 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       observer.current.observe(sentinel.current);
     }
   }, [fetchPosts, hasMore]);
-
-  const truncateHtmlBody = (text: string, lines: number): string => {
-    const truncated = text.split("\n").slice(0, lines).join("\n");
-    return truncated;
-  };
 
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
@@ -171,14 +167,9 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 <Thumbnail thumbnail={post.thumbnail || ""} />
               )}
               {post.selftext_html && (
-                <div
-                  className="mt-1 text-md text-gray-700 overflow-scroll"
-                  dangerouslySetInnerHTML={{
-                    __html: truncateHtmlBody(
-                      he.decode(post.selftext_html),
-                      10
-                    ).replace(/\n\n/g, "<br>"),
-                  }}
+                <SelfTextHtml
+                  selftext_html={post.selftext_html}
+                  truncateLines={10}
                 />
               )}
               <div className="text-gray-500 text-sm mt-2">

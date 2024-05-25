@@ -8,6 +8,7 @@ import LinkFlairText from "./LinkFlairText";
 import AuthorFlairText from "./AuthorFlairText";
 import Thumbnail from "./Thumbnail";
 import MediaMetadata from "./MediaMetadata";
+import SelfTextHtml from "./SelfTextHtml";
 
 interface SearchPageProps {
   query: string;
@@ -79,11 +80,6 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
     }
   }, [fetchPosts, hasMore]);
 
-  const truncateHtmlBody = (text: string, lines: number): string => {
-    const truncated = text.split("\n").slice(0, lines).join("\n");
-    return truncated;
-  };
-
   return (
     <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
       <div className="flex justify-between items-center mb-5">
@@ -125,7 +121,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
               />
             </div>
             <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-            {post.media_metadata ? (
+              {post.media_metadata ? (
                 <MediaMetadata mediaMetadata={post.media_metadata} />
               ) : post.preview &&
                 post.preview.images &&
@@ -151,14 +147,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
                 <Thumbnail thumbnail={post.thumbnail || ""} />
               )}
               {post.selftext_html && (
-                <div
-                  className="mt-1 text-md text-gray-700 overflow-scroll"
-                  dangerouslySetInnerHTML={{
-                    __html: truncateHtmlBody(
-                      he.decode(post.selftext_html),
-                      10
-                    ).replace(/\n\n/g, "<br>"),
-                  }}
+                <SelfTextHtml
+                  selftext_html={post.selftext_html}
+                  truncateLines={10}
                 />
               )}
               <div className="text-gray-500 text-sm mt-2">

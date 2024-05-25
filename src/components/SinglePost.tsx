@@ -15,6 +15,7 @@ import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
+import SelfTextHtml from "./SelfTextHtml";
 
 const CommentComponent = ({
   comment,
@@ -158,7 +159,7 @@ const SinglePost = ({
               link_flair_text={post.link_flair_text}
               link_flair_background_color={post.link_flair_background_color}
             />
-            {post.secure_media_embed ? (
+            {post.secure_media_embed?.media_domain_url ? (
               <SecureMediaEmbed {...post.secure_media_embed} />
             ) : post.secure_media ? (
               <SecureMedia {...post.secure_media} />
@@ -223,14 +224,7 @@ const SinglePost = ({
               <Thumbnail thumbnail={post.thumbnail || ""} />
             )}
             {post.selftext_html && (
-              <div
-                className="mt-1 text-md text-gray-700 overflow-scroll"
-                dangerouslySetInnerHTML={{
-                  __html: he.decode(
-                    post.selftext_html.replace(/\n\n/g, "<br>")
-                  ),
-                }}
-              />
+              <SelfTextHtml selftext_html={post.selftext_html} />
             )}
           </a>
           <div className="text-gray-500 text-sm mt-2">
