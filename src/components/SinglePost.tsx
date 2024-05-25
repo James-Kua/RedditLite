@@ -16,6 +16,7 @@ import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
 import SelfTextHtml from "./SelfTextHtml";
 import PostGallery from "./PostGallery";
+import PostStats from "./PostStats";
 
 const CommentComponent = ({
   comment,
@@ -191,9 +192,7 @@ const SinglePost = ({
               <SelfTextHtml selftext_html={post.selftext_html} />
             )}
           </a>
-          <div className="text-gray-500 text-sm mt-2">
-            🔼 {post.score} upvotes 💬 {post.num_comments} comments
-          </div>
+          <PostStats score={post.score} num_comments={post.num_comments} />
         </div>
       ))}
 

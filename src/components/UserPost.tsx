@@ -6,6 +6,7 @@ import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
 import UserKarma from "./UserKarma";
 import BodyHtml from "./BodyHtml";
+import PostStats from "./PostStats";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -137,9 +138,7 @@ const UserPost = ({ username }: { username: string }) => {
                 className="mt-2 overflow-scroll text-gray-600"
               />
             )}
-            <div className="text-gray-500 text-sm mt-2">
-              🔼 {post.score} upvotes 💬 {post.num_comments} comments
-            </div>
+            <PostStats score={post.score} num_comments={post.num_comments} />
           </a>
         </div>
       ))}

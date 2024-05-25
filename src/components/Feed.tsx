@@ -13,6 +13,7 @@ import SubredditInfo from "./SubredditInfo";
 import SubredditIcon from "./SubredditIcon";
 import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
+import PostStats from "./PostStats";
 
 interface FeedProps {
   subreddit: string;
@@ -172,9 +173,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                   truncateLines={10}
                 />
               )}
-              <div className="text-gray-500 text-sm mt-2">
-                🔼 {post.score} upvotes 💬 {post.num_comments} comments
-              </div>
+              <PostStats score={post.score} num_comments={post.num_comments} />
             </div>
           </div>
         </a>
