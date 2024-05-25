@@ -122,84 +122,82 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
                 link_flair_text={post.link_flair_text}
                 link_flair_background_color={post.link_flair_background_color}
               />
-              {post.thumbnail === "spoiler" && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <span className="text-black text-xl font-bold">SPOILER</span>
-                </div>
-              )}
             </div>
-            {post.media_metadata ? (
-              <div>
+            <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
+              {post.media_metadata ? (
+                <div>
+                  <div className="relative mt-2">
+                    <img
+                      src={`https://i.redd.it/${
+                        Object.keys(post.media_metadata)[0]
+                      }.${parseImageType(
+                        post.media_metadata[
+                          Object.keys(
+                            post.media_metadata
+                          )[0] as unknown as number
+                        ]?.m
+                      )}`}
+                      className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+                      alt="Image"
+                    />
+                  </div>
+                </div>
+              ) : post.preview &&
+                post.preview.images &&
+                post.preview.images[0].resolutions.length > 0 ? (
                 <div className="relative mt-2">
                   <img
-                    src={`https://i.redd.it/${
-                      Object.keys(post.media_metadata)[0]
-                    }.${parseImageType(
-                      post.media_metadata[
-                        Object.keys(post.media_metadata)[0] as unknown as number
-                      ]?.m
-                    )}`}
-                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                    alt="Image"
+                    src={post.preview.images[0].source.url.replace(
+                      /&amp;/g,
+                      "&"
+                    )}
+                    alt="source_url"
+                    className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
                   />
                 </div>
-              </div>
-            ) : post.preview &&
-              post.preview.images &&
-              post.preview.images[0].resolutions.length > 0 ? (
-              <div className="relative mt-2">
+              ) : post.url_overridden_by_dest &&
+                isImage(post.url_overridden_by_dest) ? (
                 <img
-                  src={post.preview.images[0].source.url.replace(/&amp;/g, "&")}
-                  alt="source_url"
-                  className="relative rounded-[8px] overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-                />
-              </div>
-            ) : post.url_overridden_by_dest &&
-              isImage(post.url_overridden_by_dest) ? (
-              <img
-                src={post.url_overridden_by_dest}
-                alt="url_overridden_by_dest"
-                className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
-              />
-            ) : !(
-                post.thumbnail === "self" ||
-                post.thumbnail === "default" ||
-                post.thumbnail === "spoiler" ||
-                post.thumbnail === ""
-              ) ? (
-              post.thumbnail === "nsfw" ? (
-                <CustomTag
-                  fontSize="text-xs"
-                  color="text-white"
-                  backgroundColor="bg-red-500"
-                  content="🔞 NSFW"
-                />
-              ) : (
-                <img
-                  src={post.thumbnail}
-                  alt="thumbnail"
+                  src={post.url_overridden_by_dest}
+                  alt="url_overridden_by_dest"
                   className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
                 />
-              )
-            ) : null}
-            {post.selftext_html && (
-              <div
-                className={`mt-1 text-md text-gray-700 overflow-scroll ${
-                  post.thumbnail === "spoiler" ? "blur p-2" : ""
-                }`}
-                dangerouslySetInnerHTML={{
-                  __html:
-                    post.thumbnail === "spoiler"
-                      ? truncateHtmlBody(he.decode(post.selftext_html), 10)
-                      : he.decode(post.selftext_html).replace(/\n\n/g, "<br>"),
-                }}
-              />
-            )}
-            {
+              ) : !(
+                  post.thumbnail === "self" ||
+                  post.thumbnail === "default" ||
+                  post.thumbnail === "spoiler" ||
+                  post.thumbnail === ""
+                ) ? (
+                post.thumbnail === "nsfw" ? (
+                  <CustomTag
+                    fontSize="text-xs"
+                    color="text-white"
+                    backgroundColor="bg-red-500"
+                    content="🔞 NSFW"
+                  />
+                ) : (
+                  <img
+                    src={post.thumbnail}
+                    alt="thumbnail"
+                    className="relative rounded-[8px] overflow-hidden box-border border border-solid border-neutral-border-weak xs:w-[184px] w-[284px] block mt-2"
+                  />
+                )
+              ) : null}
+              {post.selftext_html && (
+                <div
+                  className="mt-1 text-md text-gray-700 overflow-scroll"
+                  dangerouslySetInnerHTML={{
+                    __html: truncateHtmlBody(
+                      he.decode(post.selftext_html),
+                      10
+                    ).replace(/\n\n/g, "<br>"),
+                  }}
+                />
+              )}
               <div className="text-gray-500 text-sm mt-2">
                 🔼 {post.score} upvotes 💬 {post.num_comments} comments
               </div>
-            }
+            </div>
           </div>
         </a>
       ))}
