@@ -107,7 +107,7 @@ const SearchInput: React.FC = () => {
             isExpanded
               ? "opacity-100 pl-2 pr-10 py-2.5"
               : "opacity-0 pl-0 pr-0 py-0 lg:opacity-100 lg:pl-2 lg:pr-10 lg:py-2.5"
-          } w-full rounded-md border-gray-200 shadow-sm sm:text-sm`}
+          } w-full rounded-md border-gray-200 shadow-sm sm:text-sm dark:bg-slate-800`}
         />
         <button
           type="button"
@@ -141,7 +141,7 @@ const SearchInput: React.FC = () => {
         </button>
       </div>
       {subredditSuggestions.length > 0 && (
-        <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-10">
+        <div className="absolute mt-1 w-full rounded-md bg-white dark:bg-slate-700 shadow-lg z-10">
           <ul>
             {subredditSuggestions.slice(0, 6).map((subreddit, index) => (
               <a
@@ -150,7 +150,7 @@ const SearchInput: React.FC = () => {
               >
                 <li
                   key={index}
-                  className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                  className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-600"
                 >
                   {subreddit?.community_icon ? (
                     <img
@@ -165,7 +165,7 @@ const SearchInput: React.FC = () => {
                       className="w-6 h-6 rounded-lg mr-2"
                     />
                   ) : null}
-                  <p className="font-medium text-xs">
+                  <p className="font-medium text-xs dark:text-white">
                     {subreddit.display_name_prefixed}
                   </p>
                 </li>

@@ -83,72 +83,81 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
   }, [fetchPosts, hasMore]);
 
   return (
-    <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
-      <div className="flex justify-between items-center mb-5">
-        <h1 className="text-gray-500 font-bold text-xl mr-1">Search Results</h1>
-        <div className="ml-1">
-          <SearchInput />
-        </div>
-      </div>
-
-      {posts.map((post) => (
-        <a href={parsePermalink(post.permalink)} key={post.id}>
-          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-semibold">{post.author}</h3>
-                <AuthorFlairText
-                  author_flair_richtext={post.author_flair_richtext}
-                  author_flair_text={post.author_flair_text}
-                  author_flair_background_color={
-                    post.author_flair_background_color
-                  }
-                />
-              </div>
-              <div className="bg-slate-100 p-1 w-fit rounded-lg">
-                <span className="text-gray-500 text-sm font-semibold">
-                  <a href={`/${post.subreddit_name_prefixed}`}>
-                    {post.subreddit_name_prefixed}
-                  </a>
-                </span>
-              </div>
-              <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
-              <h2 className="text-lg font-semibold my-1">
-                {he.decode(post.title)}
-              </h2>
-              <LinkFlairText
-                link_flair_richtext={post.link_flair_richtext}
-                link_flair_text={post.link_flair_text}
-                link_flair_background_color={post.link_flair_background_color}
-              />
-            </div>
-            <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-              {post.media_metadata ? (
-                <MediaMetadata media_metadata={post.media_metadata} />
-              ) : post.preview ? (
-                <PostPreview preview={post.preview} />
-              ) : post.url_overridden_by_dest &&
-                isImage(post.url_overridden_by_dest) ? (
-                <img
-                  src={post.url_overridden_by_dest}
-                  alt="url_overridden_by_dest"
-                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                />
-              ) : (
-                <Thumbnail thumbnail={post.thumbnail || ""} />
-              )}
-              {post.selftext_html && (
-                <SelfTextHtml
-                  selftext_html={post.selftext_html}
-                  truncateLines={10}
-                />
-              )}
-              <PostStats score={post.score} num_comments={post.num_comments} />
-            </div>
+    <div className="dark:bg-black text-white">
+      <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
+        <div className="flex justify-between items-center mb-5">
+          <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">
+            Search Results
+          </h1>
+          <div className="ml-1">
+            <SearchInput />
           </div>
-        </a>
-      ))}
-      <div ref={sentinel} className="h-1"></div>
+        </div>
+
+        {posts.map((post) => (
+          <a href={parsePermalink(post.permalink)} key={post.id}>
+            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold">{post.author}</h3>
+                  <AuthorFlairText
+                    author_flair_richtext={post.author_flair_richtext}
+                    author_flair_text={post.author_flair_text}
+                    author_flair_background_color={
+                      post.author_flair_background_color
+                    }
+                  />
+                </div>
+                <div className="bg-slate-100 dark:bg-slate-600 p-1 w-fit rounded-lg my-1">
+                  <span className="text-gray-500 text-sm font-semibold dark:text-white">
+                    <a href={`/${post.subreddit_name_prefixed}`}>
+                      {post.subreddit_name_prefixed}
+                    </a>
+                  </span>
+                </div>
+                <h3 className="text-sm">
+                  🕔 {parseUnixTimestamp(post.created)}
+                </h3>
+                <h2 className="text-lg font-semibold my-1 dark:text-white">
+                  {he.decode(post.title)}
+                </h2>
+                <LinkFlairText
+                  link_flair_richtext={post.link_flair_richtext}
+                  link_flair_text={post.link_flair_text}
+                  link_flair_background_color={post.link_flair_background_color}
+                />
+              </div>
+              <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
+                {post.media_metadata ? (
+                  <MediaMetadata media_metadata={post.media_metadata} />
+                ) : post.preview ? (
+                  <PostPreview preview={post.preview} />
+                ) : post.url_overridden_by_dest &&
+                  isImage(post.url_overridden_by_dest) ? (
+                  <img
+                    src={post.url_overridden_by_dest}
+                    alt="url_overridden_by_dest"
+                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                  />
+                ) : (
+                  <Thumbnail thumbnail={post.thumbnail || ""} />
+                )}
+                {post.selftext_html && (
+                  <SelfTextHtml
+                    selftext_html={post.selftext_html}
+                    truncateLines={10}
+                  />
+                )}
+                <PostStats
+                  score={post.score}
+                  num_comments={post.num_comments}
+                />
+              </div>
+            </div>
+          </a>
+        ))}
+        <div ref={sentinel} className="h-1"></div>
+      </div>{" "}
     </div>
   );
 };

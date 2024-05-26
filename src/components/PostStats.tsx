@@ -7,7 +7,7 @@ interface PostStatsProps {
 
 const PostStats: React.FC<PostStatsProps> = ({ score, num_comments }) => {
   return (
-    <div className="text-gray-500 text-sm mt-2">
+    <div className="text-gray-500 text-sm mt-2 dark:text-white">
       🔼 {score.toLocaleString("en-US")} upvotes 💬{" "}
       {num_comments.toLocaleString("en-US")} comments
     </div>

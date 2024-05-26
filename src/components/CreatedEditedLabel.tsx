@@ -11,7 +11,7 @@ const CreatedEditedLabel: React.FC<CreatedEditedLabelProps> = ({
   edited,
 }) => {
   return (
-    <span className="flex space-x-1 whitespace-nowrap w-fit text-xs">
+    <span className="flex space-x-1 whitespace-nowrap w-fit text-xs dark:text-white">
       <h3 className="whitespace-nowrap font-medium">
         🕔 {parseUnixTimestamp(created)}
       </h3>

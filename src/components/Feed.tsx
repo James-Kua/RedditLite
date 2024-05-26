@@ -89,86 +89,94 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   }, [fetchPosts, hasMore]);
 
   return (
-    <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
-      <div className="flex justify-between items-center mb-5">
-        <div className="flex items-center">
-          {
-            <SubredditIcon
-              community_icon={subredditInfo?.community_icon}
-              icon_img={subredditInfo?.icon_img}
-            />
-          }
-          <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
-            {subreddit}
-          </h1>
+    <div className="dark:bg-black dark:text-white">
+      <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
+        <div className="flex justify-between items-center mb-5">
+          <div className="flex items-center">
+            {
+              <SubredditIcon
+                community_icon={subredditInfo?.community_icon}
+                icon_img={subredditInfo?.icon_img}
+              />
+            }
+            <h1 className="text-gray-500 font-bold text-xl tracking-wide mr-1">
+              {subreddit}
+            </h1>
+          </div>
+
+          <div className="ml-1">
+            <SearchInput />
+          </div>
         </div>
 
-        <div className="ml-1">
-          <SearchInput />
+        <div className="mb-6">
+          <SubredditInfo
+            public_description_html={subredditInfo?.public_description_html}
+            accounts_active={subredditInfo?.accounts_active}
+            subscribers={subredditInfo?.subscribers}
+          />
         </div>
-      </div>
-
-      <div className="mb-6">
-        <SubredditInfo
-          public_description_html={subredditInfo?.public_description_html}
-          accounts_active={subredditInfo?.accounts_active}
-          subscribers={subredditInfo?.subscribers}
-        />
-      </div>
-      {posts.map((post) => (
-        <a href={parsePermalink(post.permalink)} key={post.id}>
-          <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
-            <div>
-              <div className="flex items-center space-x-2">
-                <h3 className="font-semibold">{post.author}</h3>
-                <AuthorFlairText
-                  author_flair_richtext={post.author_flair_richtext}
-                  author_flair_text={post.author_flair_text}
-                  author_flair_background_color={
-                    post.author_flair_background_color
-                  }
+        {posts.map((post) => (
+          <a href={parsePermalink(post.permalink)} key={post.id}>
+            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold">{post.author}</h3>
+                  <AuthorFlairText
+                    author_flair_richtext={post.author_flair_richtext}
+                    author_flair_text={post.author_flair_text}
+                    author_flair_background_color={
+                      post.author_flair_background_color
+                    }
+                  />
+                </div>
+                <CreatedEditedLabel
+                  created={post.created}
+                  edited={post.edited}
+                />
+                <h2 className="text-lg font-semibold my-1 dark:text-white">
+                  {he.decode(post.title)}
+                </h2>
+                <LinkFlairText
+                  link_flair_richtext={post.link_flair_richtext}
+                  link_flair_text={post.link_flair_text}
+                  link_flair_background_color={post.link_flair_background_color}
                 />
               </div>
-              <CreatedEditedLabel created={post.created} edited={post.edited} />
-              <h2 className="text-lg font-semibold my-1">
-                {he.decode(post.title)}
-              </h2>
-              <LinkFlairText
-                link_flair_richtext={post.link_flair_richtext}
-                link_flair_text={post.link_flair_text}
-                link_flair_background_color={post.link_flair_background_color}
-              />
-            </div>
-            <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-              {post.media_metadata ? (
-                <MediaMetadata media_metadata={post.media_metadata} />
-              ) : post.preview ? (
-                <PostPreview preview={post.preview} />
-              ) : post.url_overridden_by_dest ? (
-                isImage(post.url_overridden_by_dest) ? (
-                  <img
-                    src={post.url_overridden_by_dest}
-                    alt="url_overridden_by_dest"
-                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                  />
+              <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
+                {post.media_metadata ? (
+                  <MediaMetadata media_metadata={post.media_metadata} />
+                ) : post.preview ? (
+                  <PostPreview preview={post.preview} />
+                ) : post.url_overridden_by_dest ? (
+                  isImage(post.url_overridden_by_dest) ? (
+                    <img
+                      src={post.url_overridden_by_dest}
+                      alt="url_overridden_by_dest"
+                      className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                    />
+                  ) : (
+                    <FetchImage url={post.url_overridden_by_dest} />
+                  )
                 ) : (
-                  <FetchImage url={post.url_overridden_by_dest} />
-                )
-              ) : (
-                <Thumbnail thumbnail={post.thumbnail || ""} />
-              )}
-              {post.selftext_html && (
-                <SelfTextHtml
-                  selftext_html={post.selftext_html}
-                  truncateLines={10}
+                  <Thumbnail thumbnail={post.thumbnail || ""} />
+                )}
+                {post.selftext_html && (
+                  <SelfTextHtml
+                    selftext_html={post.selftext_html}
+                    truncateLines={10}
+                  />
+                )}
+                <PostStats
+                  score={post.score}
+                  num_comments={post.num_comments}
                 />
-              )}
-              <PostStats score={post.score} num_comments={post.num_comments} />
+              </div>
             </div>
-          </div>
-        </a>
-      ))}
-      <div ref={sentinel} className="h-1"></div>
+          </a>
+        ))}
+        <div ref={sentinel} className="h-1"></div>
+      </div>
     </div>
   );
 };
