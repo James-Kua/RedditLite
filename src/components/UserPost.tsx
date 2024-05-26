@@ -8,6 +8,7 @@ import UserKarma from "./UserKarma";
 import BodyHtml from "./BodyHtml";
 import PostStats from "./PostStats";
 import SearchInput from "./SearchInput";
+import SelfTextHtml from "./SelfTextHtml";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -99,7 +100,7 @@ const UserPost = ({ username }: { username: string }) => {
               🕔 {parseUnixTimestamp(post.created)}
             </h3>
             <a href={`/r/${post.subreddit}`} className="text-blue-500">
-              <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-600 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
+              <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
                 {post.subreddit_name_prefixed}
               </span>
             </a>
@@ -115,8 +116,8 @@ const UserPost = ({ username }: { username: string }) => {
                 {he.decode(post.title ?? "")}
               </h1>
               {post.link_title && (
-                <div className="bg-slate-50 dark:bg-slate-500 rounded-md py-2 pl-2">
-                  <h1 className="text-md font-medium text-gray-900 dark:text-slate-800">
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-md py-2 pl-2">
+                  <h1 className="text-md font-medium text-gray-900 dark:text-white">
                     {post.link_title}
                   </h1>
                 </div>
@@ -132,15 +133,8 @@ const UserPost = ({ username }: { username: string }) => {
                 ) : (
                   <FetchImage url={post.url_overridden_by_dest} />
                 ))}
-
-              {post.body_html && <BodyHtml body_html={post.body_html} />}
-              {post.selftext && (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: he.decode(post.selftext.replace(/\n/g, "<br>")),
-                  }}
-                  className="mt-2 overflow-scroll text-gray-600"
-                />
+              {post.selftext_html && (
+                <SelfTextHtml selftext_html={post.selftext_html} />
               )}
               <PostStats score={post.score} num_comments={post.num_comments} />
             </a>
