@@ -16,19 +16,19 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({
   return (
     <div>
       <div
-        className="text-gray-500 text-sm overflow-scroll"
+        className="text-gray-500 text-sm overflow-scroll dark:text-white"
         dangerouslySetInnerHTML={{
           __html: he.decode(descriptionHtml),
         }}
       />
       <div>
         {subscribers && (
-          <p className="text-gray-500 text-sm font-medium mt-4">
+          <p className="text-gray-500 text-sm font-medium mt-4 dark:text-white">
             🫂 {subscribers.toLocaleString("en-US")} Members
           </p>
         )}
         {accounts_active && (
-          <p className="text-gray-500 text-sm font-medium mt-1">
+          <p className="text-gray-500 text-sm font-medium mt-1 dark:text-white">
             🟢 {accounts_active.toLocaleString("en-US")} Online
           </p>
         )}

@@ -29,7 +29,7 @@ const CommentComponent = ({
   if (!comment?.body_html) return null;
 
   return (
-    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent px-1 rounded-md">
+    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent dark:hover:bg-slate-800 lg:dark:hover:bg-transparent px-1 rounded-md">
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`}>
@@ -51,7 +51,7 @@ const CommentComponent = ({
         <CreatedEditedLabel created={comment.created} edited={comment.edited} />
       </div>
       <BodyHtml body_html={comment.body_html} />
-      <div className="text-gray-500 text-sm mt-2">
+      <div className="text-gray-500 text-sm mt-2 dark:text-white">
         🔼 {comment.score || 0} upvotes
       </div>
       {comment.replies?.data?.children?.map((childWrapper: Children2) => {
@@ -97,103 +97,107 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
-      <nav
-        aria-label="Breadcrumb"
-        className="flex items-center justify-between mb-5"
-      >
-        <ol className="flex items-center gap-1 text-sm text-gray-600">
-          <li>
-            <a href="/" className="block transition hover:text-gray-700">
-              <span className="sr-only">Home</span>
-              <HomeIcon />
-            </a>
-          </li>
-          <li className="rtl:rotate-180">
-            <ArrowIcon />
-          </li>
-          <li>
-            <a
-              href={`/r/${subreddit}`}
-              className="flex h-8 items-center bg-white text-gray-500 text-lg font-bold"
-            >
-              {subreddit}
-            </a>
-          </li>
-        </ol>
-        <div className="search-input">
-          <SearchInput />
-        </div>
-      </nav>
-
-      {posts.map((post) => (
-        <div
-          key={post.id}
-          className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8"
+    <div className="dark:bg-black dark:text-white min-h-screen">
+      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center justify-between mb-5"
         >
-          <div className="flex items-center space-x-2">
-            <a href={`/user/${post.author}`}>
-              <h3 className="font-semibold">{post.author}</h3>
-            </a>
-            <AuthorFlairText
-              author_flair_richtext={post.author_flair_richtext}
-              author_flair_text={post.author_flair_text}
-              author_flair_background_color={post.author_flair_background_color}
-            />
+          <ol className="flex items-center gap-1 text-sm text-gray-600">
+            <li>
+              <a href="/" className="block transition hover:text-gray-700">
+                <span className="sr-only">Home</span>
+                <HomeIcon />
+              </a>
+            </li>
+            <li className="rtl:rotate-180">
+              <ArrowIcon />
+            </li>
+            <li>
+              <a
+                href={`/r/${subreddit}`}
+                className="flex h-8 items-center dark:text-white text-gray-500 text-lg font-bold"
+              >
+                {subreddit}
+              </a>
+            </li>
+          </ol>
+          <div className="search-input">
+            <SearchInput />
           </div>
-          <a href={`${post.url_overridden_by_dest ?? post.url}`}>
-            <CreatedEditedLabel created={post.created} edited={post.edited} />
-            <h2 className="text-lg my-2 font-semibold">
-              {he.decode(post.title)}
-            </h2>
-            <LinkFlairText
-              link_flair_richtext={post.link_flair_richtext}
-              link_flair_text={post.link_flair_text}
-              link_flair_background_color={post.link_flair_background_color}
-            />
-            {post.secure_media_embed?.media_domain_url ? (
-              <SecureMediaEmbed {...post.secure_media_embed} />
-            ) : post.secure_media ? (
-              <SecureMedia {...post.secure_media} />
-            ) : post.media_metadata ? (
-              <div className="relative mt-2">
-                {post.gallery_data ? (
-                  <PostGallery
-                    galleryData={post.gallery_data}
-                    mediaMetadata={post.media_metadata}
-                  />
-                ) : null}
-              </div>
+        </nav>
+
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8"
+          >
+            <div className="flex items-center space-x-2">
+              <a href={`/user/${post.author}`}>
+                <h3 className="font-semibold">{post.author}</h3>
+              </a>
+              <AuthorFlairText
+                author_flair_richtext={post.author_flair_richtext}
+                author_flair_text={post.author_flair_text}
+                author_flair_background_color={
+                  post.author_flair_background_color
+                }
+              />
+            </div>
+            <a href={`${post.url_overridden_by_dest ?? post.url}`}>
+              <CreatedEditedLabel created={post.created} edited={post.edited} />
+              <h2 className="text-lg my-2 font-semibold dark:text-white">
+                {he.decode(post.title)}
+              </h2>
+              <LinkFlairText
+                link_flair_richtext={post.link_flair_richtext}
+                link_flair_text={post.link_flair_text}
+                link_flair_background_color={post.link_flair_background_color}
+              />
+              {post.secure_media_embed?.media_domain_url ? (
+                <SecureMediaEmbed {...post.secure_media_embed} />
+              ) : post.secure_media ? (
+                <SecureMedia {...post.secure_media} />
+              ) : post.media_metadata ? (
+                <div className="relative mt-2">
+                  {post.gallery_data ? (
+                    <PostGallery
+                      galleryData={post.gallery_data}
+                      mediaMetadata={post.media_metadata}
+                    />
+                  ) : null}
+                </div>
               ) : post.preview ? (
                 <PostPreview preview={post.preview} />
               ) : post.url_overridden_by_dest ? (
-              isImage(post.url_overridden_by_dest) ? (
-                <img
-                  src={post.url_overridden_by_dest}
-                  alt="url_overridden_by_dest"
-                  className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                />
+                isImage(post.url_overridden_by_dest) ? (
+                  <img
+                    src={post.url_overridden_by_dest}
+                    alt="url_overridden_by_dest"
+                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                  />
+                ) : (
+                  <FetchImage url={post.url_overridden_by_dest} />
+                )
               ) : (
-                <FetchImage url={post.url_overridden_by_dest} />
-              )
-            ) : (
-              <Thumbnail thumbnail={post.thumbnail || ""} />
-            )}
-            {post.selftext_html && (
-              <SelfTextHtml selftext_html={post.selftext_html} />
-            )}
-          </a>
-          <PostStats score={post.score} num_comments={post.num_comments} />
-        </div>
-      ))}
+                <Thumbnail thumbnail={post.thumbnail || ""} />
+              )}
+              {post.selftext_html && (
+                <SelfTextHtml selftext_html={post.selftext_html} />
+              )}
+            </a>
+            <PostStats score={post.score} num_comments={post.num_comments} />
+          </div>
+        ))}
 
-      {comments.map((comment) => (
-        <CommentComponent
-          key={comment.id}
-          comment={comment}
-          postAuthor={posts[0].author}
-        />
-      ))}
+        {comments.map((comment) => (
+          <CommentComponent
+            key={comment.id}
+            comment={comment}
+            postAuthor={posts[0].author}
+          />
+        ))}
+      </div>{" "}
     </div>
   );
 };
