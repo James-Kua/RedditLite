@@ -5,7 +5,6 @@ import he from "he";
 import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
 import UserKarma from "./UserKarma";
-import BodyHtml from "./BodyHtml";
 import PostStats from "./PostStats";
 import SearchInput from "./SearchInput";
 import SelfTextHtml from "./SelfTextHtml";
