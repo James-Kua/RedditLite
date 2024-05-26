@@ -61,12 +61,8 @@ const SearchInput: React.FC = () => {
 
   const handleButtonClick = () => {
     if (search.trim() !== "") {
-      if (search.startsWith("/r/")) {
-        navigate(`${search}`, { replace: true });
-      } else {
-        const encodedQuery = encodeURIComponent(search);
-        navigate(`/search/?q=${encodedQuery}`, { replace: true });
-      }
+      const encodedQuery = encodeURIComponent(search);
+      navigate(`/search/?q=${encodedQuery}`);
       if (isMobile) {
         setIsExpanded(false);
       }
@@ -141,7 +137,7 @@ const SearchInput: React.FC = () => {
         </button>
       </div>
       {subredditSuggestions.length > 0 && (
-        <div className="absolute mt-1 w-full rounded-md dark:bg-slate-800 shadow-lg z-10">
+        <div className="absolute mt-1 w-full rounded-md bg-white dark:bg-slate-800 shadow-lg z-10">
           <ul>
             {subredditSuggestions.slice(0, 6).map((subreddit, index) => (
               <a

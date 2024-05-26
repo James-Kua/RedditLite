@@ -8,6 +8,7 @@ import UserKarma from "./UserKarma";
 import PostStats from "./PostStats";
 import SearchInput from "./SearchInput";
 import SelfTextHtml from "./SelfTextHtml";
+import BodyHtml from "./BodyHtml";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -132,8 +133,9 @@ const UserPost = ({ username }: { username: string }) => {
                 ) : (
                   <FetchImage url={post.url_overridden_by_dest} />
                 ))}
-              {post.selftext_html && (
-                <SelfTextHtml selftext_html={post.selftext_html} />
+              {post.body_html && <BodyHtml body_html={post.body_html} />}
+              {post.selftext && (
+                <SelfTextHtml selftext_html={post.selftext} />
               )}
               <PostStats score={post.score} num_comments={post.num_comments} />
             </a>
