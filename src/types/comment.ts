@@ -3,6 +3,7 @@ export type Comment = {
   body_html: string;
   author: string;
   created: number;
+  edited: boolean | number;
   permalink: string;
   score: number;
   created_utc: number;

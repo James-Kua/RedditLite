@@ -5,6 +5,7 @@ export type Post = {
   author_flair_background_color?: string;
   author_flair_richtext: AuthorFlairRichtext[]
   created: number;
+  edited: boolean | number;
   title: string;
   selftext_html?: string;
   permalink: string;

@@ -129,7 +129,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                   }
                 />
               </div>
-              <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
+              <span className="flex space-x-1">
+                <h3 className="text-sm whitespace-nowrap ml-1">
+                  🕔 {parseUnixTimestamp(post.created)}
+                </h3>
+                {typeof post.edited === 'number' && (
+                  <h3 className="text-sm">✏️ Edited {parseUnixTimestamp(post.edited)}</h3>
+                )}
+              </span>
               <h2 className="text-xl font-semibold my-1">
                 {he.decode(post.title)}
               </h2>
