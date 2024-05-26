@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
-import { parseUnixTimestamp } from "../utils/datetime";
 import { parsePermalink, isImage } from "../utils/parser";
 import { Post } from "../types/post";
 import { Subreddit } from "../types/subreddit";
@@ -15,6 +14,7 @@ import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
+import CreatedEditedLabel from "./CreatedEditedLabel";
 
 interface FeedProps {
   subreddit: string;
@@ -129,14 +129,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                   }
                 />
               </div>
-              <span className="flex space-x-1">
-                <h3 className="text-sm whitespace-nowrap ml-1">
-                  🕔 {parseUnixTimestamp(post.created)}
-                </h3>
-                {typeof post.edited === 'number' && (
-                  <h3 className="text-sm">✏️ Edited {parseUnixTimestamp(post.edited)}</h3>
-                )}
-              </span>
+              <CreatedEditedLabel created={post.created} edited={post.edited} />
               <h2 className="text-xl font-semibold my-1">
                 {he.decode(post.title)}
               </h2>

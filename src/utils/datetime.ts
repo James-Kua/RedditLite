@@ -12,18 +12,18 @@ export function parseUnixTimestamp(created: number): string {
     const years = Math.floor(months / 12);
   
     if (years > 0) {
-        return years === 1 ? "1 year ago" : `${years} years ago`;
+        return years === 1 ? "1y ago" : `${years}y ago`;
     } else if (months > 0) {
-        return months === 1 ? "1 month ago" : `${months} months ago`;
+        return months === 1 ? "1mo ago" : `${months}mos ago`;
     } else if (weeks > 0) {
-        return weeks === 1 ? "1 week ago" : `${weeks} weeks ago`;
+        return weeks === 1 ? "1w ago" : `${weeks}w ago`;
     } else if (days > 0) {
-        return days === 1 ? "1 day ago" : `${days} days ago`;
+        return days === 1 ? "1d ago" : `${days}d ago`;
     } else if (hours > 0) {
-        return hours === 1 ? "1 hour ago" : `${hours} hours ago`;
+        return hours === 1 ? "1h ago" : `${hours}h ago`;
     } else if (minutes > 0) {
-        return minutes === 1 ? "1 minute ago" : `${minutes} minutes ago`;
+        return minutes === 1 ? "1m ago" : `${minutes}m ago`;
     } else {
         return "Just Now";
     }
-  }
+}

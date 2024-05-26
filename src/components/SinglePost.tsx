@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import he from "he";
-import { parseUnixTimestamp } from "../utils/datetime";
 import { Post } from "../types/post";
 import { Comment, Children2 } from "../types/comment";
 import { isImage } from "../utils/parser";
@@ -18,6 +17,7 @@ import SelfTextHtml from "./SelfTextHtml";
 import PostGallery from "./PostGallery";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
+import CreatedEditedLabel from "./CreatedEditedLabel";
 
 const CommentComponent = ({
   comment,
@@ -48,14 +48,7 @@ const CommentComponent = ({
             }
           />
         </div>
-        <span className="flex space-x-1">
-          <h3 className="text-sm whitespace-nowrap ml-1">
-            🕔 {parseUnixTimestamp(comment.created_utc)}
-          </h3>
-          {typeof comment.edited === 'number' && (
-            <h3 className="text-sm">✏️ Edited {parseUnixTimestamp(comment.edited)}</h3>
-          )}
-        </span>
+        <CreatedEditedLabel created={comment.created} edited={comment.edited} />
       </div>
       <BodyHtml body_html={comment.body_html} />
       <div className="text-gray-500 text-sm mt-2">
@@ -149,14 +142,7 @@ const SinglePost = ({
             />
           </div>
           <a href={`${post.url_overridden_by_dest ?? post.url}`}>
-            <span className="flex space-x-1">
-              <h3 className="text-sm whitespace-nowrap ml-1">
-                🕔 {parseUnixTimestamp(post.created)}
-              </h3>
-              {typeof post.edited === 'number' && (
-                <h3 className="text-sm">✏️ Edited {parseUnixTimestamp(post.edited)}</h3>
-              )}
-            </span>
+            <CreatedEditedLabel created={post.created} edited={post.edited} />
             <h2 className="text-2xl my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
