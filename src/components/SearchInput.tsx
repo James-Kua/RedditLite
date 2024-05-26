@@ -143,7 +143,7 @@ const SearchInput: React.FC = () => {
       {subredditSuggestions.length > 0 && (
         <div className="absolute mt-1 w-full rounded-md bg-white shadow-lg z-10">
           <ul>
-            {subredditSuggestions.slice(0, 5).map((subreddit, index) => (
+            {subredditSuggestions.slice(0, 6).map((subreddit, index) => (
               <a
                 href={`/${subreddit.display_name_prefixed}`}
                 className="text-gray-800"
