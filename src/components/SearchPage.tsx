@@ -113,7 +113,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
                 </span>
               </div>
               <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
-              <h2 className="text-xl font-semibold my-1">
+              <h2 className="text-lg font-semibold my-1">
                 {he.decode(post.title)}
               </h2>
               <LinkFlairText

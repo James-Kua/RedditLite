@@ -33,10 +33,10 @@ const CommentComponent = ({
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`}>
-            <h3 className="font-semibold">{comment.author}</h3>
+            <h3 className="font-semibold text-sm">{comment.author}</h3>
           </a>
           {comment.author === postAuthor && (
-            <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-sm text-blue-700 overflow-x-auto">
+            <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">
               OP
             </span>
           )}
@@ -143,7 +143,7 @@ const SinglePost = ({
           </div>
           <a href={`${post.url_overridden_by_dest ?? post.url}`}>
             <CreatedEditedLabel created={post.created} edited={post.edited} />
-            <h2 className="text-2xl my-2 font-semibold">
+            <h2 className="text-lg my-2 font-semibold">
               {he.decode(post.title)}
             </h2>
             <LinkFlairText

@@ -130,7 +130,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
                 />
               </div>
               <CreatedEditedLabel created={post.created} edited={post.edited} />
-              <h2 className="text-xl font-semibold my-1">
+              <h2 className="text-lg font-semibold my-1">
                 {he.decode(post.title)}
               </h2>
               <LinkFlairText

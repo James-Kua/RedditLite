@@ -105,7 +105,7 @@ const UserPost = ({ username }: { username: string }) => {
                 : post.permalink.split("/r/")[1]
             }`}
           >
-            <h1 className="text-xl font-semibold text-gray-800">
+            <h1 className="text-lg font-semibold text-gray-800">
               {he.decode(post.title ?? "")}
             </h1>
             {post.link_title && (

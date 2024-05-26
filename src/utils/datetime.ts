@@ -14,7 +14,7 @@ export function parseUnixTimestamp(created: number): string {
     if (years > 0) {
         return years === 1 ? "1y ago" : `${years}y ago`;
     } else if (months > 0) {
-        return months === 1 ? "1mo ago" : `${months}mos ago`;
+        return months === 1 ? "1mo ago" : `${months}mo ago`;
     } else if (weeks > 0) {
         return weeks === 1 ? "1w ago" : `${weeks}w ago`;
     } else if (days > 0) {
