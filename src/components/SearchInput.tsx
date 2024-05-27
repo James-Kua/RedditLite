@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
+import he from "he";
 
 const SearchInput: React.FC = () => {
   const isMobile = window.innerWidth <= 767;
@@ -150,13 +151,13 @@ const SearchInput: React.FC = () => {
                 >
                   {subreddit?.community_icon ? (
                     <img
-                      src={subreddit.community_icon.replace("&amp;", "&")}
+                      src={he.decode(subreddit.community_icon)}
                       alt="community_icon"
                       className="w-6 h-6 rounded-lg mr-2"
                     />
                   ) : subreddit?.icon_img ? (
                     <img
-                      src={subreddit.icon_img.replace("&amp;", "&")}
+                      src={he.decode(subreddit.icon_img)}
                       alt="icon_img"
                       className="w-6 h-6 rounded-lg mr-2"
                     />

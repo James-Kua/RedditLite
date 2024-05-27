@@ -1,3 +1,5 @@
+import he from "he";
+
 interface UserKarmaProps {
   iconImg: string;
   username: string;
@@ -15,7 +17,7 @@ const UserKarma: React.FC<UserKarmaProps> = ({
     <div>
       {iconImg && (
         <img
-          src={iconImg.replace(/&amp;/g, "&")}
+          src={he.decode(iconImg)}
           alt={username}
           className="h-12 w-12 rounded-lg"
         />

@@ -1,3 +1,4 @@
+import he from "he";
 import React from "react";
 
 type SubredditIconProps = {
@@ -14,7 +15,7 @@ const SubredditIcon: React.FC<SubredditIconProps> = ({
 
   return src ? (
     <img
-      src={src.replace("&amp;", "&")}
+      src={he.decode(src)}
       alt={alt}
       className="w-8 h-8 rounded-lg mr-2"
     />

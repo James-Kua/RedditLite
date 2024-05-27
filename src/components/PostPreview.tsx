@@ -1,5 +1,6 @@
 import React from "react";
 import { Post } from "../types/post";
+import he from "he";
 
 export type PostPreviewProps = Pick<Post, "preview">;
 
@@ -13,7 +14,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ preview }) => {
     <div className="relative mt-2">
       {imageUrl && (
         <img
-          src={imageUrl.replace(/&amp;/g, "&")}
+          src={he.decode(imageUrl)}
           alt="preview"
           className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
         />
