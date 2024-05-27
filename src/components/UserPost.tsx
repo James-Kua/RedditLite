@@ -74,7 +74,7 @@ const UserPost = ({ username }: { username: string }) => {
   }, [fetchPosts, hasMore]);
 
   return (
-    <div className="dark:bg-black dark:text-white">
+    <div className="dark:bg-custom-black dark:text-white">
       <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
         <nav aria-label="Breadcrumb" className="mb-5">
           <div className="flex h-8 items-center text-gray-500">

@@ -51,7 +51,7 @@ const CommentComponent = ({
         <CreatedEditedLabel created={comment.created} edited={comment.edited} />
       </div>
       <BodyHtml body_html={comment.body_html} />
-      <div className="text-gray-500 text-sm mt-2 dark:text-white">
+      <div className="text-gray-500 text-xs mt-2 dark:text-slate-200">
         🔼 {comment.score || 0} upvotes
       </div>
       {comment.replies?.data?.children?.map((childWrapper: Children2) => {
@@ -97,7 +97,7 @@ const SinglePost = ({
   }, [subreddit, postId, title]);
 
   return (
-    <div className="dark:bg-black dark:text-white min-h-screen">
+    <div className="dark:bg-custom-black dark:text-white min-h-screen">
       <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
         <nav
           aria-label="Breadcrumb"

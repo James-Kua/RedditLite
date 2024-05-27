@@ -2,7 +2,11 @@
 export default {
   content: ["./src/**/*.{html,js,ts,jsx,tsx,vue}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'custom-black': '#0E1113',
+      },
+    },
   },
   plugins: [],
 }

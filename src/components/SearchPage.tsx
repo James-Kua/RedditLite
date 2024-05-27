@@ -83,7 +83,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
   }, [fetchPosts, hasMore]);
 
   return (
-    <div className="dark:bg-black text-white">
+    <div className="dark:bg-custom-black text-white">
       <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">
