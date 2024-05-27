@@ -94,6 +94,11 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
           </div>
         </div>
 
+        <div className="mb-2 font-medium text-gray-400">
+          Showing search results for{" "}
+          <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span>
+        </div>
+
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
             <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
