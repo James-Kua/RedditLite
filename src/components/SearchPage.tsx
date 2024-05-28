@@ -12,21 +12,25 @@ import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import { sortOptions } from "../utils/sortOptions";
+import { timeOptions } from "../utils/timeOptions";
 
 interface SearchPageProps {
   query: string;
   sort: string;
+  time: string;
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({
   query,
   sort: initialSort,
+  time: initialTime,
 }) => {
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState<string>(initialSort);
+  const [time, setTime] = useState<string>(initialTime);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef<HTMLDivElement | null>(null);
 
@@ -34,7 +38,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
     if (!hasMore || !userQuery) return;
 
     fetch(
-      `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}`
+      `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -57,7 +61,9 @@ const SearchPage: React.FC<SearchPageProps> = ({
     setHasMore(true);
 
     if (userQuery) {
-      fetch(`https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}`)
+      fetch(
+        `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&t=${time}`
+      )
         .then((response) => response.json())
         .then((data) => {
           const fetchedPosts = data.data.children.map(
@@ -68,7 +74,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
           setHasMore(!!data.data.after);
         });
     }
-  }, [userQuery, sort]);
+  }, [userQuery, sort, time]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -90,6 +96,11 @@ const SearchPage: React.FC<SearchPageProps> = ({
     }
   }, [fetchPosts, hasMore]);
 
+  const filterOptions = [
+    { label: "Sort by", options: sortOptions },
+    { label: "Time", options: timeOptions },
+  ];
+
   return (
     <div className="dark:bg-custom-black text-white">
       <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
@@ -108,20 +119,35 @@ const SearchPage: React.FC<SearchPageProps> = ({
             {decodeURIComponent(userQuery)}
           </span>
         </div>
-        <div className="text-black dark:text-gray-400 text-sm mb-2">
-          <label className="mr-1 font-medium">Sort by</label>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+
+        {filterOptions.map((optionGroup, index) => (
+          <div
+            className="text-black dark:text-gray-400 text-sm mb-2"
+            key={index}
           >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.key}
-              </option>
-            ))}
-          </select>
-        </div>
+            <label className="mr-1 font-medium">{optionGroup.label}</label>
+            <select
+              value={optionGroup.label === "Sort by" ? sort : time}
+              onChange={(e) => {
+                switch (optionGroup.label) {
+                  case "Sort by":
+                    setSort(e.target.value);
+                    break;
+                  case "Time":
+                    setTime(e.target.value);
+                    break;
+                }
+              }}
+              className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+            >
+              {optionGroup.options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.key}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
 
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>

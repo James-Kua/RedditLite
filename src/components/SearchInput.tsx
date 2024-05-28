@@ -61,7 +61,7 @@ const SearchInput: React.FC = () => {
   const handleButtonClick = () => {
     if (search.trim() !== "") {
       const encodedQuery = encodeURIComponent(search);
-      navigate(`/search/?q=${encodedQuery}&sort=relevance`);
+      navigate(`/search/?q=${encodedQuery}&sort=relevance&time=&t=year`);
       if (isMobile) {
         setIsExpanded(false);
       }
