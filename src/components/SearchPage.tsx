@@ -121,32 +121,34 @@ const SearchPage: React.FC<SearchPageProps> = ({
         </div>
 
         {filterOptions.map((optionGroup, index) => (
-          <div
-            className="text-black dark:text-gray-400 text-sm mb-2"
-            key={index}
-          >
-            <label className="mr-1 font-medium">{optionGroup.label}</label>
-            <select
-              value={optionGroup.label === "Sort by" ? sort : time}
-              onChange={(e) => {
-                switch (optionGroup.label) {
-                  case "Sort by":
-                    setSort(e.target.value);
-                    break;
-                  case "Time":
-                    setTime(e.target.value);
-                    break;
-                }
-              }}
-              className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+          optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
+            <div
+              className="text-black dark:text-gray-400 text-sm mb-2"
+              key={index}
             >
-              {optionGroup.options.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.key}
-                </option>
-              ))}
-            </select>
-          </div>
+              <label className="mr-1 font-medium">{optionGroup.label}</label>
+              <select
+                value={optionGroup.label === "Sort by" ? sort : time}
+                onChange={(e) => {
+                  switch (optionGroup.label) {
+                    case "Sort by":
+                      setSort(e.target.value);
+                      break;
+                    case "Time":
+                      setTime(e.target.value);
+                      break;
+                  }
+                }}
+                className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+              >
+                {optionGroup.options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.key}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )
         ))}
 
         {posts.map((post) => (
