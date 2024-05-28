@@ -14,6 +14,7 @@ export type User = {
   author_flair_text?: string;
   created: number;
   created_utc: number;
+  edited?: boolean | number;
   link_url?: string;
   title?: string;
   link_flair_text?: string;

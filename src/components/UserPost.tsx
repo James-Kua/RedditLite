@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { User, UserProfile } from "../types/user";
-import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
@@ -9,6 +8,7 @@ import PostStats from "./PostStats";
 import SearchInput from "./SearchInput";
 import SelfTextHtml from "./SelfTextHtml";
 import BodyHtml from "./BodyHtml";
+import CreatedEditedLabel from "./CreatedEditedLabel";
 
 const UserPost = ({ username }: { username: string }) => {
   const [posts, setPosts] = useState<User[]>([]);
@@ -96,9 +96,7 @@ const UserPost = ({ username }: { username: string }) => {
         </nav>
         {posts.map((post) => (
           <div key={post.id} className="mb-8">
-            <h3 className="text-sm my-1">
-              🕔 {parseUnixTimestamp(post.created)}
-            </h3>
+            <CreatedEditedLabel created={post.created_utc} edited={post.edited} />
             <a href={`/r/${post.subreddit}`} className="text-blue-500">
               <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
                 {post.subreddit_name_prefixed}
