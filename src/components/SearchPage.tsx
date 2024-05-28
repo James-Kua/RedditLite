@@ -11,23 +11,31 @@ import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
+import { sortOptions } from "../utils/sortOptions";
 
 interface SearchPageProps {
   query: string;
+  sort: string;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
+const SearchPage: React.FC<SearchPageProps> = ({
+  query,
+  sort: initialSort,
+}) => {
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [sort, setSort] = useState<string>(initialSort);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef<HTMLDivElement | null>(null);
 
   const fetchPosts = useCallback(() => {
     if (!hasMore || !userQuery) return;
 
-    fetch(`https://www.reddit.com/search.json?q=${userQuery}&after=${after}`)
+    fetch(
+      `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}`
+    )
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -37,7 +45,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
-  }, [userQuery, after, hasMore]);
+  }, [userQuery, after, hasMore, sort]);
 
   useEffect(() => {
     setUserQuery(query);
@@ -49,7 +57,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
     setHasMore(true);
 
     if (userQuery) {
-      fetch(`https://www.reddit.com/search.json?q=${userQuery}`)
+      fetch(`https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}`)
         .then((response) => response.json())
         .then((data) => {
           const fetchedPosts = data.data.children.map(
@@ -60,7 +68,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
           setHasMore(!!data.data.after);
         });
     }
-  }, [userQuery]);
+  }, [userQuery, sort]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -96,12 +104,28 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
 
         <div className="mb-2 font-medium text-gray-400">
           Showing search results for{" "}
-          <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span>
+          <span className="font-semibold italic">
+            {decodeURIComponent(userQuery)}
+          </span>
+        </div>
+        <div className="text-black dark:text-gray-400 text-sm mb-2">
+          <label className="mr-1 font-medium">Sort by</label>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.key}
+              </option>
+            ))}
+          </select>
         </div>
 
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
-            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
+            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8 relative">
               <div>
                 <div className="flex items-center space-x-2">
                   <h3 className="font-semibold">{post.author}</h3>
@@ -162,7 +186,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ query }) => {
           </a>
         ))}
         <div ref={sentinel} className="h-1"></div>
-      </div>{" "}
+      </div>
     </div>
   );
 };

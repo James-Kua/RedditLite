@@ -51,8 +51,9 @@ const UserProfileWrapper = () => {
 const SearchWrapper = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
+  const sort = searchParams.get("sort") || "relevance";
 
   const encodedQuery = query ? encodeURIComponent(query) : "";
 
-  return <SearchPage query={encodedQuery ?? ''} />;
+  return <SearchPage query={encodedQuery} sort={sort} />;
 };

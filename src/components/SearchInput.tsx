@@ -23,7 +23,7 @@ const SearchInput: React.FC = () => {
       }
       timeoutId = setTimeout(() => {
         fetchSubredditSuggestions();
-      }, 300); 
+      }, 300);
     } else {
       setSubredditSuggestions([]);
     }
@@ -33,9 +33,7 @@ const SearchInput: React.FC = () => {
         clearTimeout(timeoutId);
       }
     };
-
   }, [search]);
-  
 
   const fetchSubredditSuggestions = async () => {
     try {
@@ -63,7 +61,7 @@ const SearchInput: React.FC = () => {
   const handleButtonClick = () => {
     if (search.trim() !== "") {
       const encodedQuery = encodeURIComponent(search);
-      navigate(`/search/?q=${encodedQuery}`);
+      navigate(`/search/?q=${encodedQuery}&sort=relevance`);
       if (isMobile) {
         setIsExpanded(false);
       }
