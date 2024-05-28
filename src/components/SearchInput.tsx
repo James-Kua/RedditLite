@@ -66,6 +66,7 @@ const SearchInput: React.FC = () => {
         setIsExpanded(false);
       }
       setSearch("");
+      setSubredditSuggestions([]);
     }
   };
 
