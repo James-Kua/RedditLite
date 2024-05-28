@@ -11,7 +11,7 @@ import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
-import { sortOptions } from "../utils/sortOptions";
+import { searchSortOptions } from "../utils/sortOptions";
 import { timeOptions } from "../utils/timeOptions";
 
 interface SearchPageProps {
@@ -97,7 +97,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
   }, [fetchPosts, hasMore]);
 
   const filterOptions = [
-    { label: "Sort by", options: sortOptions },
+    { label: "Sort by", options: searchSortOptions },
     { label: "Time", options: timeOptions },
   ];
 

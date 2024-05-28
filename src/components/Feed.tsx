@@ -15,6 +15,8 @@ import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
+import { timeOptions } from "../utils/timeOptions";
+import { subredditSortOptions } from "../utils/sortOptions";
 
 interface FeedProps {
   subreddit: string;
@@ -25,13 +27,17 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+  const [time, setTime] = useState<string>("year");
+  const [sort, setSort] = useState<string>("hot");
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
 
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    fetch(`https://www.reddit.com/r/${subreddit}.json?after=${after}`)
+    fetch(
+      `https://www.reddit.com/r/${subreddit}/${sort}.json?after=${after}&t=${time}`
+    )
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -48,7 +54,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
     setAfter(null);
     setHasMore(true);
 
-    fetch(`https://www.reddit.com/r/${subreddit}.json`)
+    fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -66,7 +72,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       });
 
     document.title = `🤖 ${subreddit}`;
-  }, [subreddit]);
+  }, [subreddit, sort, time]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -87,6 +93,11 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
       observer.current.observe(sentinel.current);
     }
   }, [fetchPosts, hasMore]);
+
+  const filterOptions = [
+    { label: "Sort by", options: subredditSortOptions },
+    { label: "Time", options: timeOptions },
+  ];
 
   return (
     <div className="dark:bg-custom-black dark:text-white">
@@ -109,13 +120,47 @@ const Feed: React.FC<FeedProps> = ({ subreddit }) => {
           </div>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-2">
           <SubredditInfo
             public_description_html={subredditInfo?.public_description_html}
             accounts_active={subredditInfo?.accounts_active}
             subscribers={subredditInfo?.subscribers}
           />
         </div>
+
+        <div className="mb-2">
+          {filterOptions.map((optionGroup, index) =>
+            optionGroup.label === "Time" && sort !== "top" ? null : (
+              <div
+                className="text-black dark:text-gray-400 text-sm mb-2"
+                key={index}
+              >
+                <label className="mr-1 font-medium">{optionGroup.label}</label>
+                <select
+                  value={optionGroup.label === "Sort by" ? sort : time}
+                  onChange={(e) => {
+                    switch (optionGroup.label) {
+                      case "Sort by":
+                        setSort(e.target.value);
+                        break;
+                      case "Time":
+                        setTime(e.target.value);
+                        break;
+                    }
+                  }}
+                  className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+                >
+                  {optionGroup.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )
+          )}
+        </div>
+
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
             <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
