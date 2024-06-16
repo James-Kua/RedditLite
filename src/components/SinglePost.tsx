@@ -27,6 +27,8 @@ const CommentComponent = ({
   comment: Comment;
   postAuthor: string;
 }) => {
+  const [showReplies, setShowReplies] = useState(true);
+
   if (!comment?.body_html) return null;
 
   return (
@@ -55,14 +57,23 @@ const CommentComponent = ({
       <div className="text-gray-500 text-xs mt-2 dark:text-slate-200">
         🔼 {comment.score || 0} upvotes
       </div>
-      {comment.replies?.data?.children?.map((childWrapper: Children2) => {
-        const child = childWrapper.data;
-        return child ? (
-          <div key={child.id} className="ml-3 md:ml-4 lg:ml-5 mt-4">
-            <CommentComponent comment={child} postAuthor={postAuthor} />
-          </div>
-        ) : null;
-      })}
+      {comment.replies?.data?.children?.length > 0 && (
+        <button
+          className="text-blue-500 text-xs mt-2"
+          onClick={() => setShowReplies(!showReplies)}
+        >
+          {showReplies ? "Hide Replies" : "Show Replies"}
+        </button>
+      )}
+      {showReplies &&
+        comment.replies?.data?.children?.map((childWrapper: Children2) => {
+          const child = childWrapper.data;
+          return child ? (
+            <div key={child.id} className="ml-3 md:ml-4 lg:ml-5 mt-4">
+              <CommentComponent comment={child} postAuthor={postAuthor} />
+            </div>
+          ) : null;
+        })}
     </div>
   );
 };
