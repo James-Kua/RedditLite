@@ -18,6 +18,7 @@ import PostGallery from "./PostGallery";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
+import PostLock from "./PostLock";
 
 const CommentComponent = ({
   comment,
@@ -186,6 +187,8 @@ const SinglePost = ({
                 <SelfTextHtml selftext_html={post.selftext_html} />
               )}
             </a>
+
+            <PostLock locked={post.locked} />
             <PostStats score={post.score} num_comments={post.num_comments} />
           </div>
         ))}

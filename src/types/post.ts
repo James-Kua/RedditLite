@@ -25,6 +25,7 @@ export type Post = {
   subreddit_name_prefixed: string;
   num_comments: number;
   gallery_data?: GalleryData
+  locked: boolean
 };
 
 interface GalleryData {
