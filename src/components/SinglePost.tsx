@@ -62,18 +62,21 @@ const CommentComponent = ({
           className="text-blue-500 text-xs mt-2"
           onClick={() => setShowReplies(!showReplies)}
         >
-          {showReplies ? "Hide Replies" : "Show Replies"}
+          {showReplies ? "➖ Hide Replies" : "➕ Show Replies"}
         </button>
       )}
-      {showReplies &&
-        comment.replies?.data?.children?.map((childWrapper: Children2) => {
-          const child = childWrapper.data;
-          return child ? (
-            <div key={child.id} className="ml-3 md:ml-4 lg:ml-5 mt-4">
-              <CommentComponent comment={child} postAuthor={postAuthor} />
-            </div>
-          ) : null;
-        })}
+      {showReplies && (
+        <div className="relative border-l-[0.5px] border-gray-700 pl-4 ml-2">
+          {comment.replies?.data?.children?.map((childWrapper: Children2) => {
+            const child = childWrapper.data;
+            return child ? (
+              <div key={child.id} className="mt-4">
+                <CommentComponent comment={child} postAuthor={postAuthor} />
+              </div>
+            ) : null;
+          })}
+        </div>
+      )}
     </div>
   );
 };
