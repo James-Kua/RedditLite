@@ -29,6 +29,12 @@ const CommentComponent = ({
 }) => {
   const [showReplies, setShowReplies] = useState(true);
 
+  useEffect(() => {
+    if (comment.collapsed) {
+      setShowReplies(false);
+    }
+  }, [comment.collapsed]);
+
   if (!comment?.body_html) return null;
 
   return (

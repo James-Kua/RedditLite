@@ -4,6 +4,7 @@ export type Comment = {
   author: string;
   created: number;
   edited: boolean | number;
+  collapsed: boolean;
   permalink: string;
   score: number;
   created_utc: number;
