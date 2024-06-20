@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
 import he from "he";
 
@@ -12,7 +12,9 @@ const SearchInput: React.FC = () => {
   const [subredditSuggestions, setSubredditSuggestions] = useState<Subreddit[]>(
     []
   );
+  const [searchInSubreddit, setSearchInSubreddit] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -61,7 +63,11 @@ const SearchInput: React.FC = () => {
   const handleButtonClick = () => {
     if (search.trim() !== "") {
       const encodedQuery = encodeURIComponent(search);
-      navigate(`/search/?q=${encodedQuery}&sort=relevance&time=&t=year`);
+      const searchUrl =
+        searchInSubreddit && currentSubreddit
+          ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&time=&t=year`
+          : `/search/?q=${encodedQuery}&sort=relevance&time=&t=year`;
+      navigate(searchUrl);
       if (isMobile) {
         setIsExpanded(false);
       }
@@ -81,6 +87,14 @@ const SearchInput: React.FC = () => {
       setIsExpanded(!isExpanded);
     }
   };
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInSubreddit(e.target.checked);
+  };
+
+  const currentPath = location.pathname;
+  const isSubredditPath = /^\/r\/[^/]+$/.test(currentPath);
+  const currentSubreddit = isSubredditPath ? currentPath.split("/")[2] : null;
 
   return (
     <div className="relative">
@@ -143,11 +157,9 @@ const SearchInput: React.FC = () => {
               <a
                 href={`/${subreddit.display_name_prefixed}`}
                 className="text-gray-800"
+                key={index}
               >
-                <li
-                  key={index}
-                  className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700"
-                >
+                <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700">
                   {subreddit?.community_icon ? (
                     <img
                       src={he.decode(subreddit.community_icon)}
@@ -168,6 +180,23 @@ const SearchInput: React.FC = () => {
               </a>
             ))}
           </ul>
+          {isSubredditPath && (
+            <div className="flex items-center px-4 py-2">
+              <input
+                type="checkbox"
+                id="search-in-subreddit"
+                checked={searchInSubreddit}
+                onChange={handleCheckboxChange}
+                className="mr-2"
+              />
+              <label
+                htmlFor="search-in-subreddit"
+                className="text-xs text-gray-800 dark:text-white"
+              >
+                Search in {currentSubreddit}
+              </label>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -15,6 +15,7 @@ function App() {
           path="/r/:subreddit/comments/:id/:title"
           element={<SinglePostWrapper />}
         />
+        <Route path="/r/:subreddit/search" element={<SearchWrapper />} />
         <Route path="/search" element={<SearchWrapper />} />
         <Route path="/user/:username" element={<UserProfileWrapper />} />
         <Route path="/" element={<Home />} />
@@ -32,23 +33,21 @@ import SearchPage from "./components/SearchPage";
 
 const FeedWrapper = () => {
   const { subreddit } = useParams();
-
   return <Feed subreddit={subreddit || "nus"} />;
 };
 
 const SinglePostWrapper = () => {
   const { subreddit = "", id = "", title = "" } = useParams();
-
   return <SinglePost subreddit={subreddit} postId={id} title={title} />;
 };
 
 const UserProfileWrapper = () => {
   const { username } = useParams();
-
   return <UserPost username={username ?? ""} />;
 };
 
 const SearchWrapper = () => {
+  const { subreddit } = useParams();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
   const sort = searchParams.get("sort") || "relevance";
@@ -56,5 +55,12 @@ const SearchWrapper = () => {
 
   const encodedQuery = query ? encodeURIComponent(query) : "";
 
-  return <SearchPage query={encodedQuery} sort={sort} time={time}/>;
+  return (
+    <SearchPage
+      query={encodedQuery}
+      sort={sort}
+      time={time}
+      subreddit={subreddit || ""}
+    />
+  );
 };

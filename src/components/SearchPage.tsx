@@ -18,12 +18,14 @@ interface SearchPageProps {
   query: string;
   sort: string;
   time: string;
+  subreddit: string;
 }
 
 const SearchPage: React.FC<SearchPageProps> = ({
   query,
   sort: initialSort,
   time: initialTime,
+  subreddit,
 }) => {
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -37,9 +39,11 @@ const SearchPage: React.FC<SearchPageProps> = ({
   const fetchPosts = useCallback(() => {
     if (!hasMore || !userQuery) return;
 
-    fetch(
-      `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`
-    )
+    const searchUrl = subreddit
+      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
+      : `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`;
+
+    fetch(searchUrl)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -49,7 +53,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
-  }, [userQuery, after, hasMore, sort]);
+  }, [userQuery, after, hasMore, sort, subreddit]);
 
   useEffect(() => {
     setUserQuery(query);
@@ -61,9 +65,11 @@ const SearchPage: React.FC<SearchPageProps> = ({
     setHasMore(true);
 
     if (userQuery) {
-      fetch(
-        `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&t=${time}`
-      )
+      const searchUrl = subreddit
+        ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on`
+        : `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&t=${time}`;
+
+      fetch(searchUrl)
         .then((response) => response.json())
         .then((data) => {
           const fetchedPosts = data.data.children.map(
@@ -74,7 +80,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
           setHasMore(!!data.data.after);
         });
     }
-  }, [userQuery, sort, time]);
+  }, [userQuery, sort, time, subreddit]);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -117,11 +123,13 @@ const SearchPage: React.FC<SearchPageProps> = ({
           Showing search results for{" "}
           <span className="font-semibold italic">
             {decodeURIComponent(userQuery)}
-          </span>
+          </span>{" "}
+          in {subreddit ? `r/${subreddit}` : "all subreddits"}
         </div>
 
-        {filterOptions.map((optionGroup, index) => (
-          optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
+        {filterOptions.map((optionGroup, index) =>
+          optionGroup.label === "Time" &&
+          !["relevance", "top", "comments"].includes(sort) ? null : (
             <div
               className="text-black dark:text-gray-400 text-sm mb-2"
               key={index}
@@ -149,7 +157,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
               </select>
             </div>
           )
-        ))}
+        )}
 
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
