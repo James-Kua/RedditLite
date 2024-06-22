@@ -11,6 +11,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/r/:subreddit" element={<FeedWrapper />} />
+        <Route path="/r/:subreddit/:sort" element={<FeedWrapper />} />
         <Route
           path="/r/:subreddit/comments/:id/:title"
           element={<SinglePostWrapper />}
@@ -32,8 +33,11 @@ import SinglePost from "./components/SinglePost";
 import SearchPage from "./components/SearchPage";
 
 const FeedWrapper = () => {
-  const { subreddit } = useParams();
-  return <Feed subreddit={subreddit || "nus"} />;
+  const { subreddit, sort = "hot" } = useParams();
+  const [searchParams] = useSearchParams();
+  const time = searchParams.get("t") || "year";
+
+  return <Feed subreddit={subreddit || "singapore"} initialTime={time} initialSort={sort} />;
 };
 
 const SinglePostWrapper = () => {

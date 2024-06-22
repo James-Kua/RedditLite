@@ -20,15 +20,17 @@ import { subredditSortOptions } from "../utils/sortOptions";
 
 interface FeedProps {
   subreddit: string;
+  initialTime: string;
+  initialSort: string;
 }
 
-const Feed: React.FC<FeedProps> = ({ subreddit }) => {
+const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
-  const [time, setTime] = useState<string>("year");
-  const [sort, setSort] = useState<string>("hot");
+  const [time, setTime] = useState<string>(initialTime);
+  const [sort, setSort] = useState<string>(initialSort);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
 
