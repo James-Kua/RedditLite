@@ -181,7 +181,7 @@ const SearchInput: React.FC = () => {
             ))}
           </ul>
           {isSubredditPath && (
-            <div className="flex items-center px-4 py-2">
+            <div className="flex items-center px-4 py-3">
               <input
                 type="checkbox"
                 id="search-in-subreddit"
