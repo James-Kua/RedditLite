@@ -42,7 +42,7 @@ const CommentComponent = ({
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`}>
-            <h3 className="font-semibold text-sm">{comment.author}</h3>
+            <h3 className="font-semibold text-sm text-blue-400">{comment.author}</h3>
           </a>
           {comment.author === postAuthor && (
             <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">
@@ -65,14 +65,14 @@ const CommentComponent = ({
       </div>
       {comment.replies?.data?.children?.length > 0 && (
         <button
-          className="text-blue-500 text-xs mt-2"
+          className="dark:text-gray-300 text-xs mt-2"
           onClick={() => setShowReplies(!showReplies)}
         >
           {showReplies ? "➖ Hide Replies" : "➕ Show Replies"}
         </button>
       )}
       {showReplies && (
-        <div className="relative border-l-[0.5px] border-gray-700 pl-4 ml-2">
+        <div className="relative border-l-[0.5px] border-gray-700 pl-2 lg:pl-4 ml-1">
           {comment.replies?.data?.children?.map((childWrapper: Children2) => {
             const child = childWrapper.data;
             return child ? (
@@ -155,7 +155,7 @@ const SinglePost = ({
           >
             <div className="flex items-center space-x-2">
               <a href={`/user/${post.author}`}>
-                <h3 className="font-semibold">{post.author}</h3>
+                <h3 className="font-semibold text-blue-400">{post.author}</h3>
               </a>
               <AuthorFlairText
                 author_flair_richtext={post.author_flair_richtext}

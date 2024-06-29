@@ -15,7 +15,7 @@ const SelfTextHtml: React.FC<SelfTextHtmlProps> = ({
 
   return (
     <div
-      className="mt-1 text-[15px] text-gray-700 overflow-scroll dark:text-gray-400"
+      className="mt-1 text-[15px] text-gray-700 overflow-scroll dark:text-gray-400 text-sm lg:text-md leading-relaxed"
       dangerouslySetInnerHTML={{
         __html: he.decode(truncatedHtml.replace(/\n\n/g, "<br>")),
       }}

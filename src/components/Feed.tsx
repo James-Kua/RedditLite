@@ -168,7 +168,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
             <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="font-semibold">{post.author}</h3>
+                  <h3 className="font-semibold text-blue-400">{post.author}</h3>
                   <AuthorFlairText
                     author_flair_richtext={post.author_flair_richtext}
                     author_flair_text={post.author_flair_text}
