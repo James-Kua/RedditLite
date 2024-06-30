@@ -39,9 +39,13 @@ const SearchPage: React.FC<SearchPageProps> = ({
   const fetchPosts = useCallback(() => {
     if (!hasMore || !userQuery) return;
 
+    const isAlreadyEncoded = userQuery.match(/%[0-9A-F]{2}/i);
+    // handle chinese queries
+    const encodedQuery = isAlreadyEncoded ? encodeURIComponent(userQuery) : userQuery;
+
     const searchUrl = subreddit
-      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
-      : `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`;
+      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
+      : `https://www.reddit.com/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}`;
 
     fetch(searchUrl)
       .then((response) => response.json())
