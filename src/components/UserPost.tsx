@@ -95,9 +95,9 @@ const UserPost = ({ username }: { username: string }) => {
           )}
         </nav>
         {posts.map((post) => (
-          <div key={post.id} className="mb-8">
+          <div key={post.id} className="mb-10">
             <CreatedEditedLabel created={post.created_utc} edited={post.edited} />
-            <a href={`/r/${post.subreddit}`} className="text-blue-500">
+            <a href={`/r/${post.subreddit}`}>
               <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
                 {post.subreddit_name_prefixed}
               </span>
@@ -114,7 +114,7 @@ const UserPost = ({ username }: { username: string }) => {
                 {he.decode(post.title ?? "")}
               </h1>
               {post.link_title && (
-                <div className="bg-slate-50 dark:bg-slate-800 rounded-md py-2 pl-2">
+                <div className="bg-slate-50 dark:bg-transparent rounded-md p-1.5 border border-gray-400 text-sm">
                   <h1 className="text-md font-medium text-gray-900 dark:text-white">
                     {post.link_title}
                   </h1>
@@ -140,7 +140,7 @@ const UserPost = ({ username }: { username: string }) => {
           </div>
         ))}
         <div ref={sentinel} className="h-1"></div>
-      </div>{" "}
+      </div>
     </div>
   );
 };
