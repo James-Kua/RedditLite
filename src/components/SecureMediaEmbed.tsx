@@ -13,7 +13,7 @@ const SecureMediaEmbed: React.FC<SecureEmbedMediaProps> = ({
 }) => {
   return (
     <div
-      className="mt-4 aspect-auto flex justify-center items-center max-w-full"
+      className="mt-4 flex justify-center items-center max-w-full max-h-[70vh]"
       style={{
         width: `${width}px`,
         height: `${height}px`,
