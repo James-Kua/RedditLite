@@ -1,4 +1,5 @@
 import React from "react";
+import ReactPlayer from "react-player";
 
 type SecureEmbedMediaProps = {
   media_domain_url: string;
@@ -19,11 +20,12 @@ const SecureMediaEmbed: React.FC<SecureEmbedMediaProps> = ({
         height: `${height}px`,
       }}
     >
-      <iframe
-        src={media_domain_url}
-        allowFullScreen
-        className="w-full h-full aspect-auto"
-      ></iframe>
+      <ReactPlayer
+        url={media_domain_url}
+        controls
+        width="100%"
+        height="100%"
+      />
     </div>
   );
 };

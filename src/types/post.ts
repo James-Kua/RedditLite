@@ -70,6 +70,7 @@ export interface SecureMedia {
 }
 
 export interface RedditVideo {
+  hls_url: string
   fallback_url: string
   height: number
   width: number
