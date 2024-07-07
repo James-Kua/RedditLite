@@ -34,6 +34,8 @@ const SecureMediaEmbed: React.FC<SecureEmbedMediaProps> = ({
               controls
               width="100%"
               height="100%"
+              playing
+              muted
             />
           </div>
         </div>

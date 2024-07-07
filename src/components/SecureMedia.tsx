@@ -25,6 +25,8 @@ const SecureMedia: React.FC<SecureMediaProps> = ({ reddit_video }) => {
         controls
         width="100%"
         height="100%"
+        playing
+        muted
       />
     </div>
   );
