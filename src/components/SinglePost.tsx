@@ -176,7 +176,10 @@ const SinglePost = ({
                 link_flair_background_color={post.link_flair_background_color}
               />
               {post.secure_media_embed?.media_domain_url ? (
-                <SecureMediaEmbed {...post.secure_media_embed} />
+                <SecureMediaEmbed
+                  url_overridden_by_dest={post.url_overridden_by_dest}
+                  {...post.secure_media_embed}
+                />
               ) : post.secure_media ? (
                 <SecureMedia {...post.secure_media} />
               ) : post.media_metadata ? (
