@@ -17,6 +17,7 @@ import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import { timeOptions } from "../utils/timeOptions";
 import { subredditSortOptions } from "../utils/sortOptions";
+import SecureMediaEmbed from "./SecureMediaEmbed";
 
 interface FeedProps {
   subreddit: string;
@@ -191,7 +192,12 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
                 />
               </div>
               <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-                {post.media_metadata ? (
+                {post.secure_media_embed?.media_domain_url ? (
+                  <SecureMediaEmbed
+                    url_overridden_by_dest={post.url_overridden_by_dest}
+                    {...post.secure_media_embed}
+                  />
+                ) : post.media_metadata ? (
                   <MediaMetadata media_metadata={post.media_metadata} />
                 ) : post.preview ? (
                   <PostPreview preview={post.preview} />

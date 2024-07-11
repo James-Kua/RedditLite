@@ -8,9 +8,10 @@ type SecureMediaProps = {
     width: number;
     height: number;
   };
+  playing?: boolean;
 };
 
-const SecureMedia: React.FC<SecureMediaProps> = ({ reddit_video }) => {
+const SecureMedia: React.FC<SecureMediaProps> = ({ reddit_video, playing = false }) => {
   const { hls_url, fallback_url, width, height } = reddit_video;
   return (
     <div
@@ -25,7 +26,7 @@ const SecureMedia: React.FC<SecureMediaProps> = ({ reddit_video }) => {
         controls
         width="100%"
         height="100%"
-        playing
+        playing={playing}
         muted
       />
     </div>
