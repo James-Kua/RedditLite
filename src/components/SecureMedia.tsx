@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
 type SecureMediaProps = {
@@ -11,24 +11,55 @@ type SecureMediaProps = {
   playing?: boolean;
 };
 
-const SecureMedia: React.FC<SecureMediaProps> = ({ reddit_video, playing = false }) => {
+const SecureMedia: React.FC<SecureMediaProps> = ({
+  reddit_video,
+  playing = false,
+}) => {
   const { hls_url, fallback_url, width, height } = reddit_video;
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
+      ref={containerRef}
       className="mt-4 flex justify-center items-center max-w-full max-h-[70vh]"
       style={{
         width: `${width}px`,
         height: `${height}px`,
       }}
     >
-      <ReactPlayer
-        url={hls_url ?? fallback_url}
-        controls
-        width="100%"
-        height="100%"
-        playing={playing}
-        muted
-      />
+      {isVisible && (
+        <ReactPlayer
+          url={hls_url ?? fallback_url}
+          controls
+          width="100%"
+          height="100%"
+          playing={playing}
+          muted
+        />
+      )}
     </div>
   );
 };
