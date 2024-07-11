@@ -77,23 +77,32 @@ export interface RedditVideo {
 }
 
 export interface Preview {
-  images: Image[]
+  images: Image[];
 }
 
 export interface Image {
-  source: Source
-  resolutions: Resolution[]
-  id: string
+  source: Source;
+  resolutions: Resolution[];
+  variants?: {
+    gif?: Variant;
+    mp4?: Variant;
+  };
+  id: string;
 }
 
 export interface Source {
-  url: string
-  width: number
-  height: number
+  url: string;
+  width: number;
+  height: number;
 }
 
 export interface Resolution {
-  url: string
-  width: number
-  height: number
+  url: string;
+  width: number;
+  height: number;
+}
+
+export interface Variant {
+  source: Source;
+  resolutions: Resolution[];
 }

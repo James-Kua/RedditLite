@@ -5,10 +5,17 @@ import he from "he";
 export type PostPreviewProps = Pick<Post, "preview">;
 
 const PostPreview: React.FC<PostPreviewProps> = ({ preview }) => {
-  if (!preview || !preview.images || preview.images[0].resolutions.length === 0)
-    return null;
+  if (!preview || !preview.images || preview.images.length === 0) return null;
 
-  const imageUrl = preview?.images[0].source.url ?? "";
+  const image = preview.images[0];
+  const isGif = image.variants && image.variants.gif;
+
+  let imageUrl = "";
+  if (isGif && image.variants && image.variants.gif && image.variants.gif.source) {
+    imageUrl = image.variants.gif.source.url;
+  } else {
+    imageUrl = image.source.url;
+  }
 
   return (
     <div className="relative mt-2">
