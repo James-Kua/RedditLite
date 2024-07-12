@@ -10,7 +10,6 @@ import { FetchImage } from "../utils/image";
 import Thumbnail from "./Thumbnail";
 import SubredditInfo from "./SubredditInfo";
 import SubredditIcon from "./SubredditIcon";
-import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
@@ -18,6 +17,8 @@ import CreatedEditedLabel from "./CreatedEditedLabel";
 import { timeOptions } from "../utils/timeOptions";
 import { subredditSortOptions } from "../utils/sortOptions";
 import SecureMediaEmbed from "./SecureMediaEmbed";
+import SecureMedia from "./SecureMedia";
+import PostGallery from "./PostGallery";
 
 interface FeedProps {
   subreddit: string;
@@ -197,8 +198,17 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
                     url_overridden_by_dest={post.url_overridden_by_dest}
                     {...post.secure_media_embed}
                   />
+                ) : post.secure_media ? (
+                  <SecureMedia playing={true} {...post.secure_media} />
                 ) : post.media_metadata ? (
-                  <MediaMetadata media_metadata={post.media_metadata} />
+                  <div className="relative mt-2">
+                    {post.gallery_data ? (
+                      <PostGallery
+                        galleryData={post.gallery_data}
+                        mediaMetadata={post.media_metadata}
+                      />
+                    ) : null}
+                  </div>
                 ) : post.preview ? (
                   <PostPreview preview={post.preview} />
                 ) : post.url_overridden_by_dest ? (

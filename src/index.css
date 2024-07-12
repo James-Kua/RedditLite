@@ -6,4 +6,9 @@
     :root {
         background: #0E1113;
     }
+
+    /* post gallery active dot style */
+    .slick-dots li button:before {
+        color: white !important;
+    }
 }
