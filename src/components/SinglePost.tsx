@@ -20,6 +20,39 @@ import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
 import { commentSortOptions } from "../utils/sortOptions";
+import { FaTimes } from "react-icons/fa";
+
+const filterComments = (comments: Comment[], searchTerm: string): Comment[] => {
+  return comments
+    .map((comment) => {
+      if (!comment.body_html) {
+        return null;
+      }
+
+      if (comment.body_html.toLowerCase().includes(searchTerm)) {
+        return comment;
+      }
+
+      if (comment.replies?.data?.children?.length > 0) {
+        const filteredReplies = filterComments(
+          comment.replies.data.children.map((child: Children2) => child.data),
+          searchTerm
+        );
+        if (filteredReplies.length > 0) {
+          return {
+            ...comment,
+            replies: {
+              data: {
+                children: filteredReplies.map((reply) => ({ data: reply })),
+              },
+            },
+          };
+        }
+      }
+      return null;
+    })
+    .filter(Boolean) as Comment[];
+};
 
 const CommentComponent = ({
   comment,
@@ -101,7 +134,8 @@ const SinglePost = ({
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentsSortOption, setSortOption] = useState(commentSortOptions[0].value);
+  const [commentsSortOption, setSortOption] = useState("");
+  const [commentsSearchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch(
@@ -118,12 +152,27 @@ const SinglePost = ({
             (child: { data: Comment }) => child.data
           )
         );
+  
+        if (postList.data.children.length > 0) {
+          setSortOption(postList.data.children[0].data.suggested_sort || commentsSortOption);
+        }
       });
-  }, [subreddit, postId, title, commentsSortOption]);
+  
+  }, [commentsSortOption]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
   };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  const handleClearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const filteredComments = filterComments(comments, commentsSearchTerm);
 
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
@@ -190,10 +239,7 @@ const SinglePost = ({
                   {...post.secure_media_embed}
                 />
               ) : post.secure_media ? (
-                <SecureMedia 
-                  playing={true}
-                  {...post.secure_media}
-                />
+                <SecureMedia playing={true} {...post.secure_media} />
               ) : post.media_metadata ? (
                 <div className="relative mt-2">
                   {post.gallery_data ? (
@@ -228,24 +274,39 @@ const SinglePost = ({
           </div>
         ))}
 
-        <div className="flex justify-end items-center mb-4 text-sm">
-          <label className="mr-2">
-            Sort by:
-          </label>
-          <select
-            value={commentsSortOption}
-            onChange={handleSortChange}
-            className="border border-gray-300 dark:bg-transparent rounded p-1"
-          >
-            {commentSortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.key}
-              </option>
-            ))}
-          </select>
+        <div className="flex justify-between items-center mb-4 text-sm">
+          <div className="flex items-center relative">
+            <input
+              type="text"
+              value={commentsSearchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search comments"
+              className="border border-gray-300 dark:bg-transparent rounded p-1 mr-2"
+            />
+            {commentsSearchTerm && (
+              <FaTimes
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600 mr-1"
+                onClick={handleClearSearch}
+              />
+            )}
+          </div>
+          <div className="flex items-center">
+            <label className="mr-2">Sort by:</label>
+            <select
+              value={commentsSortOption}
+              onChange={handleSortChange}
+              className="border border-gray-300 dark:bg-transparent rounded p-1"
+            >
+              {commentSortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.key}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {comments.map((comment) => (
+        {filteredComments.map((comment) => (
           <CommentComponent
             key={comment.id}
             comment={comment}
