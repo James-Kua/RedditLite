@@ -154,7 +154,11 @@ const SinglePost = ({
         );
   
         if (postList.data.children.length > 0) {
-          setSortOption(postList.data.children[0].data.suggested_sort || commentsSortOption);
+          if (commentsSortOption === "") {
+            setSortOption(postList.data.children[0].data.suggested_sort);
+          } else {
+            setSortOption(commentsSortOption);
+          }
         }
       });
   
