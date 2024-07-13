@@ -19,6 +19,7 @@ import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
+import { commentSortOptions } from "../utils/sortOptions";
 
 const CommentComponent = ({
   comment,
@@ -42,7 +43,9 @@ const CommentComponent = ({
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`}>
-            <h3 className="font-semibold text-sm text-blue-400">{comment.author}</h3>
+            <h3 className="font-semibold text-sm text-blue-400">
+              {comment.author}
+            </h3>
           </a>
           {comment.author === postAuthor && (
             <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">
@@ -98,10 +101,11 @@ const SinglePost = ({
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [commentsSortOption, setSortOption] = useState(commentSortOptions[0].value);
 
   useEffect(() => {
     fetch(
-      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}.json`
+      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}.json?sort=${commentsSortOption}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -115,7 +119,11 @@ const SinglePost = ({
           )
         );
       });
-  }, [subreddit, postId, title]);
+  }, [subreddit, postId, title, commentsSortOption]);
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortOption(e.target.value);
+  };
 
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
@@ -220,6 +228,23 @@ const SinglePost = ({
           </div>
         ))}
 
+        <div className="flex justify-end items-center mb-4 text-sm">
+          <label className="mr-2">
+            Sort by:
+          </label>
+          <select
+            value={commentsSortOption}
+            onChange={handleSortChange}
+            className="border border-gray-300 dark:bg-transparent rounded p-1"
+          >
+            {commentSortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.key}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {comments.map((comment) => (
           <CommentComponent
             key={comment.id}
@@ -227,7 +252,7 @@ const SinglePost = ({
             postAuthor={posts[0].author}
           />
         ))}
-      </div>{" "}
+      </div>
     </div>
   );
 };

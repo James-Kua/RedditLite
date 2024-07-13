@@ -12,3 +12,12 @@ export const subredditSortOptions = [
   { key: "Top", value: "top" },
   { key: "Rising", value: "rising" },
 ];
+
+export const commentSortOptions = [
+  { key: "Best", value: "best" },
+  { key: "Top", value: "top" },
+  { key: "New", value: "new" },
+  { key: "Controversial", value: "controversial" },
+  { key: "Old", value: "old" },
+  { key: "Q&A", value: "qa" },
+];
