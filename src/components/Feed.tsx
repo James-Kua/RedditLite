@@ -35,6 +35,9 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
   const [sort, setSort] = useState<string>(initialSort);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
+  const [isStarred, setIsStarred] = useState<boolean>(
+    localStorage.getItem("reddit-lite-starred")?.includes(subreddit) || false
+  );
 
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
@@ -98,6 +101,26 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
     }
   }, [fetchPosts, hasMore]);
 
+  const toggleSubredditStar = () => {
+    let starredSubreddits: string[] = JSON.parse(
+      localStorage.getItem("reddit-lite-starred") || "[]"
+    );
+
+    const subredditIndex = starredSubreddits.indexOf(subreddit);
+    if (subredditIndex !== -1) {
+      starredSubreddits.splice(subredditIndex, 1);
+    } else {
+      starredSubreddits.push(subreddit);
+    }
+
+    localStorage.setItem(
+      "reddit-lite-starred",
+      JSON.stringify(starredSubreddits)
+    );
+
+    setIsStarred(!isStarred);
+  };
+
   const filterOptions = [
     { label: "Sort by", options: subredditSortOptions },
     { label: "Time", options: timeOptions },
@@ -108,6 +131,14 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
       <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center">
+            <button
+              onClick={toggleSubredditStar}
+              className={`text-yellow-400 dark:text-yellow-200 focus:outline-none mr-1 ${
+                isStarred ? "text-yellow-500" : ""
+              }`}
+            >
+              {isStarred ? "⭐" : "☆"}
+            </button>
             {
               <SubredditIcon
                 community_icon={subredditInfo?.community_icon}
