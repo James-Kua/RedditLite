@@ -7,12 +7,14 @@ import he from "he";
 import LinkFlairText from "./LinkFlairText";
 import AuthorFlairText from "./AuthorFlairText";
 import Thumbnail from "./Thumbnail";
-import MediaMetadata from "./MediaMetadata";
 import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import { searchSortOptions } from "../utils/sortOptions";
 import { timeOptions } from "../utils/timeOptions";
+import PostGallery from "./PostGallery";
+import SecureMedia from "./SecureMedia";
+import SecureMediaEmbed from "./SecureMediaEmbed";
 
 interface SearchPageProps {
   query: string;
@@ -197,8 +199,22 @@ const SearchPage: React.FC<SearchPageProps> = ({
                 />
               </div>
               <div className={`${post.thumbnail === "spoiler" ? "blur" : ""}`}>
-                {post.media_metadata ? (
-                  <MediaMetadata media_metadata={post.media_metadata} />
+                {post.secure_media_embed?.media_domain_url ? (
+                  <SecureMediaEmbed
+                    url_overridden_by_dest={post.url_overridden_by_dest}
+                    {...post.secure_media_embed}
+                  />
+                ) : post.secure_media ? (
+                  <SecureMedia playing={true} {...post.secure_media} />
+                ) : post.media_metadata ? (
+                  <div className="relative mt-2">
+                    {post.gallery_data ? (
+                      <PostGallery
+                        galleryData={post.gallery_data}
+                        mediaMetadata={post.media_metadata}
+                      />
+                    ) : null}
+                  </div>
                 ) : post.preview ? (
                   <PostPreview preview={post.preview} />
                 ) : post.url_overridden_by_dest &&
