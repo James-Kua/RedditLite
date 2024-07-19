@@ -33,7 +33,7 @@ const PostGallery: React.FC<PostGalleryProps> = ({
           {galleryData.items.map((item) => (
             <div key={item.media_id} className="flex justify-center">
               <div
-                className="max-h-[90vh] w-full flex items-center justify-center"
+                className="max-h-[80vh] w-full flex items-center justify-center"
                 style={{ maxWidth: `${maxImageWidth}px` }}
               >
                 <img

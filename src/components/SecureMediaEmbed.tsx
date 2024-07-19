@@ -49,13 +49,13 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   return (
     <div
       ref={containerRef}
-      className="my-4 flex justify-center items-center w-full max-w-[90vw] max-h-[70vh] relative"
+      className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative border rounded-sm"
       style={{ paddingTop: `${aspectRatio}%` }}
     >
       {isVisible && (
         <>
           {url_overridden_by_dest || media_domain_url ? (
-            <div className="absolute inset-0 flex justify-center items-center w-full max-h-[90vh]">
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full">
               <ReactPlayer
                 url={url_overridden_by_dest ?? media_domain_url}
                 controls
@@ -68,7 +68,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
           ) : (
             decodedContent && (
               <div
-                className="flex justify-center items-center"
+                className="flex justify-center items-center w-full h-full"
                 dangerouslySetInnerHTML={{ __html: decodedContent }}
               />
             )
