@@ -1,127 +1,13 @@
-import { useEffect, useState } from "react";
-import he from "he";
+import React, { useEffect, useState } from "react";
 import { Post } from "../types/post";
-import { Comment, Children2 } from "../types/comment";
-import { isImage } from "../utils/parser";
-import AuthorFlairText from "./AuthorFlairText";
-import LinkFlairText from "./LinkFlairText";
+import { Comment } from "../types/comment";
 import SearchInput from "./SearchInput";
-import { FetchImage } from "../utils/image";
-import Thumbnail from "./Thumbnail";
-import BodyHtml from "./BodyHtml";
-import HomeIcon from "../static/HomeIcon";
-import ArrowIcon from "../static/ArrowIcon";
-import SecureMediaEmbed from "./SecureMediaEmbed";
-import SecureMedia from "./SecureMedia";
-import SelfTextHtml from "./SelfTextHtml";
-import PostGallery from "./PostGallery";
-import PostStats from "./PostStats";
-import PostPreview from "./PostPreview";
-import CreatedEditedLabel from "./CreatedEditedLabel";
-import PostLock from "./PostLock";
 import { commentSortOptions } from "../utils/sortOptions";
 import { FaTimes } from "react-icons/fa";
-
-const filterComments = (comments: Comment[], searchTerm: string): Comment[] => {
-  return comments
-    .map((comment) => {
-      if (!comment.body_html) {
-        return null;
-      }
-
-      if (comment.body_html.toLowerCase().includes(searchTerm)) {
-        return comment;
-      }
-
-      if (comment.replies?.data?.children?.length > 0) {
-        const filteredReplies = filterComments(
-          comment.replies.data.children.map((child: Children2) => child.data),
-          searchTerm
-        );
-        if (filteredReplies.length > 0) {
-          return {
-            ...comment,
-            replies: {
-              data: {
-                children: filteredReplies.map((reply) => ({ data: reply })),
-              },
-            },
-          };
-        }
-      }
-      return null;
-    })
-    .filter(Boolean) as Comment[];
-};
-
-const CommentComponent = ({
-  comment,
-  postAuthor,
-}: {
-  comment: Comment;
-  postAuthor: string;
-}) => {
-  const [showReplies, setShowReplies] = useState(true);
-
-  useEffect(() => {
-    if (comment.collapsed) {
-      setShowReplies(false);
-    }
-  }, [comment.collapsed]);
-
-  if (!comment?.body_html) return null;
-
-  return (
-    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent dark:hover:bg-slate-800 lg:dark:hover:bg-transparent px-1 rounded-md">
-      <div className="flex justify-between items-center w-full max-w-[100vw]">
-        <div className="flex items-center space-x-2 overflow-hidden">
-          <a href={`/user/${comment.author}`}>
-            <h3 className="font-semibold text-sm text-blue-400">
-              {comment.author}
-            </h3>
-          </a>
-          {comment.author === postAuthor && (
-            <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">
-              OP
-            </span>
-          )}
-          <AuthorFlairText
-            author_flair_richtext={comment.author_flair_richtext}
-            author_flair_text={comment.author_flair_text}
-            author_flair_background_color={
-              comment.author_flair_background_color
-            }
-          />
-        </div>
-        <CreatedEditedLabel created={comment.created} edited={comment.edited} />
-      </div>
-      <BodyHtml body_html={comment.body_html} />
-      <div className="text-gray-500 text-xs mt-2 dark:text-slate-200">
-        🔼 {comment.score || 0} upvotes
-      </div>
-      {comment.replies?.data?.children?.length > 0 && (
-        <button
-          className="dark:text-gray-300 text-xs mt-2"
-          onClick={() => setShowReplies(!showReplies)}
-        >
-          {showReplies ? "➖ Hide Replies" : "➕ Show Replies"}
-        </button>
-      )}
-      {showReplies && (
-        <div className="relative border-l-[0.5px] border-gray-700 pl-2 lg:pl-4 ml-1">
-          {comment.replies?.data?.children?.map((childWrapper: Children2) => {
-            const child = childWrapper.data;
-            return child ? (
-              <div key={child.id} className="mt-4">
-                <CommentComponent comment={child} postAuthor={postAuthor} />
-              </div>
-            ) : null;
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
+import HomeIcon from "../static/HomeIcon";
+import ArrowIcon from "../static/ArrowIcon";
+import PostComponent from "./Post";
+import CommentsComponent from "./Comments";
 
 const SinglePost = ({
   subreddit,
@@ -152,7 +38,7 @@ const SinglePost = ({
             (child: { data: Comment }) => child.data
           )
         );
-  
+
         if (postList.data.children.length > 0) {
           if (commentsSortOption === "") {
             setSortOption(postList.data.children[0].data.suggested_sort);
@@ -161,7 +47,6 @@ const SinglePost = ({
           }
         }
       });
-  
   }, [commentsSortOption]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -175,8 +60,6 @@ const SinglePost = ({
   const handleClearSearch = () => {
     setSearchTerm("");
   };
-
-  const filteredComments = filterComments(comments, commentsSearchTerm);
 
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
@@ -210,72 +93,7 @@ const SinglePost = ({
         </nav>
 
         {posts.map((post) => (
-          <div
-            key={post.id}
-            className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8"
-          >
-            <div className="flex items-center space-x-2">
-              <a href={`/user/${post.author}`}>
-                <h3 className="font-semibold text-blue-400">{post.author}</h3>
-              </a>
-              <AuthorFlairText
-                author_flair_richtext={post.author_flair_richtext}
-                author_flair_text={post.author_flair_text}
-                author_flair_background_color={
-                  post.author_flair_background_color
-                }
-              />
-            </div>
-            <a href={`${post.url_overridden_by_dest ?? post.url}`}>
-              <CreatedEditedLabel created={post.created} edited={post.edited} />
-              <h2 className="text-lg my-2 font-semibold dark:text-white">
-                {he.decode(post.title)}
-              </h2>
-              <LinkFlairText
-                link_flair_richtext={post.link_flair_richtext}
-                link_flair_text={post.link_flair_text}
-                link_flair_background_color={post.link_flair_background_color}
-              />
-              {post.secure_media_embed?.media_domain_url ? (
-                <SecureMediaEmbed
-                  url_overridden_by_dest={post.url_overridden_by_dest}
-                  playing={true}
-                  {...post.secure_media_embed}
-                />
-              ) : post.secure_media ? (
-                <SecureMedia playing={true} {...post.secure_media} />
-              ) : post.media_metadata ? (
-                <div className="relative mt-2">
-                  {post.gallery_data ? (
-                    <PostGallery
-                      galleryData={post.gallery_data}
-                      mediaMetadata={post.media_metadata}
-                    />
-                  ) : null}
-                </div>
-              ) : post.preview ? (
-                <PostPreview preview={post.preview} />
-              ) : post.url_overridden_by_dest ? (
-                isImage(post.url_overridden_by_dest) ? (
-                  <img
-                    src={post.url_overridden_by_dest}
-                    alt="url_overridden_by_dest"
-                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
-                  />
-                ) : (
-                  <FetchImage url={post.url_overridden_by_dest} />
-                )
-              ) : (
-                <Thumbnail thumbnail={post.thumbnail || ""} />
-              )}
-              {post.selftext_html && (
-                <SelfTextHtml selftext_html={post.selftext_html} />
-              )}
-            </a>
-
-            <PostLock locked={post.locked} />
-            <PostStats score={post.score} num_comments={post.num_comments} />
-          </div>
+          <PostComponent key={post.id} post={post} />
         ))}
 
         <div className="flex justify-between items-center mb-4 text-sm">
@@ -310,13 +128,11 @@ const SinglePost = ({
           </div>
         </div>
 
-        {filteredComments.map((comment) => (
-          <CommentComponent
-            key={comment.id}
-            comment={comment}
-            postAuthor={posts[0].author}
-          />
-        ))}
+        <CommentsComponent
+          comments={comments}
+          postAuthor={posts[0]?.author || ""}
+          searchTerm={commentsSearchTerm}
+        />
       </div>
     </div>
   );
