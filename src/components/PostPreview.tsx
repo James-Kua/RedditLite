@@ -18,13 +18,15 @@ const PostPreview: React.FC<PostPreviewProps> = ({ preview }) => {
   }
 
   return (
-    <div className="relative mt-2">
+    <div className="relative mt-2 flex justify-center border rounded-md">
       {imageUrl && (
-        <img
-          src={he.decode(imageUrl)}
-          alt="preview"
-          className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
-        />
+        <div className="w-full max-w-[90vw] max-h-[500px] h-auto flex justify-center">
+          <img
+            src={he.decode(imageUrl)}
+            alt="preview"
+            className="object-contain w-full h-auto rounded-md"
+          />
+        </div>
       )}
     </div>
   );
