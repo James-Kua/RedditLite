@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import SearchInput from "./SearchInput";
 import { Post } from "../types/post";
 import { isImage, parsePermalink } from "../utils/parser";
@@ -23,7 +23,7 @@ interface SearchPageProps {
   subreddit: string;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({
+const SearchPage: React.FC<SearchPageProps> = memo(({
   query,
   sort: initialSort,
   time: initialTime,
@@ -42,8 +42,9 @@ const SearchPage: React.FC<SearchPageProps> = ({
     if (!hasMore || !userQuery) return;
 
     const isAlreadyEncoded = userQuery.match(/%[0-9A-F]{2}/i);
-    // handle chinese queries
-    const encodedQuery = isAlreadyEncoded ? encodeURIComponent(userQuery) : userQuery;
+    const encodedQuery = isAlreadyEncoded
+      ? encodeURIComponent(userQuery)
+      : userQuery;
 
     const searchUrl = subreddit
       ? `https://www.reddit.com/r/${subreddit}/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
@@ -59,7 +60,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
-  }, [userQuery, after, hasMore, sort, subreddit]);
+  }, [userQuery, after, hasMore, sort, subreddit, time]);
 
   useEffect(() => {
     setUserQuery(query);
@@ -222,7 +223,7 @@ const SearchPage: React.FC<SearchPageProps> = ({
                   <img
                     src={post.url_overridden_by_dest}
                     alt="url_overridden_by_dest"
-                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                    className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
                   />
                 ) : (
                   <Thumbnail thumbnail={post.thumbnail || ""} />
@@ -245,6 +246,6 @@ const SearchPage: React.FC<SearchPageProps> = ({
       </div>
     </div>
   );
-};
+});
 
 export default SearchPage;

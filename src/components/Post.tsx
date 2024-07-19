@@ -30,7 +30,13 @@ const PostComponent = ({ post }: { post: Post }) => {
           author_flair_background_color={post.author_flair_background_color}
         />
       </div>
-      <a href={`${post.crosspost_parent_list?.[0].permalink ?? post.url_overridden_by_dest ?? post.url}`}>
+      <a
+        href={`${
+          post.crosspost_parent_list?.[0].permalink ??
+          post.url_overridden_by_dest ??
+          post.url
+        }`}
+      >
         <CreatedEditedLabel created={post.created} edited={post.edited} />
         <h2 className="text-lg my-2 font-semibold dark:text-white">
           {he.decode(post.title)}
@@ -78,7 +84,7 @@ const PostComponent = ({ post }: { post: Post }) => {
             <img
               src={post.url_overridden_by_dest}
               alt="url_overridden_by_dest"
-              className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2 max-w-full"
+              className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
             />
           ) : (
             <FetchImage url={post.url_overridden_by_dest} />

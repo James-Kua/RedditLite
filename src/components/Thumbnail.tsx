@@ -31,7 +31,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({ thumbnail }) => {
     <img
       src={thumbnail}
       alt="thumbnail"
-      className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+      className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
     />
   );
 };

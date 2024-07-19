@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, memo } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
 import { parsePermalink, isImage } from "../utils/parser";
@@ -26,7 +26,7 @@ interface FeedProps {
   initialSort: string;
 }
 
-const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
+const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [after, setAfter] = useState<string | null>(null);
@@ -247,7 +247,7 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
                     <img
                       src={post.url_overridden_by_dest}
                       alt="url_overridden_by_dest"
-                      className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                      className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
                     />
                   ) : (
                     <FetchImage url={post.url_overridden_by_dest} />
@@ -273,6 +273,6 @@ const Feed: React.FC<FeedProps> = ({ subreddit, initialTime, initialSort }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Feed;

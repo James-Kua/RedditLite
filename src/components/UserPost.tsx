@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, memo } from "react";
 import { User, UserProfile } from "../types/user";
 import he from "he";
 import { FetchImage } from "../utils/image";
@@ -10,13 +10,17 @@ import SelfTextHtml from "./SelfTextHtml";
 import BodyHtml from "./BodyHtml";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 
-const UserPost = ({ username }: { username: string }) => {
+interface UserPostProps {
+  username: string;
+}
+
+const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const [posts, setPosts] = useState<User[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
-  const sentinel = useRef(null);
+  const sentinel = useRef<HTMLDivElement | null>(null);
 
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
@@ -50,7 +54,6 @@ const UserPost = ({ username }: { username: string }) => {
       .then((data) => {
         setUserProfile(data.data);
       });
-    console.log(userProfile);
   }, [username]);
 
   useEffect(() => {
@@ -96,7 +99,10 @@ const UserPost = ({ username }: { username: string }) => {
         </nav>
         {posts.map((post) => (
           <div key={post.id} className="mb-10">
-            <CreatedEditedLabel created={post.created_utc} edited={post.edited} />
+            <CreatedEditedLabel
+              created={post.created_utc}
+              edited={post.edited}
+            />
             <a href={`/r/${post.subreddit}`}>
               <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
                 {post.subreddit_name_prefixed}
@@ -126,15 +132,13 @@ const UserPost = ({ username }: { username: string }) => {
                   <img
                     src={post.url_overridden_by_dest}
                     alt="url_overridden_by_dest"
-                    className="relative rounded-md overflow-hidden xs:w-[184px] w-[284px] block mt-2"
+                    className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
                   />
                 ) : (
                   <FetchImage url={post.url_overridden_by_dest} />
                 ))}
               {post.body_html && <BodyHtml body_html={post.body_html} />}
-              {post.selftext && (
-                <SelfTextHtml selftext_html={post.selftext} />
-              )}
+              {post.selftext && <SelfTextHtml selftext_html={post.selftext} />}
               <PostStats score={post.score} num_comments={post.num_comments} />
             </a>
           </div>
@@ -143,6 +147,6 @@ const UserPost = ({ username }: { username: string }) => {
       </div>
     </div>
   );
-};
+});
 
 export default UserPost;

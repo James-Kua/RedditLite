@@ -17,11 +17,11 @@ const MediaMetadata: React.FC<MediaMetadataProps> = ({ media_metadata }) => {
   }.${imageType}`;
 
   return (
-    <div>
-      <div className="relative mt-2">
+    <div className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm">
+      <div className="relative max-h-full">
         <img
           src={imageUrl}
-          className="relative rounded-md overflow-hidden xs:h-[100px] xs:w-[130px] max-w-[90vw] w-96 h-auto block mt-2"
+          className="rounded-md overflow-hidden w-96 max-w-full max-h-full"
           alt="Image"
         />
       </div>
