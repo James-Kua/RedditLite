@@ -27,7 +27,7 @@ const PostGallery: React.FC<PostGalleryProps> = ({
   };
 
   return (
-    <div className="px-4">
+    <div className="px-6">
       {galleryData ? (
         <Slider {...settings} className="mb-8">
           {galleryData.items.map((item) => (
