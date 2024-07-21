@@ -3,6 +3,7 @@ import { Comment, Children2 } from "../types/comment";
 import AuthorFlairText from "./AuthorFlairText";
 import BodyHtml from "./BodyHtml";
 import CreatedEditedLabel from "./CreatedEditedLabel";
+import UpvoteIcon from "../static/UpvoteIcon";
 
 const filterComments = (comments: Comment[], searchTerm: string): Comment[] => {
   return comments
@@ -78,8 +79,10 @@ const CommentComponent = ({
         <CreatedEditedLabel created={comment.created} edited={comment.edited} />
       </div>
       <BodyHtml body_html={comment.body_html} />
-      <div className="text-gray-500 text-xs mt-2 dark:text-slate-200">
-        🔼 {comment.score || 0} upvotes
+      <div className="text-gray-500 text-xs mt-2 dark:text-slate-200 flex space-x-1">
+        <UpvoteIcon />
+        <span>{comment.score.toLocaleString("en-US")}</span>
+        <span>upvotes</span>
       </div>
       {comment.replies?.data?.children?.length > 0 && (
         <button
