@@ -20,16 +20,9 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   playing = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const decodedContent = content ? he.decode(content) : null;
+  const aspectRatio = Math.min((height / width) * 100, 90);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const extractYouTubeUrl = (htmlContent: string): string | null => {
-    const div = document.createElement("div");
-    div.innerHTML = he.decode(htmlContent);
-    const iframe = div.querySelector("iframe");
-    return iframe ? iframe.src : null;
-  };
-
-  const youtubeUrl = content ? extractYouTubeUrl(content) : null;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,20 +49,31 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   return (
     <div
       ref={containerRef}
-      className="my-4 flex justify-center items-center w-full max-w-full mx-auto relative border rounded-sm"
-      style={{ paddingTop: `${(height / width) * 100}%` }}
+      className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative border rounded-sm"
+      style={{ paddingTop: `${aspectRatio}%` }}
     >
       {isVisible && (
-        <div className="absolute inset-0 flex justify-center items-center w-full h-full">
-          <ReactPlayer
-            url={youtubeUrl ?? url_overridden_by_dest ?? media_domain_url}
-            controls
-            width="100%"
-            height="100%"
-            playing={playing}
-            muted
-          />
-        </div>
+        <>
+          {url_overridden_by_dest || media_domain_url ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full">
+              <ReactPlayer
+                url={url_overridden_by_dest ?? media_domain_url}
+                controls
+                width="100%"
+                height="100%"
+                playing={playing}
+                muted
+              />
+            </div>
+          ) : (
+            decodedContent && (
+              <div
+                className="flex justify-center items-center w-full h-full"
+                dangerouslySetInnerHTML={{ __html: decodedContent }}
+              />
+            )
+          )}
+        </>
       )}
     </div>
   );
