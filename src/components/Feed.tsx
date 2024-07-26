@@ -19,6 +19,7 @@ import { subredditSortOptions } from "../utils/sortOptions";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
 import PostGallery from "./PostGallery";
+import ExternalLink from "./ExternalLink";
 
 interface FeedProps {
   subreddit: string;
@@ -260,6 +261,9 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                     selftext_html={post.selftext_html}
                     truncateLines={10}
                   />
+                )}
+                {post.url_overridden_by_dest && post.post_hint == "link" && (
+                  <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
                 )}
                 <PostStats
                   score={post.score}

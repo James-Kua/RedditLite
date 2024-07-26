@@ -12,6 +12,7 @@ export type Post = {
   preview: Preview
   url: string;
   url_overridden_by_dest: string;
+  post_hint: string;
   thumbnail?: string;
   media: Media
   secure_media?: SecureMedia
