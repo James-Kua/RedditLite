@@ -197,12 +197,18 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           )}
         </div>
 
-        {posts.map((post) => (
-          <a href={parsePermalink(post.permalink)} key={post.id}>
-            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative">
+          {posts.map((post) => (
+            <div
+              key={post.id}
+              className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-10 relative"
+            >
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="font-semibold text-blue-400">{post.author}</h3>
+                  <a href={`/user/${post.author}`}>
+                    <h3 className="font-semibold text-blue-400">
+                      {post.author}
+                    </h3>
+                  </a>
                   <AuthorFlairText
                     author_flair_richtext={post.author_flair_richtext}
                     author_flair_text={post.author_flair_text}
@@ -215,68 +221,81 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                   created={post.created}
                   edited={post.edited}
                 />
-                <h2 className="text-lg font-semibold my-1 dark:text-white">
-                  {he.decode(post.title)}
-                </h2>
-                <LinkFlairText
-                  link_flair_richtext={post.link_flair_richtext}
-                  link_flair_text={post.link_flair_text}
-                  link_flair_background_color={post.link_flair_background_color}
-                />
-              </div>
-              <div className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" ? "blur" : ""}`}>
-                {post.secure_media_embed?.media_domain_url ? (
-                  <SecureMediaEmbed
-                    url_overridden_by_dest={post.url_overridden_by_dest}
-                    {...post.secure_media_embed}
+                <a href={parsePermalink(post.permalink)}>
+                  <h2 className="text-lg font-semibold my-1 dark:text-white">
+                    {he.decode(post.title)}
+                  </h2>
+                  <LinkFlairText
+                    link_flair_richtext={post.link_flair_richtext}
+                    link_flair_text={post.link_flair_text}
+                    link_flair_background_color={
+                      post.link_flair_background_color
+                    }
                   />
-                ) : post.secure_media ? (
-                  <SecureMedia {...post.secure_media} />
-                ) : post.media_metadata ? (
-                  <div className="relative mt-2">
-                    {post.gallery_data ? (
-                      <PostGallery
-                        galleryData={post.gallery_data}
-                        mediaMetadata={post.media_metadata}
+                  <div
+                    className={`${
+                      post.thumbnail === "spoiler" || post.thumbnail === "nsfw"
+                        ? "blur"
+                        : ""
+                    }`}
+                  >
+                    {post.secure_media_embed?.media_domain_url ? (
+                      <SecureMediaEmbed
+                        url_overridden_by_dest={post.url_overridden_by_dest}
+                        {...post.secure_media_embed}
                       />
-                    ) : null}
-                  </div>
-                ) : post.preview ? (
-                  <PostPreview preview={post.preview} />
-                ) : post.url_overridden_by_dest ? (
-                  isImage(post.url_overridden_by_dest) ? (
-                    <img
-                      src={post.url_overridden_by_dest}
-                      alt="url_overridden_by_dest"
-                      className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
+                    ) : post.secure_media ? (
+                      <SecureMedia {...post.secure_media} />
+                    ) : post.media_metadata ? (
+                      <div className="relative mt-2">
+                        {post.gallery_data ? (
+                          <PostGallery
+                            galleryData={post.gallery_data}
+                            mediaMetadata={post.media_metadata}
+                          />
+                        ) : null}
+                      </div>
+                    ) : post.preview ? (
+                      <PostPreview preview={post.preview} />
+                    ) : post.url_overridden_by_dest ? (
+                      isImage(post.url_overridden_by_dest) ? (
+                        <img
+                          src={post.url_overridden_by_dest}
+                          alt="url_overridden_by_dest"
+                          className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
+                        />
+                      ) : (
+                        <FetchImage url={post.url_overridden_by_dest} />
+                      )
+                    ) : (
+                      <Thumbnail thumbnail={post.thumbnail || ""} />
+                    )}
+                    {post.selftext_html && (
+                      <SelfTextHtml
+                        selftext_html={post.selftext_html}
+                        truncateLines={10}
+                      />
+                    )}
+                    {post.url_overridden_by_dest &&
+                      post.post_hint === "link" && (
+                        <ExternalLink
+                          url_overridden_by_dest={post.url_overridden_by_dest}
+                        />
+                      )}
+                    <PostStats
+                      score={post.score}
+                      num_comments={post.num_comments}
                     />
-                  ) : (
-                    <FetchImage url={post.url_overridden_by_dest} />
-                  )
-                ) : (
-                  <Thumbnail thumbnail={post.thumbnail || ""} />
-                )}
-                {post.selftext_html && (
-                  <SelfTextHtml
-                    selftext_html={post.selftext_html}
-                    truncateLines={10}
-                  />
-                )}
-                {post.url_overridden_by_dest && post.post_hint == "link" && (
-                  <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
-                )}
-                <PostStats
-                  score={post.score}
-                  num_comments={post.num_comments}
-                />
+                  </div>
+                </a>
               </div>
             </div>
-          </a>
-        ))}
-        <div ref={sentinel} className="h-1"></div>
+          ))}
+          <div ref={sentinel} className="h-1"></div>
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 export default Feed;
