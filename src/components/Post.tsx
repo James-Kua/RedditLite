@@ -15,6 +15,9 @@ import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
 
 const PostComponent = ({ post }: { post: Post }) => {
+
+  document.title = post.title;
+
   return (
     <div
       key={post.id}

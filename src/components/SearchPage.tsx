@@ -15,6 +15,7 @@ import { timeOptions } from "../utils/timeOptions";
 import PostGallery from "./PostGallery";
 import SecureMedia from "./SecureMedia";
 import SecureMediaEmbed from "./SecureMediaEmbed";
+import ExternalLink from "./ExternalLink";
 
 interface SearchPageProps {
   query: string;
@@ -29,6 +30,9 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
   time: initialTime,
   subreddit,
 }) => {
+
+  document.title = `${decodeURIComponent(query)} - Reddit Search!` ;
+
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
   const [after, setAfter] = useState<string | null>(null);
