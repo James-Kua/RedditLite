@@ -238,6 +238,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
                     truncateLines={10}
                   />
                 )}
+                <ExternalLink url_overridden_by_dest={post.url} />
                 <PostStats
                   score={post.score}
                   num_comments={post.num_comments}
