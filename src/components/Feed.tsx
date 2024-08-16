@@ -20,6 +20,8 @@ import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
 import PostGallery from "./PostGallery";
 import ExternalLink from "./ExternalLink";
+import HomeIcon from "../static/HomeIcon";
+import ArrowIcon from "../static/ArrowIcon";
 
 interface FeedProps {
   subreddit: string;
@@ -130,8 +132,20 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   return (
     <div className="dark:bg-custom-black dark:text-white">
       <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
-        <div className="flex justify-between items-center mb-5">
-          <div className="flex items-center">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center justify-between mb-5"
+        >
+          <ol className="flex items-center gap-1 text-sm text-gray-600">
+            <li>
+              <a href="/" className="block transition hover:text-gray-700">
+                <span className="sr-only">Home</span>
+                <HomeIcon />
+              </a>
+            </li>
+            <li className="rtl:rotate-180">
+              <ArrowIcon />
+            </li>
             <button
               onClick={toggleSubredditStar}
               className={`text-yellow-400 dark:text-yellow-200 focus:outline-none mr-1 ${
@@ -146,15 +160,14 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                 icon_img={subredditInfo?.icon_img}
               />
             }
-            <h1 className="text-gray-500 dark:text-white font-bold text-xl tracking-wide mr-1">
+            <h1 className="text-gray-500 dark:text-white font-bold text-lg tracking-wide mr-1">
               {subreddit}
             </h1>
-          </div>
-
-          <div className="ml-1">
+          </ol>
+          <div className="search-input">
             <SearchInput />
           </div>
-        </div>
+        </nav>
 
         <div className="mb-2">
           <SubredditInfo
