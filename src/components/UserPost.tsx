@@ -109,13 +109,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
               </span>
             </a>
 
-            <a
-              href={`/r/${
-                post.link_permalink
-                  ? post.link_permalink.split("/r/")[1]
-                  : post.permalink.split("/r/")[1]
-              }`}
-            >
+            <a href={`${post.permalink ?? post.link_permalink}`}>
               <h1 className="text-lg font-semibold text-gray-800 dark:text-white">
                 {he.decode(post.title ?? "")}
               </h1>

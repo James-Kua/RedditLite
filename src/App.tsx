@@ -13,7 +13,7 @@ function App() {
         <Route path="/r/:subreddit" element={<FeedWrapper />} />
         <Route path="/r/:subreddit/:sort" element={<FeedWrapper />} />
         <Route
-          path="/r/:subreddit/comments/:id/:title"
+          path="/r/:subreddit/comments/:id/:title/:comment_id?"
           element={<SinglePostWrapper />}
         />
         <Route path="/r/:subreddit/search" element={<SearchWrapper />} />
@@ -37,12 +37,25 @@ const FeedWrapper = () => {
   const [searchParams] = useSearchParams();
   const time = searchParams.get("t") || "year";
 
-  return <Feed subreddit={subreddit || "singapore"} initialTime={time} initialSort={sort} />;
+  return (
+    <Feed
+      subreddit={subreddit || "singapore"}
+      initialTime={time}
+      initialSort={sort}
+    />
+  );
 };
 
 const SinglePostWrapper = () => {
-  const { subreddit = "", id = "", title = "" } = useParams();
-  return <SinglePost subreddit={subreddit} postId={id} title={title} />;
+  const { subreddit = "", id = "", title = "", comment_id = "" } = useParams();
+  return (
+    <SinglePost
+      subreddit={subreddit}
+      postId={id}
+      title={title}
+      comment_id={comment_id ?? ""}
+    />
+  );
 };
 
 const UserProfileWrapper = () => {

@@ -13,10 +13,12 @@ const SinglePost = ({
   subreddit,
   postId,
   title,
+  comment_id,
 }: {
   subreddit: string;
   postId: string;
   title: string;
+  comment_id?: string;
 }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -25,7 +27,7 @@ const SinglePost = ({
 
   useEffect(() => {
     fetch(
-      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}.json?sort=${commentsSortOption}`
+      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
     )
       .then((response) => response.json())
       .then((data) => {
