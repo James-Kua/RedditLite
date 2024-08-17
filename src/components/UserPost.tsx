@@ -9,6 +9,7 @@ import SearchInput from "./SearchInput";
 import SelfTextHtml from "./SelfTextHtml";
 import BodyHtml from "./BodyHtml";
 import CreatedEditedLabel from "./CreatedEditedLabel";
+import PollData from "./PollData";
 
 interface UserPostProps {
   username: string;
@@ -132,7 +133,10 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                   <FetchImage url={post.url_overridden_by_dest} />
                 ))}
               {post.body_html && <BodyHtml body_html={post.body_html} />}
-              {post.selftext && <SelfTextHtml selftext_html={post.selftext} />}
+              {post.poll_data && (
+                <PollData poll_data={post.poll_data} />
+              )}
+              {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
               <PostStats score={post.score} num_comments={post.num_comments} />
             </a>
           </div>

@@ -22,6 +22,7 @@ import PostGallery from "./PostGallery";
 import ExternalLink from "./ExternalLink";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
+import PollData from "./PollData";
 
 interface FeedProps {
   subreddit: string;
@@ -282,6 +283,9 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                       )
                     ) : (
                       <Thumbnail thumbnail={post.thumbnail || ""} />
+                    )}
+                    {post.poll_data && (
+                      <PollData poll_data={post.poll_data} />
                     )}
                     {post.selftext_html && (
                       <SelfTextHtml

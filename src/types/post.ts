@@ -29,6 +29,7 @@ export type Post = {
   gallery_data?: GalleryData
   locked: boolean
   crosspost_parent_list?: Post[]
+  poll_data?: PollData
 };
 
 interface GalleryData {
@@ -108,4 +109,15 @@ export interface Resolution {
 export interface Variant {
   source: Source;
   resolutions: Resolution[];
+}
+
+export interface PollData {
+  options: {
+    text: string;
+    vote_count: number;
+    id: string;
+  }[];
+  total_vote_count: number;
+  user_selection?: string;
+  voting_end_timestamp: string;
 }

@@ -13,6 +13,7 @@ import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
+import PollData from "./PollData";
 
 const PostComponent = ({ post }: { post: Post }) => {
 
@@ -94,6 +95,9 @@ const PostComponent = ({ post }: { post: Post }) => {
           )
         ) : (
           <Thumbnail thumbnail={post.thumbnail || ""} />
+        )}
+        {post.poll_data && (
+          <PollData poll_data={post.poll_data} />
         )}
         {post.selftext_html && (
           <SelfTextHtml selftext_html={post.selftext_html} />
