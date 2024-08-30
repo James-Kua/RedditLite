@@ -111,7 +111,9 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
   return (
     <div>
       <div className="max-w-screen overflow-x-auto">
-        <Bar data={data} options={options} />
+        <div className="min-w-[400px] mx-0">
+          <Bar data={data} options={options} />
+        </div>
       </div>
       <div>
         {isPollOpen ? (
