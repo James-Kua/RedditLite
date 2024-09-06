@@ -16,6 +16,8 @@ import PostGallery from "./PostGallery";
 import SecureMedia from "./SecureMedia";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import ExternalLink from "./ExternalLink";
+import ArrowIcon from "../static/ArrowIcon";
+import HomeIcon from "../static/HomeIcon";
 
 interface SearchPageProps {
   query: string;
@@ -119,16 +121,30 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
   ];
 
   return (
-    <div className="dark:bg-custom-black text-white">
-      <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
-        <div className="flex justify-between items-center mb-5">
-          <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">
-            Search Results
-          </h1>
-          <div className="ml-1">
+    <div className="dark:bg-custom-black dark:text-white min-h-screen">
+      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
+        <nav
+          aria-label="Breadcrumb"
+          className="flex items-center justify-between mb-5"
+        >
+          <ol className="flex items-center gap-1 text-sm text-gray-600">
+            <li>
+              <a href="/" className="block transition hover:text-gray-700">
+                <span className="sr-only">Home</span>
+                <HomeIcon />
+              </a>
+            </li>
+            <li className="rtl:rotate-180">
+              <ArrowIcon />
+            </li>
+            <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">
+              Search Results
+            </h1>
+          </ol>
+          <div className="search-input">
             <SearchInput />
           </div>
-        </div>
+        </nav>
 
         <div className="mb-2 font-medium text-gray-400">
           Showing search results for{" "}
