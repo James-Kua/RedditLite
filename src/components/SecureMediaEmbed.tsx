@@ -46,6 +46,11 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
     };
   }, []);
 
+  const handlePlayerClick = (event: React.MouseEvent) => {
+    event.preventDefault(); 
+    event.stopPropagation();
+  };
+
   return (
     <div
       ref={containerRef}
@@ -63,6 +68,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
                 height="100%"
                 playing={playing}
                 muted
+                onClick={handlePlayerClick}
               />
             </div>
           ) : (

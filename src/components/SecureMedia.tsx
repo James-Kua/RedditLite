@@ -41,6 +41,11 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
     };
   }, []);
 
+  const handlePlayerClick = (event: React.MouseEvent) => {
+    event.preventDefault(); 
+    event.stopPropagation();
+  };
+
   return (
     <div
       ref={containerRef}
@@ -61,6 +66,7 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
             border: "1px solid #e0e0e0"
           }}
           muted
+          onClick={handlePlayerClick}
         />
       )}
     </div>
