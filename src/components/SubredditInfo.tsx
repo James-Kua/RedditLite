@@ -7,30 +7,37 @@ type SubredditInfoProps = {
   subscribers?: number;
 };
 
-const SubredditInfo: React.FC<SubredditInfoProps> = ({
-  public_description_html,
-  accounts_active,
-  subscribers,
-}) => {
-  const descriptionHtml = public_description_html || "";
+const SubredditInfo: React.FC<SubredditInfoProps> = ({ public_description_html, accounts_active, subscribers }) => {
+  if (!public_description_html) {
+    return null;
+  }
+
+  const gradientClass = "bg-gradient-to-r from-blue-200 to-green-200 dark:from-gray-800 dark:to-gray-900";
+
   return (
-    <div>
+    <div className={`${gradientClass} p-2 rounded-md text-sm overflow-scroll`}>
       <div
-        className="text-gray-500 text-sm overflow-scroll dark:text-white"
+        className="text-black text-sm leading-relaxed overflow-hidden dark:text-white mb-2"
         dangerouslySetInnerHTML={{
-          __html: he.decode(descriptionHtml),
+          __html: he.decode(public_description_html),
         }}
       />
-      <div>
+      <div className="flex flex-col space-y-1 text-sm">
         {subscribers && (
-          <p className="text-gray-500 text-sm font-medium mt-4 dark:text-white">
-            🫂 {subscribers.toLocaleString("en-US")} Members
-          </p>
+          <div className="flex items-center text-black dark:text-white">
+            <span role="img" aria-label="members" className="mr-1">
+              🫂
+            </span>
+            <span className="font-base">{subscribers.toLocaleString("en-US")} Members</span>
+          </div>
         )}
         {accounts_active && (
-          <p className="text-gray-500 text-sm font-medium mt-1 dark:text-white">
-            🟢 {accounts_active.toLocaleString("en-US")} Online
-          </p>
+          <div className="flex items-center text-black dark:text-white">
+            <span role="img" aria-label="online" className="mr-1">
+              🟢
+            </span>
+            <span className="font-base">{accounts_active.toLocaleString("en-US")} Online</span>
+          </div>
         )}
       </div>
     </div>
