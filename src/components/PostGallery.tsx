@@ -11,15 +11,28 @@ type PostGalleryProps = {
   mediaMetadata?: any[];
 };
 
-const PostGallery: React.FC<PostGalleryProps> = ({
-  galleryData,
-  mediaMetadata,
-}) => {
+const PostGallery: React.FC<PostGalleryProps> = ({ galleryData, mediaMetadata }) => {
   const maxImageWidth = window.innerWidth * 0.9;
 
   const settings = {
+    customPaging: function (i: number) {
+      const item = galleryData.items[i];
+      const imageUrl = `https://i.redd.it/${item.media_id}.${parseImageType(
+        mediaMetadata?.[item.media_id as unknown as number]?.m ?? ""
+      )}`;
+
+      return (
+        <a>
+          <img
+            src={imageUrl}
+            className="w-6 h-6 object-cover rounded-md"
+          />
+        </a>
+      );
+    },
     dots: true,
-    infinite: false,
+    fade: true,
+    infinite: true,
     speed: 200,
     slidesToShow: 1,
     slidesToScroll: 1,
