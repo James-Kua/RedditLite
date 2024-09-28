@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
 import he from "he";
+import SearchIcon from "../static/SearchIcon";
 
 const SearchInput: React.FC = () => {
   const isMobile = window.innerWidth <= 767;
@@ -102,7 +103,7 @@ const SearchInput: React.FC = () => {
         Search
       </label>
       <div
-        className={`flex items-center transition-all duration-300 ease-in-out ${
+        className={`flex items-center transition-all duration-300 ease-in-out ml-1 ${
           isExpanded ? "w-full" : "w-12 lg:w-full"
         }`}
       >
@@ -117,7 +118,7 @@ const SearchInput: React.FC = () => {
             isExpanded
               ? "opacity-100 pl-2 pr-10 py-2.5"
               : "opacity-0 pl-0 pr-0 py-0 lg:opacity-100 lg:pl-2 lg:pr-10 lg:py-2.5"
-          } w-full rounded-md border-gray-200 shadow-sm sm:text-sm dark:bg-slate-900 dark:text-white`}
+          } w-full rounded-md border-gray-200 shadow-sm text-sm dark:bg-slate-900 dark:text-white`}
         />
         <button
           type="button"
@@ -125,20 +126,7 @@ const SearchInput: React.FC = () => {
           className="text-gray-600 hover:text-gray-700 ml-2 lg:hidden"
         >
           <span className="sr-only">Expand</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
-          </svg>
+          <SearchIcon />
         </button>
         <button
           type="button"
