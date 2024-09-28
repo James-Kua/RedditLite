@@ -3,7 +3,7 @@ import { Post } from "../types/post";
 import { Comment } from "../types/comment";
 import SearchInput from "./SearchInput";
 import { commentSortOptions } from "../utils/sortOptions";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaSyncAlt } from "react-icons/fa";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import PostComponent from "./Post";
@@ -24,8 +24,11 @@ const SinglePost = ({
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsSortOption, setSortOption] = useState("");
   const [commentsSearchTerm, setSearchTerm] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+    setIsRefreshing(true);
     fetch(
       `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
     )
@@ -48,8 +51,11 @@ const SinglePost = ({
             setSortOption(commentsSortOption);
           }
         }
+      })
+      .finally(() => {
+        setIsRefreshing(false);
       });
-  }, [commentsSortOption]);
+  }, [commentsSortOption, refreshKey]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortOption(e.target.value);
@@ -61,6 +67,10 @@ const SinglePost = ({
 
   const handleClearSearch = () => {
     setSearchTerm("");
+  };
+
+  const handleRefreshComments = () => {
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
   return (
@@ -105,7 +115,7 @@ const SinglePost = ({
               value={commentsSearchTerm}
               onChange={handleSearchChange}
               placeholder="Search comments"
-              className="border border-gray-300 dark:bg-transparent rounded p-1 mr-2"
+              className="border border-gray-300 dark:bg-transparent rounded p-1 mr-2 sm: max-w-36 lg:max-w-48"
             />
             {commentsSearchTerm && (
               <FaTimes
@@ -114,7 +124,7 @@ const SinglePost = ({
               />
             )}
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center whitespace-nowrap">
             <label className="mr-2">Sort by:</label>
             <select
               value={commentsSortOption}
@@ -127,6 +137,13 @@ const SinglePost = ({
                 </option>
               ))}
             </select>
+            <FaSyncAlt
+              onClick={handleRefreshComments}
+              className={`ml-2 text-blue-500 cursor-pointer ${
+                isRefreshing ? "animate-spin" : ""
+              }`}
+              size={16}
+            />
           </div>
         </div>
 
