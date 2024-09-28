@@ -63,7 +63,7 @@ const CommentComponent = ({
             {comment?.distinguished === "moderator" && <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>}
           </a>
           {comment.author === postAuthor && (
-            <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">
+            <span className="whitespace-nowrap rounded-md bg-gray-100 p-0.5 font-semibold text-xs text-blue-700 overflow-x-auto">
               OP
             </span>
           )}
