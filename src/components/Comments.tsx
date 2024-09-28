@@ -58,10 +58,9 @@ const CommentComponent = ({
     <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent dark:hover:bg-slate-800 lg:dark:hover:bg-transparent px-1 rounded-md">
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
-          <a href={`/user/${comment.author}`}>
-            <h3 className="font-semibold text-sm text-blue-400">
-              {comment.author}
-            </h3>
+          <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
+            <h3 className="font-semibold text-sm text-blue-400">{comment.author}</h3>
+            {comment?.distinguished === "moderator" && <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>}
           </a>
           {comment.author === postAuthor && (
             <span className="whitespace-nowrap rounded-lg bg-blue-100 p-1 font-semibold text-xs text-blue-700 overflow-x-auto">

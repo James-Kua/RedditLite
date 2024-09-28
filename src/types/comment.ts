@@ -14,6 +14,7 @@ export type Comment = {
   author_flair_richtext: AuthorFlairRichtext[]
   author_flair_text_color?: string;
   replies: Replies;
+  distinguished?: string;
 };
 
 export interface Children {
