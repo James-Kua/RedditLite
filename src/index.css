@@ -31,4 +31,18 @@
     li {
         margin-bottom: 0.25rem;
     }
+
+    blockquote {
+        border-left: 2.5px solid #3b82f6;
+        color: #6b7280;
+        background-color: #f9fafb;
+        padding: 0.5rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        blockquote {
+            color: #9ca3af;
+            background-color: #1f2937;
+        }
+    }
 }
