@@ -39,10 +39,27 @@
         padding: 0.5rem;
     }
 
+    th, td {
+        border: 1px solid #d1d5db;
+        color: #d1d5db;
+        padding: 0.45rem;
+        text-align: left;
+    }
+
+    th {
+        background-color: #60a5fa;
+        color: white;
+        font-weight: bold;
+    }
+
     @media (prefers-color-scheme: dark) {
         blockquote {
             color: #9ca3af;
             background-color: #1f2937;
+        }
+
+        th {
+            background-color: #4b5563;
         }
     }
 }
