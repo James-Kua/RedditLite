@@ -11,7 +11,7 @@ const BodyHtml: React.FC<BodyHtmlProps> = ({ body_html }) => {
       dangerouslySetInnerHTML={{
         __html: he.decode(decodedBodyHtml),
       }}
-      className="mt-2 overflow-scroll text-gray-800 text-sm lg:text-[15px] dark:text-zinc-200 leading-normal"
+      className="rich-text-content mt-2 overflow-scroll text-gray-800 text-sm lg:text-[15px] dark:text-zinc-200 leading-normal"
     />
   );
 };

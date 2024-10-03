@@ -7,8 +7,12 @@
         background: #0E1113;
     }
 
-    /* post gallery active dot style */
-    .slick-dots li button:before {
-        color: white !important;
-    }
+}
+
+.rich-text-content a {
+    color: #3b82f6;
+}
+
+.rich-text-content a:hover {
+    text-decoration: underline;
 }

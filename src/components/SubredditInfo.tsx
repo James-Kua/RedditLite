@@ -17,7 +17,7 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ public_description_html, 
   return (
     <div className={`${gradientClass} p-2 rounded-md text-sm overflow-scroll`}>
       <div
-        className="text-black text-sm leading-relaxed overflow-hidden dark:text-white mb-2"
+        className="rich-text-content text-black text-sm leading-relaxed overflow-hidden dark:text-white mb-2"
         dangerouslySetInnerHTML={{
           __html: he.decode(public_description_html),
         }}
