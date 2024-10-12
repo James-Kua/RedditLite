@@ -1,7 +1,7 @@
 # RedditLite
 
-<img width="1624" alt="image" src="https://github.com/James-Kua/RedditLite/assets/61898455/06276fe7-e131-4ad5-b38d-bc991a024ec3">
+<img width="1916" alt="image" src="https://github.com/user-attachments/assets/2215f9c8-b4fe-418d-ad54-23fda64651e5">
 
 This is a minimalist Reddit client provides a clean and simple user interface, for a more streamlined browsing experience.
 
-Try it out [here](https://reddit-lite.pages.dev/r/nus)
+Try it out [here](https://reddit-lite.pages.dev/r/singapore)
