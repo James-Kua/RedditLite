@@ -36,7 +36,8 @@
         border-left: 2.5px solid #3b82f6;
         color: #6b7280;
         background-color: #f9fafb;
-        padding: 0.5rem;
+        padding: 0.4rem;
+        border-radius: 0.25rem;
     }
 
     th, td {
