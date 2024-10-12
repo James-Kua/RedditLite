@@ -1,4 +1,5 @@
 export interface Subreddit {
+  name: string;
   title: string;
   display_name: string;
   display_name_prefixed: string;
