@@ -219,7 +219,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
                   link_flair_background_color={post.link_flair_background_color}
                 />
               </div>
-              <div className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" ? "blur" : ""}`}>
+              <div className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur" : ""}`}>
                 {post.secure_media_embed?.media_domain_url ? (
                   <SecureMediaEmbed
                     url_overridden_by_dest={post.url_overridden_by_dest}

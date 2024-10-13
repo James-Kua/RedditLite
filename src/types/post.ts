@@ -22,6 +22,7 @@ export type Post = {
   link_flair_richtext: LinkFlairRichtext[];
   link_flair_text_color: string;
   link_flair_background_color: string;
+  over_18: boolean;
   score: number;
   subreddit: string;
   subreddit_name_prefixed: string;

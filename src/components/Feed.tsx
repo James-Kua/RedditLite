@@ -248,7 +248,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                   />
                   <div
                     className={`${
-                      post.thumbnail === "spoiler" || post.thumbnail === "nsfw"
+                      post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18
                         ? "blur"
                         : ""
                     }`}
