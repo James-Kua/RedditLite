@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import he from "he";
+import { XEmbed, FacebookEmbed, PinterestEmbed, TikTokEmbed, InstagramEmbed } from "react-social-media-embed";
 
 type SecureMediaEmbedProps = {
   url_overridden_by_dest?: string;
@@ -47,9 +48,15 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   }, []);
 
   const handlePlayerClick = (event: React.MouseEvent) => {
-    event.preventDefault(); 
+    event.preventDefault();
     event.stopPropagation();
   };
+
+  const isTwitterUrl = (url: string) => url.includes("twitter.com");
+  const isFacebookUrl = (url: string) => url.includes("facebook.com");
+  const isPinterestUrl = (url: string) => url.includes("pinterest.com");
+  const isTikTokUrl = (url: string) => url.includes("tiktok.com");
+  const isInstagramUrl = (url: string) => url.includes("instagram.com");
 
   return (
     <div
@@ -57,12 +64,32 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
       className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative border rounded-sm"
       style={{ paddingTop: `${aspectRatio}%` }}
     >
-      {isVisible && (
-        <>
-          {url_overridden_by_dest || media_domain_url ? (
+      {isVisible &&
+        (url_overridden_by_dest ? (
+          isTwitterUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <XEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : isFacebookUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <FacebookEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : isPinterestUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <PinterestEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : isTikTokUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <TikTokEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : isInstagramUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <InstagramEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full">
               <ReactPlayer
-                url={url_overridden_by_dest ?? media_domain_url}
+                url={url_overridden_by_dest}
                 controls
                 width="100%"
                 height="100%"
@@ -71,16 +98,25 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
                 onClick={handlePlayerClick}
               />
             </div>
-          ) : (
-            decodedContent && (
-              <div
-                className="flex justify-center items-center w-full h-full"
-                dangerouslySetInnerHTML={{ __html: decodedContent }}
-              />
-            )
-          )}
-        </>
-      )}
+          )
+        ) : media_domain_url ? (
+          <div className="absolute inset-0 flex justify-center items-center w-full h-full">
+            <ReactPlayer
+              url={media_domain_url}
+              controls
+              width="100%"
+              height="100%"
+              playing={playing}
+              muted
+              onClick={handlePlayerClick}
+            />
+          </div>
+        ) : decodedContent ? (
+          <div
+            className="flex justify-center items-center w-full h-full"
+            dangerouslySetInnerHTML={{ __html: decodedContent }}
+          />
+        ) : null)}
     </div>
   );
 };
