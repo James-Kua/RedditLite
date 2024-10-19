@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import he from "he";
 import { XEmbed, FacebookEmbed, PinterestEmbed, TikTokEmbed, InstagramEmbed } from "react-social-media-embed";
+import { TwitchClip } from 'react-twitch-embed';
 
 type SecureMediaEmbedProps = {
   url_overridden_by_dest?: string;
@@ -57,7 +58,13 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   const isPinterestUrl = (url: string) => url.includes("pinterest.com");
   const isTikTokUrl = (url: string) => url.includes("tiktok.com");
   const isInstagramUrl = (url: string) => url.includes("instagram.com");
+  const isTwitchUrl = (url: string) => url.includes("clips.twitch.tv/");
 
+  const getTwitchClipId = (url: string) => {
+    const match = url.match(/clips\.twitch\.tv\/([A-Za-z0-9_-]+)/);
+    return match ? match[1] : null;
+  };
+  
   return (
     <div
       ref={containerRef}
@@ -85,6 +92,10 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
           ) : isInstagramUrl(url_overridden_by_dest) ? (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
               <InstagramEmbed url={url_overridden_by_dest} />
+            </div>
+          ) : isTwitchUrl(url_overridden_by_dest) ? (
+            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-hidden">
+              <TwitchClip clip={getTwitchClipId(url_overridden_by_dest) || ''} autoplay={false} muted />
             </div>
           ) : (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full">

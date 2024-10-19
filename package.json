@@ -25,6 +25,7 @@
     "react-router-dom": "^6.25.1",
     "react-slick": "^0.30.2",
     "react-social-media-embed": "^2.5.17",
+    "react-twitch-embed": "^3.0.2",
     "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
