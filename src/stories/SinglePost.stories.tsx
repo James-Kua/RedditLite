@@ -29,3 +29,17 @@ WithCommentId.args = {
   title: "weibo_gaming_vs_t1_2023_world_championship_final",
   comment_id: "k9vni5m",
 };
+
+export const NormalPost = Template.bind({});
+NormalPost.args = {
+  subreddit: "singapore",
+  postId: "1gfke9t",
+  title: "spotted_a_singapore_shaped_cloud_today",
+};
+
+export const Crosspost = Template.bind({});
+Crosspost.args = {
+  subreddit: "reddevils",
+  postId: "1gfvryi",
+  title: "manchester_united_1_0_leicester_city_casemiro_15",
+};

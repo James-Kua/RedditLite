@@ -14,6 +14,7 @@ import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
 import PollData from "./PollData";
+import ExternalLink from "./ExternalLink";
 
 const PostComponent = ({ post }: { post: Post }) => {
 
@@ -51,7 +52,7 @@ const PostComponent = ({ post }: { post: Post }) => {
           link_flair_background_color={post.link_flair_background_color}
         />
         {post.crosspost_parent_list ? (
-          <div className="px-4 pt-4 rounded-md border-2 mt-2 w-fit max-w-[90vw] inline-block">
+          <div className="px-4 pt-4 rounded-md border-2 mt-2 w-full inline-block">
             <div className="font-bold dark:text-white mb-2">
               {post.crosspost_parent_list[0].subreddit_name_prefixed}
             </div>
@@ -101,6 +102,9 @@ const PostComponent = ({ post }: { post: Post }) => {
         )}
         {post.selftext_html && (
           <SelfTextHtml selftext_html={post.selftext_html} />
+        )}
+        {!post.crosspost_parent_list && post.url_overridden_by_dest && !isImage(post.url_overridden_by_dest) && (
+            <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
         )}
       </a>
       <PostLock locked={post.locked} />
