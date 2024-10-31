@@ -1,5 +1,7 @@
 import React from "react";
 import he from "he";
+import UserGroupIcon from "../static/UserGroupIcon";
+import UserOnlineIcon from "../static/UserOnlineIcon";
 
 type SubredditInfoProps = {
   public_description_html?: string;
@@ -25,16 +27,16 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ public_description_html, 
       <div className="flex flex-col space-y-1 text-sm">
         {subscribers && (
           <div className="flex items-center text-black dark:text-white">
-            <span role="img" aria-label="members" className="mr-1">
-              🫂
+            <span aria-label="members" className="mr-1">
+              <UserGroupIcon />
             </span>
             <span className="font-base">{subscribers.toLocaleString("en-US")} Members</span>
           </div>
         )}
         {accounts_active && (
           <div className="flex items-center text-black dark:text-white">
-            <span role="img" aria-label="online" className="mr-1">
-              🟢
+            <span aria-label="online" className="mr-1">
+              <UserOnlineIcon />
             </span>
             <span className="font-base">{accounts_active.toLocaleString("en-US")} Online</span>
           </div>
