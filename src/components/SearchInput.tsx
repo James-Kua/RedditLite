@@ -138,9 +138,26 @@ const SearchInput: React.FC = () => {
           <span className="sr-only"></span>
         </button>
       </div>
-      {subredditSuggestions.length > 0 && (
+      {
         <div className="absolute mt-1 w-full rounded-md bg-white dark:bg-slate-800 shadow-lg z-10">
           <ul>
+            {search.length !== 0 && isSubredditPath && (
+              <div className="flex items-center px-4 py-3">
+                <input
+                  type="checkbox"
+                  id="search-in-subreddit"
+                  checked={searchInSubreddit}
+                  onChange={handleCheckboxChange}
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="search-in-subreddit"
+                  className="text-xs text-gray-800 dark:text-white"
+                >
+                  Search in {currentSubreddit}
+                </label>
+              </div>
+            )}
             {subredditSuggestions.slice(0, 6).map((subreddit, index) => (
               <a
                 href={`/${subreddit.display_name_prefixed}`}
@@ -168,25 +185,8 @@ const SearchInput: React.FC = () => {
               </a>
             ))}
           </ul>
-          {isSubredditPath && (
-            <div className="flex items-center px-4 py-3">
-              <input
-                type="checkbox"
-                id="search-in-subreddit"
-                checked={searchInSubreddit}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              <label
-                htmlFor="search-in-subreddit"
-                className="text-xs text-gray-800 dark:text-white"
-              >
-                Search in {currentSubreddit}
-              </label>
-            </div>
-          )}
         </div>
-      )}
+      }
     </div>
   );
 };
