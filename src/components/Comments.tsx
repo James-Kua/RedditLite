@@ -74,8 +74,8 @@ const CommentComponent = ({
               comment.author_flair_background_color
             }
           />
+          <CreatedEditedLabel created={comment.created} edited={comment.edited} />
         </div>
-        <CreatedEditedLabel created={comment.created} edited={comment.edited} />
       </div>
       <BodyHtml body_html={comment.body_html} />
       <div className="text-gray-500 text-xs mt-2 dark:text-slate-200 flex space-x-1">
