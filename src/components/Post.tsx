@@ -15,6 +15,7 @@ import CreatedEditedLabel from "./CreatedEditedLabel";
 import PostLock from "./PostLock";
 import PollData from "./PollData";
 import ExternalLink from "./ExternalLink";
+import UpvotePercentageLabel from "./UpvotePercentageLabel";
 
 const PostComponent = ({ post }: { post: Post }) => {
 
@@ -43,6 +44,9 @@ const PostComponent = ({ post }: { post: Post }) => {
         }`}
       >
         <CreatedEditedLabel created={post.created} edited={post.edited} />
+        <div>
+          <UpvotePercentageLabel upvote_ratio={post.upvote_ratio} />
+        </div>
         <h2 className="text-lg my-2 font-semibold dark:text-white">
           {he.decode(post.title)}
         </h2>

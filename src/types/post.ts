@@ -29,6 +29,7 @@ export type Post = {
   link_title?: string;
   over_18: boolean;
   score: number;
+  upvote_ratio: number;
   subreddit: string;
   subreddit_name_prefixed: string;
   num_comments: number;
