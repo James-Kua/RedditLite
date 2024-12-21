@@ -53,7 +53,7 @@ const PostGallery: React.FC<PostGalleryProps> = ({ galleryData, mediaMetadata })
                   src={`https://i.redd.it/${item.media_id}.${parseImageType(
                     mediaMetadata?.[item.media_id as unknown as number]?.m ?? ""
                   )}`}
-                  className="max-h-[90vh] max-w-full object-contain rounded-lg"
+                  className="max-h-[50vh] max-w-full object-contain rounded-lg"
                   alt="Gallery Image"
                 />
               </div>

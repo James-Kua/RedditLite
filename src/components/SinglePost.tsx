@@ -108,6 +108,14 @@ const SinglePost = ({
           <PostComponent key={post.id} post={post} />
         ))}
 
+        <div 
+          className="shrink-0 bg-gray-200 dark:bg-gray-700 h-[1.5px] w-full mb-4">
+        </div>
+
+        <div className="text-sm font-medium mb-4">
+          All Comments
+        </div>
+
         <div className="flex justify-between items-center mb-4 text-sm">
           <div className="flex items-center relative">
             <input

@@ -43,3 +43,10 @@ Crosspost.args = {
   postId: "1gfvryi",
   title: "manchester_united_1_0_leicester_city_casemiro_15",
 };
+
+export const GalleryPost = Template.bind({});
+GalleryPost.args = {
+  subreddit: "japanpics",
+  postId: "1hill1f",
+  title: "oc_japan_in_focus_fall_day_5_matsumoto_evening",
+};

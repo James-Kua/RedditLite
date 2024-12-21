@@ -103,7 +103,7 @@ const PostComponent = ({ post }: { post: Post }) => {
         {post.selftext_html && (
           <SelfTextHtml selftext_html={post.selftext_html} />
         )}
-        {!post.crosspost_parent_list && post.url_overridden_by_dest && !isImage(post.url_overridden_by_dest) && (
+        {!post.crosspost_parent_list && post.url_overridden_by_dest && !isImage(post.url_overridden_by_dest) && !post.gallery_data && (
             <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
         )}
       </a>
