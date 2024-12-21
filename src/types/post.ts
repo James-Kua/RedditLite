@@ -4,7 +4,9 @@ export type Post = {
   author_flair_text?: string;
   author_flair_background_color?: string;
   author_flair_richtext: AuthorFlairRichtext[]
+  body_html?: string;
   created: number;
+  created_utc: number;
   edited: boolean | number;
   title: string;
   selftext_html?: string;
@@ -22,6 +24,9 @@ export type Post = {
   link_flair_richtext: LinkFlairRichtext[];
   link_flair_text_color: string;
   link_flair_background_color: string;
+  link_url?: string;
+  link_permalink?: string;
+  link_title?: string;
   over_18: boolean;
   score: number;
   subreddit: string;

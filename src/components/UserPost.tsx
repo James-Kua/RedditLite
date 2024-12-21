@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback, memo } from "react";
-import { User, UserProfile } from "../types/user";
+import { UserProfile } from "../types/user";
+import { Post } from "../types/post";
 import he from "he";
 import { FetchImage } from "../utils/image";
 import { isImage } from "../utils/parser";
@@ -10,13 +11,14 @@ import SelfTextHtml from "./SelfTextHtml";
 import BodyHtml from "./BodyHtml";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PollData from "./PollData";
+import PostGallery from "./PostGallery";
 
 interface UserPostProps {
   username: string;
 }
 
 const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
-  const [posts, setPosts] = useState<User[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -30,7 +32,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
-          (child: { data: User }) => child.data
+          (child: { data: Post }) => child.data
         );
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
         setAfter(data.data.after);
@@ -43,7 +45,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
-          (child: { data: User }) => child.data
+          (child: { data: Post }) => child.data
         );
         setPosts(fetchedPosts);
         setAfter(data.data.after);
@@ -132,6 +134,9 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                   <FetchImage url={post.url_overridden_by_dest} />
                 ))}
               {post.body_html && <BodyHtml body_html={post.body_html} />}
+              {post.gallery_data && (
+                <PostGallery galleryData={post.gallery_data} mediaMetadata={post.media_metadata} />
+              )}
               {post.poll_data && (
                 <PollData poll_data={post.poll_data} />
               )}
