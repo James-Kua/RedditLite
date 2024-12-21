@@ -16,7 +16,7 @@ const CreatedEditedLabel: React.FC<CreatedEditedLabelProps> = ({
         • {parseUnixTimestamp(created)}
       </h3>
       {typeof edited === "number" && (
-        <h3 className="font-medium">✏️ Edited {parseUnixTimestamp(edited)}</h3>
+        <h3 className="font-medium">️• Edited {parseUnixTimestamp(edited)}</h3>
       )}
     </span>
   );

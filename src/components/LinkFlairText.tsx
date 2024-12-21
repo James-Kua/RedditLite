@@ -15,7 +15,7 @@ const LinkFlairText = ({
     return (
       (link_flair_richtext.length > 0 || link_flair_text) && (
         <div
-          className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+          className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
           style={{
             backgroundColor: link_flair_background_color || "#bbbb",
           }}
@@ -34,7 +34,7 @@ const LinkFlairText = ({
                     />
                   ) : (
                     <span
-                      className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+                      className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
                       style={{
                         backgroundColor: link_flair_background_color || "",
                         color: parseLinkFlairTextColor(
@@ -50,7 +50,7 @@ const LinkFlairText = ({
             )
           ) : (
             <span
-              className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+              className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
               style={{
                 backgroundColor: link_flair_background_color || "",
                 color: parseLinkFlairTextColor(

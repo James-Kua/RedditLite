@@ -63,7 +63,7 @@ const CommentComponent = ({
             {comment?.distinguished === "moderator" && <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>}
           </a>
           {comment.author === postAuthor && (
-            <span className="whitespace-nowrap rounded-md bg-gray-100 p-0.5 font-semibold text-xs text-blue-700 overflow-x-auto">
+            <span className="whitespace-nowrap rounded-md bg-gray-100 dark:bg-slate-700 p-0.5 font-semibold text-xs text-blue-700">
               OP
             </span>
           )}
@@ -92,7 +92,7 @@ const CommentComponent = ({
         </button>
       )}
       {showReplies && (
-        <div className="relative border-l-[0.5px] border-gray-700 pl-2 lg:pl-4 ml-1">
+        <div className="relative border-l-[0.5px] border-gray-700 pl-1 lg:pl-3 ml-0">
           {comment.replies?.data?.children?.map((childWrapper: Children2) => {
             const child = childWrapper.data;
             return child ? (

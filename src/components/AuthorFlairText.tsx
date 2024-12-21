@@ -15,7 +15,7 @@ const AuthorFlairText = ({
   return (
     (author_flair_richtext.length > 0 || author_flair_text) && (
       <div
-        className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+        className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
         style={{
           backgroundColor: author_flair_background_color || "#bbbb",
         }}
@@ -34,7 +34,7 @@ const AuthorFlairText = ({
                   />
                 ) : (
                   <span
-                    className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+                    className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
                     style={{
                       backgroundColor: author_flair_background_color || "",
                       color: parseLinkFlairTextColor(
@@ -50,7 +50,7 @@ const AuthorFlairText = ({
           )
         ) : (
           <span
-            className="rounded-lg p-1 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
+            className="rounded-lg p-0.5 text-xs overflow-x-auto w-fit font-medium whitespace-nowrap"
             style={{
               backgroundColor: author_flair_background_color || "",
               color: parseLinkFlairTextColor(
