@@ -270,7 +270,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                 {post.secure_media_embed?.media_domain_url ? (
                   <SecureMediaEmbed url_overridden_by_dest={post.url_overridden_by_dest} {...post.secure_media_embed} />
                 ) : post.secure_media ? (
-                  <SecureMedia playing={true} {...post.secure_media} />
+                  <SecureMedia {...post.secure_media} />
                 ) : post.media_metadata ? (
                   <div className="relative mt-2">
                     {post.gallery_data ? (
