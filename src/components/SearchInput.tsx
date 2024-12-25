@@ -66,8 +66,8 @@ const SearchInput: React.FC = () => {
       const encodedQuery = encodeURIComponent(search);
       const searchUrl =
         searchInSubreddit && currentSubreddit
-          ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&time=&t=year`
-          : `/search/?q=${encodedQuery}&sort=relevance&time=&t=year`;
+          ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&t=year`
+          : `/search/?q=${encodedQuery}&sort=relevance&t=year`;
       navigate(searchUrl);
       if (isMobile) {
         setIsExpanded(false);
