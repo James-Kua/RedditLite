@@ -227,7 +227,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                       {subreddit.display_name_prefixed}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {subreddit.subscribers.toLocaleString("en-US")} subscribers
+                      {(subreddit?.subscribers ?? 0).toLocaleString("en-US")} subscribers
                     </p>
                     <div
                       className="rich-text-content text-black text-xs leading-relaxed overflow-hidden dark:text-white mb-2"
