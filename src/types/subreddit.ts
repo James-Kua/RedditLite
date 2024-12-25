@@ -11,6 +11,7 @@ export interface Subreddit {
   public_description_html: string;
   description: string;
   banner_img: string;
+  banner_background_image: string;
 }
 
 export interface UserFlairRichtext {

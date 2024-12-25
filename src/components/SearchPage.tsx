@@ -188,18 +188,21 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         )}
 
         <div className="my-2 w-full">
-          {searchSubreddits.slice(0, 4).map((subreddit, index) => (
+          {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (
             <a key={index} href={`/${subreddit.display_name_prefixed}`}>
               <div
                 style={{
-                  backgroundImage: subreddit?.banner_img ? `url(${he.decode(subreddit.banner_img)})` : undefined,
+                  backgroundImage:
+                    subreddit?.banner_background_image ?? subreddit?.banner_img
+                      ? `url(${he.decode(subreddit.banner_background_image ?? subreddit.banner_img)})`
+                      : undefined,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
                 className="relative flex my-1 p-2 rounded-md cursor-pointer 
           bg-gradient-to-r from-blue-100 to-green-100 dark:from-gray-800 dark:to-gray-900 overflow-auto hover:bg-gradient-to-r hover:from-blue-300 hover:to-green-300 dark:hover:from-gray-700 dark:hover:to-gray-800"
               >
-                {subreddit.banner_img && (
+                {(subreddit.banner_img || subreddit.banner_background_image) && (
                   <div className="absolute inset-0 dark:bg-black dark:bg-opacity-80 bg-slate-100 bg-opacity-80"></div>
                 )}
                 <div className="relative z-10 flex items-center w-full space-x-4">
@@ -229,7 +232,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                     <div
                       className="rich-text-content text-black text-xs leading-relaxed overflow-hidden dark:text-white mb-2"
                       dangerouslySetInnerHTML={{
-                        __html: he.decode(subreddit.public_description_html ?? ''),
+                        __html: he.decode(subreddit.public_description_html ?? ""),
                       }}
                     />
                   </div>

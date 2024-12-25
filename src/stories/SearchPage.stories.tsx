@@ -15,10 +15,18 @@ const Template: StoryFn<{ query: string; sort: string; time: string; subreddit: 
   </MemoryRouter>
 );
 
-export const Default = Template.bind({});
-Default.args = {
+export const SubredditSearch = Template.bind({});
+SubredditSearch.args = {
   query: "tech salary",
   subreddit: "askSingapore",
+  sort: "relevance",
+  time: "year",
+};
+
+export const AllSubredditSearch = Template.bind({});
+AllSubredditSearch.args = {
+  query: "tech salary",
+  subreddit: "",
   sort: "relevance",
   time: "year",
 };
