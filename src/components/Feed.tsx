@@ -219,7 +219,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
               <div>
                 <div className="flex items-center space-x-2">
                   <a href={`/user/${post.author}`}>
-                    <h3 className="font-semibold text-blue-400">
+                    <h3 className="font-semibold text-blue-400 whitespace-nowrap">
                       {post.author}
                     </h3>
                   </a>

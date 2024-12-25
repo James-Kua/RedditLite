@@ -59,7 +59,7 @@ const CommentComponent = ({
       <div className="flex justify-between items-center w-full max-w-[100vw]">
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
-            <h3 className="font-semibold text-sm text-blue-400">{comment.author}</h3>
+            <h3 className="font-semibold text-sm text-blue-400 whitespace-nowrap">{comment.author}</h3>
             {comment?.distinguished === "moderator" && <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>}
           </a>
           {comment.author === postAuthor && (

@@ -28,7 +28,7 @@ const PostComponent = ({ post }: { post: Post }) => {
     >
       <div className="flex items-center space-x-2">
         <a href={`/user/${post.author}`}>
-          <h3 className="font-semibold text-blue-400">{post.author}</h3>
+          <h3 className="font-semibold text-blue-400 whitespace-nowrap">{post.author}</h3>
         </a>
         <AuthorFlairText
           author_flair_richtext={post.author_flair_richtext}

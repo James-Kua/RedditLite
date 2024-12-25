@@ -10,6 +10,7 @@ export interface Subreddit {
   community_icon: string;
   public_description_html: string;
   description: string;
+  banner_img: string;
 }
 
 export interface UserFlairRichtext {
