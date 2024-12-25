@@ -18,6 +18,7 @@ import SecureMediaEmbed from "./SecureMediaEmbed";
 import ExternalLink from "./ExternalLink";
 import ArrowIcon from "../static/ArrowIcon";
 import HomeIcon from "../static/HomeIcon";
+import { Subreddit } from "../types/subreddit";
 
 interface SearchPageProps {
   query: string;
@@ -26,17 +27,12 @@ interface SearchPageProps {
   subreddit: string;
 }
 
-const SearchPage: React.FC<SearchPageProps> = memo(({
-  query,
-  sort: initialSort,
-  time: initialTime,
-  subreddit,
-}) => {
-
-  document.title = `${decodeURIComponent(query)} - Reddit Search!` ;
+const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, time: initialTime, subreddit }) => {
+  document.title = `${decodeURIComponent(query)} - Reddit Search!`;
 
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [searchSubreddits, setSearchSubreddits] = useState<Subreddit[]>([]);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState<string>(initialSort);
@@ -48,9 +44,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
     if (!hasMore || !userQuery) return;
 
     const isAlreadyEncoded = userQuery.match(/%[0-9A-F]{2}/i);
-    const encodedQuery = isAlreadyEncoded
-      ? encodeURIComponent(userQuery)
-      : userQuery;
+    const encodedQuery = isAlreadyEncoded ? encodeURIComponent(userQuery) : userQuery;
 
     const searchUrl = subreddit
       ? `https://www.reddit.com/r/${subreddit}/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
@@ -59,14 +53,35 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
     fetch(searchUrl)
       .then((response) => response.json())
       .then((data) => {
-        const fetchedPosts = data.data.children.map(
-          (child: { data: Post }) => child.data
-        );
+        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
   }, [userQuery, after, hasMore, sort, subreddit, time]);
+
+  const fetchSubredditSuggestions = useCallback(() => {
+    if (userQuery.trim() !== "") {
+      const encodedQuery = encodeURIComponent(userQuery);
+      const searchUrl = `https://www.reddit.com/search.json?q=${encodedQuery}&sort=${sort}&type=sr&sr_detail=true`;
+
+      fetch(searchUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          const suggestions: Subreddit[] = data.data.children.map((child: any) => ({
+            ...child.data,
+          }));
+          setSearchSubreddits(suggestions);
+        })
+        .catch(() => setSearchSubreddits([]));
+    } else {
+      setSearchSubreddits([]);
+    }
+  }, [userQuery]);
+
+  useEffect(() => {
+    fetchSubredditSuggestions();
+  }, [userQuery]);
 
   useEffect(() => {
     setUserQuery(query);
@@ -85,9 +100,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
       fetch(searchUrl)
         .then((response) => response.json())
         .then((data) => {
-          const fetchedPosts = data.data.children.map(
-            (child: { data: Post }) => child.data
-          );
+          const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
           setPosts(fetchedPosts);
           setAfter(data.data.after);
           setHasMore(!!data.data.after);
@@ -123,10 +136,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
       <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
-        <nav
-          aria-label="Breadcrumb"
-          className="flex items-center justify-between mb-5"
-        >
+        <nav aria-label="Breadcrumb" className="flex items-center justify-between mb-5">
           <ol className="flex items-center gap-1 text-sm text-gray-600">
             <li>
               <a href="/" className="block transition hover:text-gray-700">
@@ -137,9 +147,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
             <li className="rtl:rotate-180">
               <ArrowIcon />
             </li>
-            <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">
-              Search Results
-            </h1>
+            <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">Search Results</h1>
           </ol>
           <div className="search-input">
             <SearchInput />
@@ -147,20 +155,13 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
         </nav>
 
         <div className="mb-2 font-medium text-gray-400">
-          Showing search results for{" "}
-          <span className="font-semibold italic">
-            {decodeURIComponent(userQuery)}
-          </span>{" "}
-          in {subreddit ? `r/${subreddit}` : "all subreddits"}
+          Showing search results for <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span> in{" "}
+          {subreddit ? `r/${subreddit}` : "all subreddits"}
         </div>
 
         {filterOptions.map((optionGroup, index) =>
-          optionGroup.label === "Time" &&
-          !["relevance", "top", "comments"].includes(sort) ? null : (
-            <div
-              className="text-black dark:text-gray-400 text-sm mb-2"
-              key={index}
-            >
+          optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
+            <div className="text-black dark:text-gray-400 text-sm mb-2" key={index}>
               <label className="mr-1 font-medium">{optionGroup.label}</label>
               <select
                 value={optionGroup.label === "Sort by" ? sort : time}
@@ -186,6 +187,58 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
           )
         )}
 
+        <div className="my-2 w-full">
+          {searchSubreddits.slice(0, 4).map((subreddit, index) => (
+            <a key={index} href={`/${subreddit.display_name_prefixed}`}>
+              <div
+                style={{
+                  backgroundImage: subreddit?.banner_img ? `url(${he.decode(subreddit.banner_img)})` : undefined,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+                className="relative flex my-1 p-2 rounded-md cursor-pointer 
+          bg-gradient-to-r from-blue-100 to-green-100 dark:from-gray-800 dark:to-gray-900 overflow-auto hover:bg-gradient-to-r hover:from-blue-300 hover:to-green-300 dark:hover:from-gray-700 dark:hover:to-gray-800"
+              >
+                {subreddit.banner_img && (
+                  <div className="absolute inset-0 dark:bg-black dark:bg-opacity-80 bg-slate-100 bg-opacity-80"></div>
+                )}
+                <div className="relative z-10 flex items-center w-full space-x-4">
+                  {subreddit?.community_icon ? (
+                    <img
+                      src={he.decode(subreddit.community_icon)}
+                      alt="community_icon"
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : subreddit?.icon_img ? (
+                    <img
+                      src={he.decode(subreddit.icon_img)}
+                      alt="icon_img"
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-600" />
+                  )}
+
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-gray-800 dark:text-white">
+                      {subreddit.display_name_prefixed}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {subreddit.subscribers.toLocaleString("en-US")} subscribers
+                    </p>
+                    <div
+                      className="rich-text-content text-black text-xs leading-relaxed overflow-hidden dark:text-white mb-2"
+                      dangerouslySetInnerHTML={{
+                        __html: he.decode(subreddit.public_description_html ?? ''),
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
             <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8 relative">
@@ -195,51 +248,38 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
                   <AuthorFlairText
                     author_flair_richtext={post.author_flair_richtext}
                     author_flair_text={post.author_flair_text}
-                    author_flair_background_color={
-                      post.author_flair_background_color
-                    }
+                    author_flair_background_color={post.author_flair_background_color}
                   />
                 </div>
                 <div className="bg-slate-100 dark:bg-slate-600 p-1 w-fit rounded-lg my-1">
                   <span className="text-gray-500 text-sm font-semibold dark:text-white">
-                    <a href={`/${post.subreddit_name_prefixed}`}>
-                      {post.subreddit_name_prefixed}
-                    </a>
+                    <a href={`/${post.subreddit_name_prefixed}`}>{post.subreddit_name_prefixed}</a>
                   </span>
                 </div>
-                <h3 className="text-sm">
-                  🕔 {parseUnixTimestamp(post.created)}
-                </h3>
-                <h2 className="text-lg font-semibold my-1 dark:text-white">
-                  {he.decode(post.title)}
-                </h2>
+                <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
+                <h2 className="text-lg font-semibold my-1 dark:text-white">{he.decode(post.title)}</h2>
                 <LinkFlairText
                   link_flair_richtext={post.link_flair_richtext}
                   link_flair_text={post.link_flair_text}
                   link_flair_background_color={post.link_flair_background_color}
                 />
               </div>
-              <div className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur" : ""}`}>
+              <div
+                className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur" : ""}`}
+              >
                 {post.secure_media_embed?.media_domain_url ? (
-                  <SecureMediaEmbed
-                    url_overridden_by_dest={post.url_overridden_by_dest}
-                    {...post.secure_media_embed}
-                  />
+                  <SecureMediaEmbed url_overridden_by_dest={post.url_overridden_by_dest} {...post.secure_media_embed} />
                 ) : post.secure_media ? (
                   <SecureMedia playing={true} {...post.secure_media} />
                 ) : post.media_metadata ? (
                   <div className="relative mt-2">
                     {post.gallery_data ? (
-                      <PostGallery
-                        galleryData={post.gallery_data}
-                        mediaMetadata={post.media_metadata}
-                      />
+                      <PostGallery galleryData={post.gallery_data} mediaMetadata={post.media_metadata} />
                     ) : null}
                   </div>
                 ) : post.preview ? (
                   <PostPreview preview={post.preview} />
-                ) : post.url_overridden_by_dest &&
-                  isImage(post.url_overridden_by_dest) ? (
+                ) : post.url_overridden_by_dest && isImage(post.url_overridden_by_dest) ? (
                   <img
                     src={post.url_overridden_by_dest}
                     alt="url_overridden_by_dest"
@@ -248,22 +288,11 @@ const SearchPage: React.FC<SearchPageProps> = memo(({
                 ) : (
                   <Thumbnail thumbnail={post.thumbnail || ""} />
                 )}
-                {post.selftext_html && (
-                  <SelfTextHtml
-                    selftext_html={post.selftext_html}
-                    truncateLines={10}
-                  />
+                {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
+                {post.url_overridden_by_dest && post.post_hint === "link" && (
+                  <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
                 )}
-                {post.url_overridden_by_dest &&
-                  post.post_hint === "link" && (
-                    <ExternalLink
-                      url_overridden_by_dest={post.url_overridden_by_dest}
-                    />
-                )}
-                <PostStats
-                  score={post.score}
-                  num_comments={post.num_comments}
-                />
+                <PostStats score={post.score} num_comments={post.num_comments} />
               </div>
             </div>
           </a>
