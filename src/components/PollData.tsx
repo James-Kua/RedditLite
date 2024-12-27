@@ -42,11 +42,19 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
   const currentTimestamp = new Date();
   const endTimestamp = new Date(poll_data.voting_end_timestamp);
   const isPollOpen = currentTimestamp < endTimestamp;
-
+  
   const remainingTime = endTimestamp.getTime() - currentTimestamp.getTime();
-  const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+  
+  const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-  const remainingTimeText = `${hours} hours ${minutes} minutes left`;
+  
+  const parts = [];
+  if (days > 0) parts.push(`${days} days`);
+  if (hours > 0) parts.push(`${hours} hours`);
+  if (minutes > 0) parts.push(`${minutes} minutes`);
+  
+  const remainingTimeText = `${parts.join(' ')} left`
 
   const data = {
     labels: poll_data.options.map((option) => option.text),
