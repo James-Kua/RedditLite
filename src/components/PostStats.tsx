@@ -2,7 +2,7 @@ import React from "react";
 import CommentIcon from "../static/CommentIcon";
 import UpvoteIcon from "../static/UpvoteIcon";
 
-interface PostStatsProps {
+export interface PostStatsProps {
   score: number;
   num_comments: number;
 }

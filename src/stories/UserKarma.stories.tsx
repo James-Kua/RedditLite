@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import UserKarma from "../components/UserKarma";
+import UserKarma, { UserKarmaProps } from "../components/UserKarma";
 
 const meta: Meta = {
   title: "Components/UserKarma",
@@ -8,9 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ iconImg: string; total_karma?: number; comment_karma?: number }> = (args) => (
-  <UserKarma {...args} />
-);
+const Template: StoryFn<UserKarmaProps> = (args) => <UserKarma {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

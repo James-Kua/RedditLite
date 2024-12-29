@@ -13,7 +13,7 @@ import CreatedEditedLabel from "./CreatedEditedLabel";
 import PollData from "./PollData";
 import PostGallery from "./PostGallery";
 
-interface UserPostProps {
+export interface UserPostProps {
   username: string;
 }
 

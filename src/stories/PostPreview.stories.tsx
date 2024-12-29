@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import PostPreview from "../components/PostPreview";
+import PostPreview, { PostPreviewProps } from "../components/PostPreview";
 
 const meta: Meta = {
   title: "Components/PostPreview",
@@ -8,7 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ preview: any }> = (args) => <PostPreview {...args} />;
+const Template: StoryFn<PostPreviewProps> = (args) => <PostPreview {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
@@ -36,7 +36,6 @@ Default.args = {
         id: "xrV8YiZD7CN5yq2rgPk6kubNzSREUT9jWCshVsJBn04",
       },
     ],
-    enabled: false,
   },
 };
 
@@ -95,6 +94,5 @@ Gif.args = {
         id: "L9-tYjOSaMuZKmWrumWbHEOAyPhmWLXms_hR-_32dgg",
       },
     ],
-    enabled: true,
   },
 };

@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import PostStats from "../components/PostStats";
+import PostStats, { PostStatsProps } from "../components/PostStats";
 
 const meta: Meta = {
   title: "Components/PostStats",
@@ -8,7 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ score: number; num_comments: number }> = (args) => (
+const Template: StoryFn<PostStatsProps> = (args) => (
   <PostStats {...args} />
 );
 

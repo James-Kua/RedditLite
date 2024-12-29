@@ -3,7 +3,7 @@ import he from "he";
 import UserGroupIcon from "../static/UserGroupIcon";
 import UserOnlineIcon from "../static/UserOnlineIcon";
 
-type SubredditInfoProps = {
+export type SubredditInfoProps = {
   public_description_html?: string;
   accounts_active?: number;
   subscribers?: number;

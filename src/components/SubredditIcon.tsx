@@ -1,7 +1,7 @@
 import he from "he";
 import React from "react";
 
-type SubredditIconProps = {
+export type SubredditIconProps = {
   community_icon?: string;
   icon_img?: string;
 };

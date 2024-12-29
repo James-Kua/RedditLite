@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import SecureMedia from "../components/SecureMedia";
+import SecureMedia, { SecureMediaProps } from "../components/SecureMedia";
 
 const meta: Meta = {
   title: "Components/SecureMedia",
@@ -8,15 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{
-  reddit_video: {
-    hls_url: string;
-    fallback_url: string;
-    width: number;
-    height: number;
-  };
-  playing?: boolean;
-}> = (args) => <SecureMedia {...args} />;
+const Template: StoryFn<SecureMediaProps> = (args) => <SecureMedia {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

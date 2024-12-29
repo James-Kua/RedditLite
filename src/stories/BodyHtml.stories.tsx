@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import BodyHtml from "../components/BodyHtml";
+import BodyHtml, { BodyHtmlProps } from "../components/BodyHtml";
 import "../../src/index.css";
 
 const meta: Meta = {
@@ -9,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ body_html: string }> = (args) => <BodyHtml {...args} />;
+const Template: StoryFn<BodyHtmlProps> = (args) => <BodyHtml {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

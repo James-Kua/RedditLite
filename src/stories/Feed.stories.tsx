@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import Feed from "../components/Feed";
+import Feed, { FeedProps } from "../components/Feed";
 
 const meta: Meta = {
   title: "Components/Feed",
@@ -9,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ subreddit: string; initialTime: string; initialSort: string }> = (args) => (
+const Template: StoryFn<FeedProps> = (args) => (
   <MemoryRouter>
     <Feed {...args} />
   </MemoryRouter>

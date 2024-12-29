@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import SearchPage from "../components/SearchPage";
+import SearchPage, { SearchPageProps } from "../components/SearchPage";
 
 const meta: Meta = {
   title: "Components/SearchPage",
@@ -9,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ query: string; sort: string; time: string; subreddit: string }> = (args) => (
+const Template: StoryFn<SearchPageProps> = (args) => (
   <MemoryRouter>
     <SearchPage {...args} />
   </MemoryRouter>

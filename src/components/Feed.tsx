@@ -24,7 +24,7 @@ import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import PollData from "./PollData";
 
-interface FeedProps {
+export interface FeedProps {
   subreddit: string;
   initialTime: string;
   initialSort: string;

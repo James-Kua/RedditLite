@@ -4,7 +4,7 @@ import he from "he";
 import { XEmbed, FacebookEmbed, PinterestEmbed, TikTokEmbed, InstagramEmbed } from "react-social-media-embed";
 import { TwitchClip } from "react-twitch-embed";
 
-type SecureMediaEmbedProps = {
+export type SecureMediaEmbedProps = {
   url_overridden_by_dest?: string;
   content?: string;
   media_domain_url?: string;

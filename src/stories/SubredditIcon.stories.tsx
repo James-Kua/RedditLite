@@ -1,7 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import SubredditIcon from "../components/SubredditIcon";
-import { JSX } from "react/jsx-runtime";
-import "../../src/index.css";
+import SubredditIcon, { SubredditIconProps } from "../components/SubredditIcon";
 
 const meta: Meta = {
   title: "Components/SubredditIcon",
@@ -10,9 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn = (args: JSX.IntrinsicAttributes & { community_icon?: string; icon_img?: string }) => (
-  <SubredditIcon {...args} />
-);
+const Template: StoryFn<SubredditIconProps> = (args) => <SubredditIcon {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

@@ -21,7 +21,7 @@ import HomeIcon from "../static/HomeIcon";
 import { Subreddit } from "../types/subreddit";
 import SubredditCard from "./SubredditCard";
 
-interface SearchPageProps {
+export interface SearchPageProps {
   query: string;
   sort: string;
   time: string;

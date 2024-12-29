@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import SinglePost from "../components/SinglePost";
+import SinglePost, { SinglePostProps } from "../components/SinglePost";
 
 const meta: Meta = {
   title: "Components/SinglePost",
@@ -9,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ subreddit: string; postId: string; title: string; comment_id?: string }> = (args) => (
+const Template: StoryFn<SinglePostProps> = (args) => (
   <MemoryRouter>
     <SinglePost {...args} />
   </MemoryRouter>

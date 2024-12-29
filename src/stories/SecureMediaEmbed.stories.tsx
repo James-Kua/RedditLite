@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import SecureMediaEmbed from "../components/SecureMediaEmbed";
+import SecureMediaEmbed, { SecureMediaEmbedProps } from "../components/SecureMediaEmbed";
 
 const meta: Meta = {
   title: "Components/SecureMediaEmbed",
@@ -8,14 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{
-  url_overridden_by_dest?: string;
-  content?: string;
-  media_domain_url?: string;
-  width: number;
-  height: number;
-  playing?: boolean;
-}> = (args) => <SecureMediaEmbed {...args} />;
+const Template: StoryFn<SecureMediaEmbedProps> = (args) => <SecureMediaEmbed {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
@@ -29,12 +22,13 @@ Default.args = {
 
 export const YoutubeEmbed = Template.bind({});
 YoutubeEmbed.args = {
-    url_overridden_by_dest: "https://youtu.be/FgdNIPuO0h8?si=p5VK7XxZjaFhgC43&amp;t=84",
-    content: "&lt;iframe width=\"356\" height=\"200\" src=\"https://www.youtube.com/embed/FgdNIPuO0h8?start=84&amp;feature=oembed&amp;enablejsapi=1\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen title=\"싱가포르 수출 전동열차 철도종합시험선로 왕복 시험운전\"&gt;&lt;/iframe&gt;",
-    media_domain_url: "https://www.redditmedia.com/mediaembed/1gctp8a",
-    width: 356,
-    height: 200,
-    playing: true
+  url_overridden_by_dest: "https://youtu.be/FgdNIPuO0h8?si=p5VK7XxZjaFhgC43&amp;t=84",
+  content:
+    '&lt;iframe width="356" height="200" src="https://www.youtube.com/embed/FgdNIPuO0h8?start=84&amp;feature=oembed&amp;enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen title="싱가포르 수출 전동열차 철도종합시험선로 왕복 시험운전"&gt;&lt;/iframe&gt;',
+  media_domain_url: "https://www.redditmedia.com/mediaembed/1gctp8a",
+  width: 356,
+  height: 200,
+  playing: true,
 };
 
 export const TwitterEmbed = Template.bind({});

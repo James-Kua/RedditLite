@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import PollData from "../components/PollData";
+import PollData, { PollDataProps } from "../components/PollData";
 import "../../src/index.css";
 
 const pollData = {
@@ -22,7 +22,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ poll_data: typeof pollData }> = (args) => <PollData {...args} />;
+const Template: StoryFn<PollDataProps> = (args) => <PollData {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

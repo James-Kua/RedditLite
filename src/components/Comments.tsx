@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Comment, Children2 } from "../types/comment";
 import AuthorFlairText from "./AuthorFlairText";
 import BodyHtml from "./BodyHtml";
@@ -37,13 +37,12 @@ const filterComments = (comments: Comment[], searchTerm: string): Comment[] => {
     .filter(Boolean) as Comment[];
 };
 
-const CommentComponent = ({
-  comment,
-  postAuthor,
-}: {
+export type CommentProps = {
   comment: Comment;
   postAuthor: string;
-}) => {
+};
+
+const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
   const [showReplies, setShowReplies] = useState(true);
 
   useEffect(() => {
@@ -60,7 +59,9 @@ const CommentComponent = ({
         <div className="flex items-center space-x-2 overflow-hidden">
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
             <h3 className="font-semibold text-sm text-blue-400 whitespace-nowrap">{comment.author}</h3>
-            {comment?.distinguished === "moderator" && <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>}
+            {comment?.distinguished === "moderator" && (
+              <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>
+            )}
           </a>
           {comment.author === postAuthor && (
             <span className="whitespace-nowrap rounded-md bg-gray-100 dark:bg-slate-700 p-0.5 font-semibold text-xs text-blue-700">
@@ -70,9 +71,7 @@ const CommentComponent = ({
           <AuthorFlairText
             author_flair_richtext={comment.author_flair_richtext}
             author_flair_text={comment.author_flair_text}
-            author_flair_background_color={
-              comment.author_flair_background_color
-            }
+            author_flair_background_color={comment.author_flair_background_color}
           />
           <CreatedEditedLabel created={comment.created} edited={comment.edited} />
         </div>
@@ -84,10 +83,7 @@ const CommentComponent = ({
         <span>upvotes</span>
       </div>
       {comment.replies?.data?.children?.length > 0 && (
-        <button
-          className="dark:text-gray-300 text-xs mt-2"
-          onClick={() => setShowReplies(!showReplies)}
-        >
+        <button className="dark:text-gray-300 text-xs mt-2" onClick={() => setShowReplies(!showReplies)}>
           {showReplies ? "➖ Hide Replies" : "➕ Show Replies"}
         </button>
       )}
@@ -97,7 +93,7 @@ const CommentComponent = ({
             const child = childWrapper.data;
             return child ? (
               <div key={child.id} className="mt-4">
-                <CommentComponent comment={child} postAuthor={postAuthor} />
+                <SingleComment comment={child} postAuthor={postAuthor} />
               </div>
             ) : null;
           })}
@@ -107,25 +103,19 @@ const CommentComponent = ({
   );
 };
 
-const CommentsComponent = ({
-  comments,
-  postAuthor,
-  searchTerm,
-}: {
+export type CommentsComponentProps = {
   comments: Comment[];
   postAuthor: string;
   searchTerm: string;
-}) => {
+};
+
+const CommentsComponent: React.FC<CommentsComponentProps> = ({ comments, postAuthor, searchTerm }) => {
   const filteredComments = filterComments(comments, searchTerm);
 
   return (
     <>
       {filteredComments.map((comment) => (
-        <CommentComponent
-          key={comment.id}
-          comment={comment}
-          postAuthor={postAuthor}
-        />
+        <SingleComment key={comment.id} comment={comment} postAuthor={postAuthor} />
       ))}
     </>
   );

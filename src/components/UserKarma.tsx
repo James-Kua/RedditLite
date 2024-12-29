@@ -1,6 +1,6 @@
 import AvatarIcon from "./AvatarIcon";
 
-interface UserKarmaProps {
+export interface UserKarmaProps {
   iconImg: string;
   total_karma?: number;
   comment_karma?: number;

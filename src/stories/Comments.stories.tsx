@@ -1,17 +1,16 @@
 import { Meta, StoryFn } from "@storybook/react";
-import Comments from "../components/Comments";
-import { Comment } from "../types/comment";
+import CommentsComponent, { CommentsComponentProps } from "../components/Comments";
 import "../../src/index.css";
 
 const meta: Meta = {
-  title: "Components/Comments",
-  component: Comments,
+  title: "Components/CommentsComponent",
+  component: CommentsComponent,
 };
 
 export default meta;
 
-const Template: StoryFn<{ comments: Comment[]; postAuthor: string; searchTerm: string }> = (args) => (
-  <Comments {...args} />
+const Template: StoryFn<CommentsComponentProps> = (args) => (
+  <CommentsComponent {...args} />
 );
 
 export const Default = Template.bind({});

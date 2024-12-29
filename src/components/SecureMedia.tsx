@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 
-type SecureMediaProps = {
+export type SecureMediaProps = {
   reddit_video: {
     hls_url: string;
     fallback_url: string;

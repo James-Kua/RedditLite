@@ -1,6 +1,6 @@
 import he from "he";
 
-type BodyHtmlProps = {
+export type BodyHtmlProps = {
   body_html: string;
 };
 

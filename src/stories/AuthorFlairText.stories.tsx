@@ -1,6 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import AuthorFlairText from "../components/AuthorFlairText";
-import { AuthorFlairRichtext } from "../types/post";
+import AuthorFlairText, { AuthorFlairTextProps } from "../components/AuthorFlairText";
 
 const meta: Meta = {
   title: "Components/AuthorFlairText",
@@ -9,11 +8,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{
-  author_flair_richtext?: AuthorFlairRichtext[];
-  author_flair_text?: string;
-  author_flair_background_color?: string;
-}> = (args) => <AuthorFlairText {...args} />;
+const Template: StoryFn<AuthorFlairTextProps> = (args) => <AuthorFlairText {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

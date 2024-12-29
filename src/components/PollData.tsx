@@ -21,7 +21,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
-type PollDataProps = {
+export type PollDataProps = {
   poll_data?: {
     options: {
       text: string;

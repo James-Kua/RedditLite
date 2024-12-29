@@ -1,7 +1,7 @@
 import { AuthorFlairRichtext } from "../types/comment";
 import { parseLinkFlairTextColor } from "../utils/parser";
 
-interface AuthorFlairTextProps {
+export interface AuthorFlairTextProps {
   author_flair_richtext?: AuthorFlairRichtext[];
   author_flair_text?: string;
   author_flair_background_color?: string;

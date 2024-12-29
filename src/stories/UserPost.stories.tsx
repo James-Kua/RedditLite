@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { MemoryRouter } from "react-router-dom";
-import UserPost from "../components/UserPost";
+import UserPost, { UserPostProps } from "../components/UserPost";
 import "../../src/index.css";
 
 const meta: Meta = {
@@ -10,7 +10,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: StoryFn<{ username: string }> = (args) => (
+const Template: StoryFn<UserPostProps> = (args) => (
   <MemoryRouter>
     <UserPost {...args} />
   </MemoryRouter>
@@ -18,5 +18,5 @@ const Template: StoryFn<{ username: string }> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  username: 'corylulu',
+  username: "corylulu",
 };

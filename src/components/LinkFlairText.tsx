@@ -1,7 +1,7 @@
 import { LinkFlairRichtext } from "../types/post";
 import { parseLinkFlairTextColor } from "../utils/parser";
 
-interface LinkFlairTextProps {
+export interface LinkFlairTextProps {
   link_flair_richtext?: LinkFlairRichtext[];
   link_flair_text?: string;
   link_flair_background_color?: string;

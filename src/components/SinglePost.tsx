@@ -9,17 +9,14 @@ import ArrowIcon from "../static/ArrowIcon";
 import PostComponent from "./Post";
 import CommentsComponent from "./Comments";
 
-const SinglePost = ({
-  subreddit,
-  postId,
-  title,
-  comment_id,
-}: {
+export type SinglePostProps = {
   subreddit: string;
   postId: string;
   title: string;
   comment_id?: string;
-}) => {
+};
+
+const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comment_id }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsSortOption, setSortOption] = useState("");
