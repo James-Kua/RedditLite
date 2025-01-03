@@ -189,7 +189,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         )}
 
         <div className="my-2 w-full">
-          {searchSubreddits.slice(0, 4).map((subreddit, index) => (
+          {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (
             <SubredditCard key={index} subreddit={subreddit} />
           ))}
         </div>
