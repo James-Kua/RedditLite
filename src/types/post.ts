@@ -89,6 +89,7 @@ export interface RedditVideo {
 
 export interface Preview {
   images: Image[];
+  reddit_video_preview?: RedditVideo;
 }
 
 export interface Image {
