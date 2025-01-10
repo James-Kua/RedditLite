@@ -5,23 +5,37 @@ export const FetchImage = ({ url }: { url: string }) => {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    fetch(`https://get-metafy.netlify.app/.netlify/functions/api?url=${url}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.image) {
-          setImage(data.image);
-        } else if (data.logo) {
-          setImage(data.logo);
+    let isMounted = true;
+
+    const fetchImage = async () => {
+      try {
+        const response = await fetch(`https://metafy.vercel.app/api?url=${url}`);
+        const data = await response.json();
+
+        if (!isMounted) return;
+
+        const imageUrl = data.image || data.logo || null;
+        if (imageUrl) {
+          setImage(imageUrl);
         } else {
-          setImage(null);
+          setHasError(true);
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching image:", error);
-      });
+      } catch (error) {
+        if (isMounted) {
+          setHasError(true);
+          console.error("Error fetching image:", error);
+        }
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      isMounted = false;
+    };
   }, [url]);
 
-  if (!image || hasError) return null;
+  if (hasError || !image) return null;
 
   return (
     <div className="mt-4 flex justify-center items-center max-w-full mx-auto border rounded-sm p-2">
