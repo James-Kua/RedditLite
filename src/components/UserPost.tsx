@@ -44,9 +44,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
     fetch(`https://www.reddit.com/user/${username}.json`)
       .then((response) => response.json())
       .then((data) => {
-        const fetchedPosts = data.data.children.map(
-          (child: { data: Post }) => child.data
-        );
+        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
         setPosts(fetchedPosts);
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
@@ -106,20 +104,16 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
               edited={post.edited}
             />
             <a href={`/r/${post.subreddit}`}>
-              <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
+              <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 my-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto display: inline-block font-bold">
                 {post.subreddit_name_prefixed}
               </span>
             </a>
 
             <a href={`${post.permalink ?? post.link_permalink}`}>
-              <h1 className="text-lg font-semibold text-gray-800 dark:text-white">
-                {he.decode(post.title ?? "")}
-              </h1>
+              <h1 className="text-lg font-semibold text-gray-800 dark:text-white">{he.decode(post.title ?? "")}</h1>
               {post.link_title && (
-                <div className="bg-slate-50 dark:bg-transparent rounded-md p-1.5 border border-gray-400 text-sm">
-                  <h1 className="text-md font-medium text-gray-900 dark:text-white">
-                    {post.link_title}
-                  </h1>
+                <div className="bg-slate-50 dark:bg-gray-800 rounded-lg p-1.5 border border-gray-300 dark:border-gray-700 text-sm">
+                  <h1 className="text-md font-medium text-gray-900 dark:text-white">{post.link_title}</h1>
                 </div>
               )}
 
@@ -141,7 +135,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                 <PollData poll_data={post.poll_data} />
               )}
               {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
-              <PostStats score={post.score} num_comments={post.num_comments} />
+              <PostStats score={post.score} />
             </a>
           </div>
         ))}
