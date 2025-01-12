@@ -8,6 +8,7 @@ import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import PostComponent from "./Post";
 import CommentsComponent from "./Comments";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 export type SinglePostProps = {
   subreddit: string;
@@ -26,7 +27,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
 
   useEffect(() => {
     setIsRefreshing(true);
-    fetch(
+    RedditApiClient.fetch(
       `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
     )
       .then((response) => response.json())

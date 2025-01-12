@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
 import he from "he";
 import SearchIcon from "../static/SearchIcon";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 const SearchInput: React.FC = () => {
   const isMobile = window.innerWidth <= 767;
@@ -40,7 +41,7 @@ const SearchInput: React.FC = () => {
 
   const fetchSubredditSuggestions = async () => {
     try {
-      const response = await fetch(
+      const response = await RedditApiClient.fetch(
         `https://www.reddit.com/subreddits/search.json?q=${search}`
       );
       const data = await response.json();

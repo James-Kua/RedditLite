@@ -23,6 +23,7 @@ import ExternalLink from "./ExternalLink";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import PollData from "./PollData";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 export interface FeedProps {
   subreddit: string;
@@ -46,7 +47,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    fetch(
+    RedditApiClient.fetch(
       `https://www.reddit.com/r/${subreddit}/${sort}.json?after=${after}&t=${time}`
     )
       .then((response) => response.json())
@@ -65,7 +66,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     setAfter(null);
     setHasMore(true);
 
-    fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}`)
+    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -76,7 +77,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         setHasMore(!!data.data.after);
       });
 
-    fetch(`https://www.reddit.com/r/${subreddit}/about.json`)
+    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about.json`)
       .then((response) => response.json())
       .then((data) => {
         setSubredditInfo(data.data);

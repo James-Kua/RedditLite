@@ -12,6 +12,7 @@ import BodyHtml from "./BodyHtml";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import PollData from "./PollData";
 import PostGallery from "./PostGallery";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 export interface UserPostProps {
   username: string;
@@ -28,7 +29,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    fetch(`https://www.reddit.com/user/${username}.json?after=${after}`)
+    RedditApiClient.fetch(`https://www.reddit.com/user/${username}.json?after=${after}`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -41,7 +42,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   }, [username, after, hasMore]);
 
   useEffect(() => {
-    fetch(`https://www.reddit.com/user/${username}.json`)
+    RedditApiClient.fetch(`https://www.reddit.com/user/${username}.json`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
@@ -50,7 +51,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
         setHasMore(!!data.data.after);
       });
 
-    fetch(`https://www.reddit.com/user/${username}/about.json`)
+    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/about.json`)
       .then((response) => response.json())
       .then((data) => {
         setUserProfile(data.data);

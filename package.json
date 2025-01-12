@@ -27,6 +27,7 @@
     "react-router-dom": "^6.27.0",
     "react-slick": "^0.30.3",
     "react-social-media-embed": "^2.5.17",
+    "react-toastify": "^11.0.2",
     "react-twitch-embed": "^3.0.2",
     "slick-carousel": "^1.8.1"
   },

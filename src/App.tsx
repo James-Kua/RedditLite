@@ -8,6 +8,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   return (
+    <>
+    <ToastContainer />
     <Router>
       <Routes>
         <Route path="/r/:subreddit" element={<FeedWrapper />} />
@@ -23,6 +25,7 @@ function App() {
         <Route path="*" element={<Error />} />
       </Routes>
     </Router>
+    </>
   );
 }
 
@@ -31,6 +34,7 @@ export default App;
 import { useParams, useSearchParams } from "react-router-dom";
 import SinglePost from "./components/SinglePost";
 import SearchPage from "./components/SearchPage";
+import { ToastContainer } from "react-toastify";
 
 const FeedWrapper = () => {
   const { subreddit, sort = "hot" } = useParams();

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchInput from "../components/SearchInput";
 import SubredditIcon from "../components/SubredditIcon";
 import { Subreddit } from "../types/subreddit";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 const Home = () => {
   const [starredSubreddits, setStarredSubreddits] = useState<Subreddit[]>([]);
@@ -13,7 +14,7 @@ const Home = () => {
       const fetchSubredditIcons = async () => {
         const subredditData = await Promise.all(
           subreddits.map(async (subreddit: string) => {
-            const response = await fetch(`https://www.reddit.com/r/${subreddit}/about.json`);
+            const response = await RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about.json`);
             const data = await response.json();
             return {
               name: subreddit,

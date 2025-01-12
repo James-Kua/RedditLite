@@ -20,6 +20,7 @@ import ArrowIcon from "../static/ArrowIcon";
 import HomeIcon from "../static/HomeIcon";
 import { Subreddit } from "../types/subreddit";
 import SubredditCard from "./SubredditCard";
+import { RedditApiClient } from "../api/RedditApiClient";
 
 export interface SearchPageProps {
   query: string;
@@ -51,7 +52,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
       ? `https://www.reddit.com/r/${subreddit}/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
       : `https://www.reddit.com/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}`;
 
-    fetch(searchUrl)
+    RedditApiClient.fetch(searchUrl)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
@@ -66,7 +67,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
       const encodedQuery = encodeURIComponent(userQuery);
       const searchUrl = `https://www.reddit.com/search.json?q=${encodedQuery}&sort=${sort}&type=sr&sr_detail=true`;
 
-      fetch(searchUrl)
+      RedditApiClient.fetch(searchUrl)
         .then((response) => response.json())
         .then((data) => {
           const suggestions: Subreddit[] = data.data.children.map((child: any) => ({
@@ -98,7 +99,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on`
         : `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&t=${time}`;
 
-      fetch(searchUrl)
+        RedditApiClient.fetch(searchUrl)
         .then((response) => response.json())
         .then((data) => {
           const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
