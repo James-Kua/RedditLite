@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo } from "react";
 import Slider from "react-slick";
 import { parseImageType } from "../utils/parser";
 
@@ -12,21 +12,22 @@ type PostGalleryProps = {
 };
 
 const PostGallery: React.FC<PostGalleryProps> = ({ galleryData, mediaMetadata }) => {
-  const maxImageWidth = window.innerWidth * 0.9;
+  const maxImageWidth = useMemo(() => window.innerWidth * 0.9, []);
+
+  const imageUrls = useMemo(() => {
+    return galleryData.items.map((item) => {
+      const imageType = parseImageType(mediaMetadata?.[item.media_id as unknown as number]?.m ?? "");
+      const imageUrl = `https://i.redd.it/${item.media_id}.${imageType}`;
+      return { media_id: item.media_id, imageUrl };
+    });
+  }, [galleryData, mediaMetadata]);
 
   const settings = {
     customPaging: function (i: number) {
-      const item = galleryData.items[i];
-      const imageUrl = `https://i.redd.it/${item.media_id}.${parseImageType(
-        mediaMetadata?.[item.media_id as unknown as number]?.m ?? ""
-      )}`;
-
+      const { imageUrl } = imageUrls[i];
       return (
         <a>
-          <img
-            src={imageUrl}
-            className="w-6 h-6 object-cover rounded-md"
-          />
+          <img src={imageUrl} className="w-6 h-6 object-cover rounded-md" loading="lazy" />
         </a>
       );
     },
@@ -41,26 +42,20 @@ const PostGallery: React.FC<PostGalleryProps> = ({ galleryData, mediaMetadata })
 
   return (
     <div className="px-6">
-      {galleryData ? (
+      {galleryData && (
         <Slider {...settings} className="mb-8">
-          {galleryData.items.map((item) => (
-            <div key={item.media_id} className="flex justify-center">
+          {imageUrls.map(({ media_id, imageUrl }) => (
+            <div key={media_id} className="flex justify-center">
               <div
                 className="max-h-[80vh] w-full flex items-center justify-center"
                 style={{ maxWidth: `${maxImageWidth}px` }}
               >
-                <img
-                  src={`https://i.redd.it/${item.media_id}.${parseImageType(
-                    mediaMetadata?.[item.media_id as unknown as number]?.m ?? ""
-                  )}`}
-                  className="max-h-[50vh] max-w-full object-contain rounded-lg"
-                  alt="Gallery Image"
-                />
+                <img src={imageUrl} className="max-h-[50vh] max-w-full object-contain rounded-lg" alt="Gallery Image" />
               </div>
             </div>
           ))}
         </Slider>
-      ) : null}
+      )}
     </div>
   );
 };
