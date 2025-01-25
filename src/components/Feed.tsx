@@ -24,6 +24,7 @@ import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
 import PollData from "./PollData";
 import { RedditApiClient } from "../api/RedditApiClient";
+import { useNavigate, useParams } from "react-router-dom";
 
 export interface FeedProps {
   subreddit: string;
@@ -32,17 +33,28 @@ export interface FeedProps {
 }
 
 const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort }) => {
+  const params = useParams();
+  const navigate = useNavigate();
+  
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
-  const [sort, setSort] = useState<string>(initialSort);
+  const [sort, setSort] = useState<string>(params.sort || initialSort);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
   const [isStarred, setIsStarred] = useState<boolean>(
     localStorage.getItem("reddit-lite-starred")?.includes(subreddit) || false
   );
+
+  useEffect(() => {
+    if (sort === "top") {
+      navigate(`/r/${subreddit}/${sort}/?t=${time}`, { replace: true });
+    } else {
+      navigate(`/r/${subreddit}/${sort}/`, { replace: true });
+    }
+  }, [sort, time, subreddit, navigate]);
 
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
