@@ -1,6 +1,13 @@
-import PropTypes from "prop-types";
+import React from "react";
 
-const CustomTag = ({
+interface CustomTagProps {
+  fontSize?: string;
+  color?: string;
+  backgroundColor?: string;
+  content?: string;
+}
+
+const CustomTag: React.FC<CustomTagProps> = ({
   fontSize = "text-xs",
   color = "text-black",
   backgroundColor = "bg-slate-50",
@@ -15,13 +22,6 @@ const CustomTag = ({
       </p>
     </span>
   );
-};
-
-CustomTag.propTypes = {
-  fontSize: PropTypes.string,
-  color: PropTypes.string,
-  backgroundColor: PropTypes.string,
-  content: PropTypes.string,
 };
 
 export default CustomTag;
