@@ -46,7 +46,7 @@ jobs:
         
             ⏰ *${{ env.CURRENT_DATETIME }}*
 
-            📂 ${{ github.ref }}
+            📂 ${{ github.head_ref || github.ref_name }}
 
             🧑‍💻 *${{ github.actor }}* created commit: ${{ github.event.head_commit.message }}
 
@@ -70,7 +70,7 @@ jobs:
         
             ⏰ *${{ env.CURRENT_DATETIME }}*
 
-            📂 ${{ github.ref }}
+            📂 ${{ github.head_ref || github.ref_name }}
 
             🧑‍💻 *${{ github.actor }}* created commit: ${{ github.event.head_commit.message }}
 
