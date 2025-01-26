@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: storybook build
 on:
   push:
     branches: [ main ]
@@ -20,7 +20,7 @@ jobs:
 
     - name: run build
       id: build
-      run: npm run build
+      run: npm run build-storybook
 
     - name: Get changed files
       id: changed-files
@@ -41,7 +41,7 @@ jobs:
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
         message: |
-            ✅ Build passed!
+            ✅ Storybook build passed!
         
             ⏰ *${{ env.CURRENT_DATETIME }}*
 
@@ -57,14 +57,14 @@ jobs:
             👍 *See changes*: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
 
     - name: Send telegram update on failure
-      if: ${{ steps.build.outcome == 'success' }}
+      if: ${{ steps.build.outcome == 'failure' }}
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         format: markdown
         message: |
-            ❌ Workflow failed!
+            ❌ Storybook build failed!
         
             ⏰ *${{ env.CURRENT_DATETIME }}*
 
