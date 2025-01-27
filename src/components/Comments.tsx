@@ -79,8 +79,10 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
       <BodyHtml body_html={comment.body_html} />
       <div className="text-gray-500 text-xs mt-2 dark:text-slate-200 flex space-x-1">
         <UpvoteIcon />
-        <span>{comment.score.toLocaleString("en-US")}</span>
-        <span>upvotes</span>
+        <span className="font-medium">{comment.score.toLocaleString("en-US")}</span>
+        <span className="font-base">
+          {comment.score === 1 ? "upvote" : "upvotes"}
+        </span>
       </div>
       {comment.replies?.data?.children?.length > 0 && (
         <button className="dark:text-gray-300 text-xs mt-2" onClick={() => setShowReplies(!showReplies)}>
