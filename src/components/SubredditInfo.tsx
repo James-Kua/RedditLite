@@ -17,28 +17,28 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ public_description_html, 
   const gradientClass = "bg-gradient-to-r from-blue-200 to-green-200 dark:from-gray-800 dark:to-gray-900";
 
   return (
-    <div className={`${gradientClass} p-2 rounded-md text-sm overflow-scroll`}>
+    <div className={`${gradientClass} p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 text-sm`}>
       <div
-        className="rich-text-content text-black text-sm leading-relaxed overflow-hidden dark:text-white mb-2"
+        className="rich-text-content text-black text-sm leading-relaxed overflow-hidden dark:text-white mb-4 prose dark:prose-invert max-w-none"
         dangerouslySetInnerHTML={{
           __html: he.decode(public_description_html),
         }}
       />
-      <div className="flex flex-col space-y-1 text-sm">
+      <div className="flex justify-between items-center pt-1">
         {subscribers && (
-          <div className="flex items-center text-black dark:text-white">
-            <span aria-label="members" className="mr-1">
+          <div className="flex items-center text-black dark:text-white bg-white/30 dark:bg-black/10 rounded-full px-1 py-1.5">
+            <span aria-label="members" className="mr-2">
               <UserGroupIcon />
             </span>
-            <span className="font-base">{subscribers.toLocaleString("en-US")} Members</span>
+            <span className="text-xs sm:text-sm font-medium">{subscribers.toLocaleString("en-US")} Members</span>
           </div>
         )}
         {accounts_active && (
-          <div className="flex items-center text-black dark:text-white">
-            <span aria-label="online" className="mr-1">
+          <div className="flex items-center text-black dark:text-white bg-white/30 dark:bg-black/10 rounded-full px-1 py-1.5">
+            <span aria-label="online" className="mr-2">
               <UserOnlineIcon />
             </span>
-            <span className="font-base">{accounts_active.toLocaleString("en-US")} Online</span>
+            <span className="text-xs sm:text-sm font-medium">{accounts_active.toLocaleString("en-US")} Online</span>
           </div>
         )}
       </div>
