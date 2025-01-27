@@ -30,43 +30,58 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center h-screen px-4 text-center dark:bg-custom-black">
-      <h1 className="text-3xl font-bold font-mono tracking-wide text-gray-500 dark:text-white">RedditLite</h1>
-      <h4 className="tracking-wide text-gray-500 dark:text-white">Lightweight Reddit Browsing</h4>
-      <SearchInput />
-      <p className="text-sm tracking-wide text-gray-500 dark:text-white mt-4">
-        Browse the most popular posts from{" "}
-        <a href="/r/popular" className="font-semibold text-blue-500 dark:text-blue-300">
-          /r/popular
-        </a>
-      </p>
-
-      <div className="mt-6 w-full px-2 max-w-sm text-sm">
-        {starredSubreddits.length > 0 && (
-          <>
-            <p className="font-semibold text-md text-gray-600 dark:text-gray-200 mb-2">Your Starred Subreddits</p>
-            <div className="grid grid-cols-1 gap-2">
-              {starredSubreddits.map(({ name, community_icon, icon_img }) => (
-                <div
-                  key={name}
-                  className="bg-gray-200 dark:bg-gray-700 p-2 rounded shadow text-gray-600 dark:text-gray-200 cursor-pointer text-sm flex items-center justify-between"
-                >
-                  <div className="flex items-center">
-                    <SubredditIcon community_icon={community_icon} icon_img={icon_img} />
-                    <p className="font-semibold">{name}</p>
-                  </div>
-                  <a
-                    href={`/r/${name}`}
-                    className="text-blue-500 dark:text-blue-400 font-semibold hover:underline text-xs"
-                  >
-                    Visit
-                  </a>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+    <div className="flex flex-col justify-center items-center min-h-screen px-4 text-center dark:bg-custom-black">
+      <div className="space-y-2 mb-4">
+        <h1 className="text-3xl font-bold font-mono tracking-wide text-gray-600 dark:text-white">
+          RedditLite
+        </h1>
+        <h4 className="tracking-wide text-gray-500 dark:text-white text-md">
+          Lightweight Reddit Browsing
+        </h4>
       </div>
+
+      <div className="w-full max-w-sm">
+        <SearchInput />
+      </div>
+
+      <div className="mt-1 flex gap-3">
+        <div className="p-2 text-sm text-gray-600 dark:text-gray-300">
+          Browse the most popular posts from <a 
+            href="/r/popular"
+            className="text-blue-500 dark:text-blue-300 hover:underline font-medium"
+          >
+            /r/popular
+          </a>
+        </div>
+      </div>
+      {starredSubreddits.length > 0 && (
+        <div className="mt-4 w-full max-w-sm">
+          <h2 className="font-semibold text-md text-gray-600 dark:text-gray-200 mb-4">
+            Your Starred Communities
+          </h2>
+          <div className="grid grid-cols-1 gap-3">
+            {starredSubreddits.map(({ name, community_icon, icon_img }) => (
+              <a
+                key={name}
+                href={`/r/${name}`}
+                className="group flex items-center p-1.5 bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-all hover:shadow-sm"
+              >
+                <div className="flex items-center gap-1.5 w-full">
+                  <div className="transform group-hover:scale-105 transition-transform">
+                    <SubredditIcon community_icon={community_icon} icon_img={icon_img} />
+                  </div>
+                  <div className="flex justify-between items-center w-full">
+                    <p className="font-semibold text-sm text-gray-700 dark:text-gray-200">r/{name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-300">
+                      Visit Community →
+                    </p>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
