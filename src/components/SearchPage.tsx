@@ -161,33 +161,40 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
           {subreddit ? `r/${subreddit}` : "all subreddits"}
         </div>
 
-        {filterOptions.map((optionGroup, index) =>
-          optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
-            <div className="text-black dark:text-gray-400 text-sm mb-2" key={index}>
-              <label className="mr-1 font-medium">{optionGroup.label}</label>
-              <select
-                value={optionGroup.label === "Sort by" ? sort : time}
-                onChange={(e) => {
-                  switch (optionGroup.label) {
-                    case "Sort by":
-                      setSort(e.target.value);
-                      break;
-                    case "Time":
-                      setTime(e.target.value);
-                      break;
-                  }
-                }}
-                className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+        <div className="mb-4 flex flex-wrap gap-3">
+          {filterOptions.map((optionGroup, index) =>
+            optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
+              <div
+                className="flex items-center"
+                key={index}
               >
-                {optionGroup.options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.key}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )
-        )}
+                <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  {optionGroup.label}
+                </label>
+                <select
+                  value={optionGroup.label === "Sort by" ? sort : time}
+                  onChange={(e) => {
+                    switch (optionGroup.label) {
+                      case "Sort by":
+                        setSort(e.target.value);
+                        break;
+                      case "Time":
+                        setTime(e.target.value);
+                        break;
+                    }
+                  }}
+                  className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-1 py-1 font-medium text-gray-800 dark:text-gray-200 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  {optionGroup.options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )
+          )}
+        </div>
 
         <div className="my-2 w-full">
           {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (

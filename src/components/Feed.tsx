@@ -191,14 +191,16 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           />
         </div>
 
-        <div className="mb-2">
+        <div className="mb-4 flex flex-wrap gap-3">
           {filterOptions.map((optionGroup, index) =>
             optionGroup.label === "Time" && sort !== "top" ? null : (
               <div
-                className="text-black dark:text-gray-400 text-sm mb-2"
+                className="flex items-center"
                 key={index}
               >
-                <label className="mr-1 font-medium">{optionGroup.label}</label>
+                <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  {optionGroup.label}
+                </label>
                 <select
                   value={optionGroup.label === "Sort by" ? sort : time}
                   onChange={(e) => {
@@ -211,7 +213,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                         break;
                     }
                   }}
-                  className="p-1 rounded dark:bg-gray-800 text-black dark:text-gray-400 font-medium"
+                  className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-1 py-1 font-medium text-gray-800 dark:text-gray-200 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   {optionGroup.options.map((option) => (
                     <option key={option.value} value={option.value}>
