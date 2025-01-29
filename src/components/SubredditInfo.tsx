@@ -17,7 +17,7 @@ export type SubredditInfoProps = {
 const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit }) => {
   const { public_description_html = '', accounts_active = 0, subscribers = 0, banner_background_image, banner_img } = subreddit || {};
 
-  const bannerImage = banner_background_image ?? banner_img;
+  const bannerImage = banner_background_image || banner_img;
 
   const gradientClass = "bg-gradient-to-r from-blue-200 to-green-200 dark:from-gray-800 dark:to-gray-900";
 

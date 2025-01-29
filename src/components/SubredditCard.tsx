@@ -14,7 +14,7 @@ export interface SubredditCardProps {
 }
 
 const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
-  const bannerImage = subreddit.banner_background_image ?? subreddit.banner_img;
+  const bannerImage = subreddit.banner_background_image || subreddit.banner_img;
 
   return (
     <a
