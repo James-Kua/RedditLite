@@ -29,9 +29,7 @@ const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
         }}
         className="relative flex p-2 rounded-md cursor-pointer bg-gradient-to-r from-blue-100 to-green-100 dark:from-gray-800 dark:to-gray-900 overflow-auto hover:bg-gradient-to-r hover:from-blue-300 hover:to-green-300 dark:hover:from-gray-700 dark:hover:to-gray-800"
       >
-        {bannerImage && (
-          <div className="absolute inset-0 dark:bg-black dark:bg-opacity-80 bg-slate-100 bg-opacity-80"></div>
-        )}
+        <div className="absolute inset-0 bg-black opacity-50 rounded-md" />
         <div className="relative z-10 flex items-center w-full space-x-4">
           {subreddit.community_icon ? (
             <img
@@ -50,14 +48,14 @@ const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
           )}
 
           <div className="flex-1">
-            <p className="font-semibold text-sm text-gray-800 dark:text-white">
+            <p className="font-semibold text-sm text-white">
               {subreddit.display_name_prefixed}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-white">
               {(subreddit.subscribers ?? 0).toLocaleString("en-US")} subscribers
             </p>
             <div
-              className="rich-text-content text-black text-xs leading-relaxed overflow-hidden dark:text-white mb-2"
+              className="rich-text-content text-white text-xs leading-relaxed overflow-hidden mb-2"
               dangerouslySetInnerHTML={{
                 __html: he.decode(subreddit.public_description_html ?? ""),
               }}
