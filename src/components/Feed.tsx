@@ -184,11 +184,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         </nav>
 
         <div className="mb-2">
-          <SubredditInfo
-            public_description_html={subredditInfo?.public_description_html}
-            accounts_active={subredditInfo?.accounts_active}
-            subscribers={subredditInfo?.subscribers}
-          />
+          {subredditInfo && (
+            <SubredditInfo
+              subreddit={subredditInfo}
+            />
+          )}
         </div>
 
         <div className="mb-4 flex flex-wrap gap-3">
