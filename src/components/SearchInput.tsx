@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, matchPath } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
 import he from "he";
 import SearchIcon from "../static/SearchIcon";
@@ -92,11 +92,11 @@ const SearchInput: React.FC = () => {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInSubreddit(e.target.checked);
-  };
-
-  const currentPath = location.pathname;
-  const isSubredditPath = /^\/r\/[^/]+$/.test(currentPath);
-  const currentSubreddit = isSubredditPath ? currentPath.split("/")[2] : null;
+  }
+  
+  const isSubredditPath = matchPath({ path: "/r/:subreddit/*"}, location.pathname);
+  const currentSubreddit = isSubredditPath ? isSubredditPath.params.subreddit : null;
+  const currentSubredditPrefixed = isSubredditPath ? isSubredditPath.pathnameBase : null; 
 
   return (
     <div className="relative">
@@ -155,7 +155,7 @@ const SearchInput: React.FC = () => {
                   htmlFor="search-in-subreddit"
                   className="text-xs text-gray-800 dark:text-white"
                 >
-                  Search in {currentSubreddit}
+                  Search in {currentSubredditPrefixed}
                 </label>
               </div>
             )}
@@ -165,7 +165,7 @@ const SearchInput: React.FC = () => {
                 className="text-gray-800"
                 key={index}
               >
-                <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700">
+                <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 z-100">
                   {subreddit?.community_icon ? (
                     <img
                       src={he.decode(subreddit.community_icon)}

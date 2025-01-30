@@ -31,9 +31,9 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit }) => {
         }}
         className="relative flex p-2 rounded-md cursor-pointer overflow-auto"
       >
-        <div className="absolute inset-0 bg-black opacity-30 rounded-md" />
+        <div className="absolute inset-0 bg-black opacity-60 rounded-md" />
         <div
-          className="rich-text-content text-sm leading-relaxed overflow-hidden text-white prose dark:prose-invert max-w-none relative z-10"
+          className="rich-text-content text-sm leading-relaxed overflow-hidden text-white prose dark:prose-invert max-w-none relative"
           dangerouslySetInnerHTML={{
             __html: he.decode(public_description_html),
           }}
