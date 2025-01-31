@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, matchPath } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
 import he from "he";
@@ -17,6 +17,7 @@ const SearchInput: React.FC = () => {
   const [searchInSubreddit, setSearchInSubreddit] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -84,6 +85,20 @@ const SearchInput: React.FC = () => {
     }
   };
 
+  const handleHotkey = (e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      inputRef.current?.focus();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleHotkey);
+    return () => {
+      window.removeEventListener("keydown", handleHotkey);
+    };
+  }, []);
+
   const toggleExpand = () => {
     if (window.location.pathname !== "/") {
       setIsExpanded(!isExpanded);
@@ -111,6 +126,7 @@ const SearchInput: React.FC = () => {
         <input
           type="text"
           id="subreddit-search"
+          ref={inputRef}
           value={search}
           onChange={handleSearch}
           onKeyDown={handleKeyDown}
