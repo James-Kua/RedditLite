@@ -35,7 +35,7 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit }) => {
         <div
           className="rich-text-content text-sm leading-relaxed overflow-hidden text-white prose dark:prose-invert max-w-none relative"
           dangerouslySetInnerHTML={{
-            __html: he.decode(public_description_html),
+            __html: he.decode(public_description_html || ''),
           }}
         />
       </div>
