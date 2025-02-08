@@ -54,11 +54,11 @@
     @media (prefers-color-scheme: dark) {
         blockquote {
             color: #d1d5db;
-            background-color: #374151;
+            background-color: #1f2937;
         }
 
         th {
-            background-color: #4b5563;
+            background-color: #2d3748;
         }
     }
 }

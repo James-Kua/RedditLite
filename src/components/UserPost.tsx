@@ -108,10 +108,10 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
         </nav>
 
         <div className="flex space-x-2 mb-4">
-          <button onClick={() => setActiveTab('posts')} className={`py-1 px-3 font-semibold text-sm rounded ${activeTab === 'posts' ? 'bg-blue-600 text-white' : 'bg-gray-300 dark:bg-slate-800 hover:bg-gray-400'}`}>
+          <button onClick={() => setActiveTab('posts')} className={`py-1 px-3 font-semibold text-sm rounded ${activeTab === 'posts' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'}`}>
             Posts
           </button>
-          <button onClick={() => setActiveTab('comments')} className={`py-1 px-3 font-semibold text-sm rounded ${activeTab === 'comments' ? 'bg-blue-600 text-white' : 'bg-gray-300 dark:bg-slate-800 hover:bg-gray-400'}`}>
+          <button onClick={() => setActiveTab('comments')} className={`py-1 px-3 font-semibold text-sm rounded ${activeTab === 'comments' ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'}`}>
             Comments
           </button>
         </div>
