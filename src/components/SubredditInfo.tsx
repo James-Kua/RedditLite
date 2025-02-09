@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import he from "he";
 import UserGroupIcon from "../static/UserGroupIcon";
 import UserOnlineIcon from "../static/UserOnlineIcon";
+import { SubredditRules } from "../types/subreddit";
 
 export type SubredditInfoProps = {
   subreddit: {
@@ -12,14 +13,22 @@ export type SubredditInfoProps = {
     public_description_html?: string;
     accounts_active?: number;
   };
+  rules?: SubredditRules[];
 };
 
-const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit }) => {
-  const { public_description_html = '', accounts_active = 0, subscribers = 0, banner_background_image, banner_img } = subreddit || {};
+const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
+  const { accounts_active = 0, subscribers = 0, banner_background_image, banner_img, public_description_html } = subreddit || {};
+  const [showRules, setShowRules] = useState<boolean>(false);
+  const [expandedRuleIndex, setExpandedRuleIndex] = useState<number | null>(null);
 
   const bannerImage = banner_background_image || banner_img;
-
   const gradientClass = "bg-gradient-to-r from-blue-200 to-green-200 dark:from-gray-800 dark:to-gray-900";
+
+  const cleanDescriptionHtml = (html?: string) => {
+    if (!html) return "";
+    const cleaned = html.replace(/<!-- SC_OFF -->(.*?)<!-- SC_ON -->/gs, "$1");
+    return he.decode(cleaned);
+  };
 
   return (
     <div className={`${gradientClass} p-2 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 text-sm`}>
@@ -61,6 +70,38 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit }) => {
           )}
         </div>
       </div>
+      {rules && rules.length > 0 && (
+        <div className="mt-4">
+          <button
+            onClick={() => {
+              setShowRules(prev => !prev);
+              setExpandedRuleIndex(null);
+            }}
+            className="text-black dark:text-white font-medium text-xs bg-white/30 dark:bg-black/30 rounded-lg py-2 px-2 transition duration-200 hover:bg-white/50 dark:hover:bg-black/50"
+          >
+            {showRules ? "Hide Rules" : "Show Rules"}
+          </button>
+          {showRules && (
+            <ul className="text-black dark:text-white">
+              {rules.map((rule, index) => (
+                <li key={index} className="ml-4 mt-2">
+                  <div onClick={() => setExpandedRuleIndex(expandedRuleIndex === index ? null : index)} className={`cursor-pointer font-medium text-xs mb-1 ${rule.description_html ? 'text-blue-500' : ''}`}>
+                    {rule.short_name}
+                  </div>
+                  {expandedRuleIndex === index && rule.description_html && (
+                    <div
+                      className="rich-text-content leading-relaxed overflow-hidden max-w-none relative mt-1 p-1 rounded-md text-xs ml-2"
+                      dangerouslySetInnerHTML={{
+                        __html: cleanDescriptionHtml(rule.description_html),
+                      }}
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 };

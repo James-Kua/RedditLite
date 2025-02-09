@@ -3,7 +3,7 @@ import he from "he";
 import SearchInput from "./SearchInput";
 import { parsePermalink, isImage } from "../utils/parser";
 import { Post } from "../types/post";
-import { Subreddit } from "../types/subreddit";
+import { Subreddit, SubredditRules } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
 import LinkFlairText from "./LinkFlairText";
 import { FetchImage } from "../utils/image";
@@ -38,6 +38,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
+  const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
   const [after, setAfter] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
@@ -93,6 +94,12 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
       .then((response) => response.json())
       .then((data) => {
         setSubredditInfo(data.data);
+      });
+
+    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about/rules.json`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSubredditRules(data.rules as SubredditRules[]);
       });
 
     document.title = `🤖 ${subreddit}`;
@@ -187,6 +194,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           {subredditInfo && (
             <SubredditInfo
               subreddit={subredditInfo}
+              rules={subredditRules}
             />
           )}
         </div>

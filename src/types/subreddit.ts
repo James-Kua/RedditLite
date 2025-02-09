@@ -20,3 +20,8 @@ export interface UserFlairRichtext {
   e: string;
   t?: string;
 }
+
+export interface SubredditRules {
+  short_name: string;
+  description_html?: string;
+}
