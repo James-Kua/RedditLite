@@ -9,6 +9,7 @@ export interface Subreddit {
   user_flair_richtext: UserFlairRichtext[];
   community_icon: string;
   public_description_html: string;
+  description_html: string;
   description: string;
   banner_img: string;
   banner_background_image: string;

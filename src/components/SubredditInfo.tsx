@@ -11,14 +11,16 @@ export type SubredditInfoProps = {
     banner_img?: string;
     subscribers?: number;
     public_description_html?: string;
+    description_html?: string;
     accounts_active?: number;
   };
   rules?: SubredditRules[];
 };
 
 const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
-  const { accounts_active = 0, subscribers = 0, banner_background_image, banner_img, public_description_html } = subreddit || {};
+  const { accounts_active = 0, subscribers = 0, banner_background_image, banner_img, public_description_html, description_html } = subreddit || {};
   const [showRules, setShowRules] = useState<boolean>(false);
+  const [showDescription, setShowDescription] = useState<boolean>(false);
   const [expandedRuleIndex, setExpandedRuleIndex] = useState<number | null>(null);
 
   const bannerImage = banner_background_image || banner_img;
@@ -70,8 +72,19 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
           )}
         </div>
       </div>
-      {rules && rules.length > 0 && (
-        <div className="mt-4">
+
+      <div className="flex space-x-2 mt-2">
+        {description_html && (
+          <button
+            onClick={() => {
+              setShowDescription(prev => !prev);
+            }}
+            className="text-black dark:text-white font-medium text-xs bg-white/30 dark:bg-black/30 rounded-lg py-2 px-2 transition duration-200 hover:bg-white/50 dark:hover:bg-black/50"
+          >
+            {showDescription ? "Hide Description" : "Show Description"}
+          </button>
+        )}
+        {rules && rules.length > 0 && (
           <button
             onClick={() => {
               setShowRules(prev => !prev);
@@ -81,26 +94,38 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
           >
             {showRules ? "Hide Rules" : "Show Rules"}
           </button>
-          {showRules && (
-            <ul className="text-black dark:text-white">
-              {rules.map((rule, index) => (
-                <li key={index} className="ml-4 mt-2">
-                  <div onClick={() => setExpandedRuleIndex(expandedRuleIndex === index ? null : index)} className={`cursor-pointer font-medium text-xs mb-1 ${rule.description_html ? 'text-blue-500' : ''}`}>
-                    {rule.short_name}
-                  </div>
-                  {expandedRuleIndex === index && rule.description_html && (
-                    <div
-                      className="rich-text-content leading-relaxed overflow-hidden max-w-none relative mt-1 p-1 rounded-md text-xs ml-2"
-                      dangerouslySetInnerHTML={{
-                        __html: cleanDescriptionHtml(rule.description_html),
-                      }}
-                    />
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
+        )}
+      </div>
+
+      {showDescription && (
+        <div className="mt-2">
+          <div
+            className="rich-text-content leading-relaxed overflow-auto relative p-1 rounded-md text-xs"
+            dangerouslySetInnerHTML={{
+              __html: cleanDescriptionHtml(description_html),
+            }}
+          />
         </div>
+      )}
+
+      {showRules && (
+        <ul className="text-black dark:text-white">
+          {rules?.map((rule, index) => (
+            <li key={index} className="ml-2 mt-2">
+              <div onClick={() => setExpandedRuleIndex(expandedRuleIndex === index ? null : index)} className={`cursor-pointer font-medium text-xs mb-1 ${rule.description_html ? 'text-blue-500' : ''}`}>
+                {rule.short_name}
+              </div>
+              {expandedRuleIndex === index && rule.description_html && (
+                <div
+                  className="rich-text-content leading-relaxed overflow-hidden max-w-none relative mt-1 p-1 rounded-md text-xs ml-2"
+                  dangerouslySetInnerHTML={{
+                    __html: cleanDescriptionHtml(rule.description_html),
+                  }}
+                />
+              )}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
