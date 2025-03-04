@@ -20,6 +20,7 @@ function App() {
         />
         <Route path="/r/:subreddit/search" element={<SearchWrapper />} />
         <Route path="/search" element={<SearchWrapper />} />
+        <Route path="/u/:username" element={<UserProfileWrapper />} />
         <Route path="/user/:username" element={<UserProfileWrapper />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<Error />} />
