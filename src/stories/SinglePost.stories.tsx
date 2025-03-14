@@ -50,3 +50,10 @@ GalleryPost.args = {
   postId: "1hill1f",
   title: "oc_japan_in_focus_fall_day_5_matsumoto_evening",
 };
+
+export const PostWithImages = Template.bind({});
+PostWithImages.args = {
+  subreddit: "singapore",
+  postId: "1ja7js6",
+  title: "fun_fact_an_employment_passs_pass_holder_in",
+};
