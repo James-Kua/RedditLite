@@ -173,7 +173,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                   <PollData poll_data={post.poll_data} />
                 )}
                 {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
-                <PostStats score={post.score} />
+                <PostStats score={post.score} num_comments={post.num_comments} />
               </a>
             </div>
           ))
