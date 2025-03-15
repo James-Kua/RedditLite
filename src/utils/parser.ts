@@ -54,6 +54,8 @@ export function parseInlineImagesFromHtml(html: string) {
       img.style.maxWidth = "100%";
       img.style.height = "auto";
       img.style.maxHeight = "50vh";
+      img.style.borderRadius = "0.5rem";
+      img.style.marginTop = "0.5rem";
 
       const newLink = document.createElement("a");
       newLink.href = href;
@@ -64,7 +66,8 @@ export function parseInlineImagesFromHtml(html: string) {
       const captionText = link.textContent || "Image";
       const caption = document.createElement("figcaption");
       caption.style.textAlign = "center";
-      caption.style.marginTop = "8px";
+      caption.style.marginTop = "0.5rem";
+      caption.style.marginBottom = "0.5rem";
       caption.style.fontSize = "0.9em";
       caption.style.fontWeight = "500";
       caption.style.color = "#666";
@@ -79,4 +82,4 @@ export function parseInlineImagesFromHtml(html: string) {
   });
 
   return tempDiv.innerHTML;
-};
+}
