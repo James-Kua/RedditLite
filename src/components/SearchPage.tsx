@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback, memo } from "react";
 import SearchInput from "./SearchInput";
 import { Post } from "../types/post";
 import { isImage, parsePermalink } from "../utils/parser";
-import { parseUnixTimestamp } from "../utils/datetime";
 import he from "he";
 import LinkFlairText from "./LinkFlairText";
 import AuthorFlairText from "./AuthorFlairText";
@@ -21,6 +20,7 @@ import HomeIcon from "../static/HomeIcon";
 import { Subreddit } from "../types/subreddit";
 import SubredditCard from "./SubredditCard";
 import { RedditApiClient } from "../api/RedditApiClient";
+import CreatedEditedLabel from "./CreatedEditedLabel";
 
 export interface SearchPageProps {
   query: string;
@@ -219,7 +219,10 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                     <a href={`/${post.subreddit_name_prefixed}`}>{post.subreddit_name_prefixed}</a>
                   </span>
                 </div>
-                <h3 className="text-sm">🕔 {parseUnixTimestamp(post.created)}</h3>
+                <CreatedEditedLabel
+                  created={post.created}
+                  edited={post.edited}
+                />
                 <h2 className="text-lg font-semibold my-1 dark:text-white">{he.decode(post.title)}</h2>
                 <LinkFlairText
                   link_flair_richtext={post.link_flair_richtext}
