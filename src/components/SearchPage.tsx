@@ -137,7 +137,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
-      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
+      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[95vw] flex flex-col justify-center relative py-4">
         <nav aria-label="Breadcrumb" className="flex items-center justify-between mb-5">
           <ol className="flex items-center gap-1 text-sm text-gray-600">
             <li>

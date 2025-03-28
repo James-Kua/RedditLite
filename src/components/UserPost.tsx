@@ -87,7 +87,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const PostItem = ({ post }: { post: Post }) => (
     <div className="mb-6">
       <a href={`/r/${post.subreddit}`}>
-        <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 my-1 text-sm text-blue-500 max-w-[90vw] overflow-x-auto inline-block font-bold">
+        <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 my-1 text-sm text-blue-500 max-w-[95vw] overflow-x-auto inline-block font-bold">
           {post.subreddit_name_prefixed}
         </span>
       </a>
@@ -132,7 +132,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
 
   return (
     <div className="dark:bg-custom-black dark:text-white">
-      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[90vw] flex flex-col justify-center relative py-4">
+      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[95vw] flex flex-col justify-center relative py-4">
         <nav aria-label="Breadcrumb" className="mb-5">
           <div className="flex h-8 items-center text-gray-500">
             <span className="mr-2 text-lg font-bold">u/{username}</span>

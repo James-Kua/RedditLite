@@ -152,7 +152,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
   return (
     <div className="dark:bg-custom-black dark:text-white">
-      <div className="md:w-8/12 xl:w-1/2 max-w-[90vw] mx-auto flex flex-col justify-center relative py-4">
+      <div className="md:w-8/12 xl:w-1/2 max-w-[95vw] mx-auto flex flex-col justify-center relative py-4">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center justify-between mb-5"
