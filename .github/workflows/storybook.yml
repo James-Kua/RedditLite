@@ -28,55 +28,13 @@ jobs:
       with:
         separator: "   "
 
-    - name: Set current datetime as env variable
-      env:
-        TZ: 'Asia/Singapore'
-      run: echo "CURRENT_DATETIME=$(date +'%d %b %Y, %I:%M%p [%A]')" >> $GITHUB_ENV
-
-    - name: Send telegram on success
-      if: ${{ steps.build.outcome == 'success' }}
-      uses: appleboy/telegram-action@master
+    - name: Notify Telegram
+      uses: james-kua/notify-telegram-action@main
       with:
+        workflow_name: ${{ github.workflow }}
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        format: markdown
-        disable_web_page_preview: true
-        message: |
-            ✅ Storybook build passed!
-        
-            ⏰ *${{ env.CURRENT_DATETIME }}*
-
-            📂 ${{ github.head_ref || github.ref_name }}
-
-            🧑‍💻 *${{ github.actor }}* created commit: ${{ github.event.head_commit.message }}
-
-            🗂 *Changed files*:
-            ${{ steps.changed-files.outputs.all_changed_files }}
-            
-            🎯 *Repository*: ${{ github.repository }}
-            
-            👍 *See changes*: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
-
-    - name: Send telegram update on failure
-      if: ${{ steps.build.outcome == 'failure' }}
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        format: markdown
-        disable_web_page_preview: true
-        message: |
-            ❌ Storybook build failed!
-        
-            ⏰ *${{ env.CURRENT_DATETIME }}*
-
-            📂 ${{ github.head_ref || github.ref_name_name }}
-
-            🧑‍💻 *${{ github.actor }}* created commit: ${{ github.event.head_commit.message }}
-
-            🗂 *Changed files*:
-            ${{ steps.changed-files.outputs.all_changed_files }}
-            
-            🎯 *Repository*: ${{ github.repository }}
-            
-            👍 *See changes*: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+        changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
+        message_format: markdown
+        disable_preview: true
+        timezone: 'Asia/Singapore'
