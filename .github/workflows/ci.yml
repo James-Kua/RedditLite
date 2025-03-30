@@ -37,6 +37,7 @@ jobs:
     - name: Notify Telegram
       uses: james-kua/notify-telegram-action@main
       with:
+        workflow_name: 'CI'
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         changed_files: ${{ steps.changed-files.outputs.all_changed_files }}
