@@ -14,7 +14,7 @@ const SelfTextHtml: React.FC<SelfTextHtmlProps> = ({ selftext_html, truncateLine
 
   return (
     <div
-      className="rich-text-content mt-1 text-sm lg:text-[15px] text-gray-700 overflow-scroll dark:text-zinc-300 leading-relaxed"
+      className="rich-text-content mt-1 text-sm text-gray-700 lg:text-md overflow-scroll dark:text-zinc-300 leading-relaxed"
       dangerouslySetInnerHTML={{ __html: modifiedHtml }}
     />
   );
