@@ -26,33 +26,36 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    setIsRefreshing(true);
-    RedditApiClient.fetch(
-      `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        const [postList, commentList] = data;
-        setPosts(
-          postList.data.children.map((child: { data: Post }) => child.data)
-        );
-        setComments(
-          commentList.data.children.map(
-            (child: { data: Comment }) => child.data
-          )
-        );
+    const load = async () => {
+      setIsRefreshing(true);
 
-        if (postList.data.children.length > 0) {
-          if (commentsSortOption === "") {
-            setSortOption(postList.data.children[0].data.suggested_sort);
-          } else {
-            setSortOption(commentsSortOption);
-          }
-        }
-      })
-      .finally(() => {
-        setIsRefreshing(false);
-      });
+      // First call to retrieve suggested_sort
+      const res = await RedditApiClient.fetch(
+        `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
+      );
+      const data = await res.json();
+      const [postList, commentList] = data;
+
+      const postData = postList.data.children.map((child: { data: Post }) => child.data)
+      
+      setPosts(postData);
+
+      const suggested_sort = postData[0]?.suggested_sort;
+      if (commentsSortOption === "" && suggested_sort) {
+        setSortOption(suggested_sort);
+        const sortedRes = await RedditApiClient.fetch(
+          `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${suggested_sort}`
+        );
+        const sortedData = await sortedRes.json();
+        const [, sortedComments] = sortedData;
+        setComments(sortedComments.data.children.map((child: { data: Post }) => child.data));
+      } else {
+        setComments(commentList.data.children.map((child: { data: Post }) => child.data));
+      }
+      setIsRefreshing(false);
+    };
+
+    load();
   }, [commentsSortOption, refreshKey]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
