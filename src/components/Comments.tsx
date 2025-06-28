@@ -54,17 +54,17 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
   if (!comment?.body_html) return null;
 
   return (
-    <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-4 hover:bg-slate-100 lg:hover:bg-transparent dark:hover:bg-slate-800 lg:dark:hover:bg-transparent px-1 rounded-md">
-      <div className="flex justify-between items-center w-full max-w-[100vw]">
-        <div className="flex items-center space-x-2 overflow-hidden">
+    <div className="bg-slate-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-lg px-2 pt-1 mb-2">
+      <div className="flex justify-between items-center w-full">
+        <div className="flex items-center flex-wrap gap-2 overflow-hidden">
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
-            <h3 className="font-semibold text-sm text-blue-400 whitespace-nowrap">{comment.author}</h3>
+            <h3 className="font-semibold text-sm text-blue-500 whitespace-nowrap hover:underline">{comment.author}</h3>
             {comment?.distinguished === "moderator" && (
-              <p className="px-0.5 text-sm font-semibold text-green-500">{"MOD"}</p>
+              <span className="text-green-500 text-xs font-semibold">MOD</span>
             )}
           </a>
           {comment.author === postAuthor && (
-            <span className="whitespace-nowrap rounded-md bg-gray-100 dark:bg-slate-700 p-0.5 font-semibold text-xs text-blue-700">
+            <span className="rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 py-0.5 text-xs font-semibold">
               OP
             </span>
           )}
@@ -76,27 +76,32 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
           <CreatedEditedLabel created={comment.created} edited={comment.edited} />
         </div>
       </div>
-      <BodyHtml body_html={comment.body_html} />
-      <div className="text-gray-500 text-xs mt-2 dark:text-slate-200 flex space-x-1">
+
+      <div className="mt-2">
+        <BodyHtml body_html={comment.body_html} />
+      </div>
+
+      <div className="text-gray-600 dark:text-gray-300 text-xs mt-2 flex items-center space-x-1">
         <UpvoteIcon />
         <span className="font-medium">{comment.score.toLocaleString("en-US")}</span>
-        <span className="font-base">
-          {comment.score === 1 ? "upvote" : "upvotes"}
-        </span>
+        <span>{comment.score === 1 ? "upvote" : "upvotes"}</span>
       </div>
+
       {comment.replies?.data?.children?.length > 0 && (
-        <button className="dark:text-gray-300 text-xs mt-2" onClick={() => setShowReplies(!showReplies)}>
+        <button
+          className="text-xs text-blue-500 mt-2 focus:outline-none"
+          onClick={() => setShowReplies(!showReplies)}
+        >
           {showReplies ? "➖ Hide Replies" : "➕ Show Replies"}
         </button>
       )}
+
       {showReplies && (
-        <div className="relative border-l-[0.5px] border-gray-700 pl-1 lg:pl-3 ml-0">
+        <div className="relative border-l-[0.5px] border-gray-700 pl-1 lg:pl-3 ml-0 mb-2">
           {comment.replies?.data?.children?.map((childWrapper: Children2) => {
             const child = childWrapper.data;
             return child ? (
-              <div key={child.id} className="mt-4">
-                <SingleComment comment={child} postAuthor={postAuthor} />
-              </div>
+              <SingleComment key={child.id} comment={child} postAuthor={postAuthor} />
             ) : null;
           })}
         </div>

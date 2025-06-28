@@ -237,7 +237,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-4 mb-6 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
+            className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-6 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
           >
             <div>
               <div className="flex items-center space-x-2 mb-2">

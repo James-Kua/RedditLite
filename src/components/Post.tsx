@@ -23,7 +23,7 @@ const PostComponent = ({ post }: { post: Post }) => {
   return (
     <div
       key={post.id}
-      className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-4 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
+      className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
     >
       <div className="flex items-center space-x-2 mb-1">
         <a href={`/user/${post.author}`}>
