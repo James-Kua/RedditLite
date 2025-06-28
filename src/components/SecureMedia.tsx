@@ -57,7 +57,7 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
     >
       {isVisible && (
         <ReactPlayer
-          url={hls_url ?? fallback_url}
+          src={hls_url ?? fallback_url}
           controls
           width="100%"
           height="100%"
