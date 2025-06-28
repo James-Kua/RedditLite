@@ -102,7 +102,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
           ) : (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full">
               <ReactPlayer
-                url={url_overridden_by_dest}
+                src={url_overridden_by_dest}
                 controls
                 width="100%"
                 height="100%"
@@ -115,7 +115,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
         ) : media_domain_url ? (
           <div className="absolute inset-0 flex justify-center items-center w-full h-full">
             <ReactPlayer
-              url={media_domain_url}
+              src={media_domain_url}
               controls
               width="100%"
               height="100%"

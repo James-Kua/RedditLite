@@ -29,7 +29,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ preview }) => {
       {videoPreview ? (
         <div className="w-full max-w-[95vw] max-h-[500px] h-auto flex justify-center">
           <ReactPlayer
-            url={videoPreview.hls_url ?? videoPreview.fallback_url}
+            src={videoPreview.hls_url ?? videoPreview.fallback_url}
             controls
             width="100%"
             height="100%"
