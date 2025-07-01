@@ -54,7 +54,7 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
   if (!comment?.body_html) return null;
 
   return (
-    <div className="bg-slate-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-lg px-2 pt-1 mb-2">
+    <div className="bg-slate-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-lg pl-2 mr-1 pt-1 mb-2">
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center flex-wrap gap-2 overflow-hidden">
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
