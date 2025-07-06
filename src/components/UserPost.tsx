@@ -85,7 +85,10 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   }, [fetchPosts, hasMore]);
 
   const PostItem = ({ post }: { post: Post }) => (
-    <div className="mb-6">
+    <div
+      key={post.id}
+      className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
+    >
       <a href={`/r/${post.subreddit}`}>
         <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 my-1 text-sm text-blue-500 max-w-[95vw] overflow-x-auto inline-block font-bold">
           {post.subreddit_name_prefixed}
