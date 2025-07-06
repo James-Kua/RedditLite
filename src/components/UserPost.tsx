@@ -146,7 +146,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
           {userProfile && (
             <div className="mt-2">
               <UserKarma
-                iconImg={userProfile.icon_img}
+                icon_img={userProfile.icon_img}
                 total_karma={userProfile.total_karma}
                 comment_karma={userProfile.comment_karma}
               />
