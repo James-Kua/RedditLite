@@ -72,6 +72,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
             ? "rgba(38, 194, 129, 1)"
             : "rgba(0, 123, 255, 1)"
         ),
+        borderWidth: 1,
         barPercentage: 0.4,
         categoryPercentage: 0.8,
         maxBarThickness: 40,
@@ -84,56 +85,58 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
     scales: {
       x: {
         beginAtZero: true,
-        grid: {
-          display: false,
-        },
-        ticks: {
-          display: false,
-        },
+        grid: { display: false },
+        ticks: { display: false },
       },
       y: {
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
+        ticks: { color: "#6b7280" },
       },
     },
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       title: {
         display: true,
         text: "Poll Results",
+        color: "#1f2937",
+        font: { size: 16 },
       },
       datalabels: {
         display: true,
-        color: "grey",
-        clamp: true,
+        color: "#6b7280",
         anchor: "end" as const,
         align: "end" as const,
         formatter: (value: number) => value,
       },
     },
+    responsive: true,
+    maintainAspectRatio: false,
   };
 
   return (
-    <div>
-      <div className="max-w-screen overflow-x-auto">
-        <div className="min-w-[400px] mx-0">
+    <div className="w-full mx-auto p-4">
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-[400px] h-[300px]">
           <Bar data={data} options={options} />
         </div>
       </div>
-      <div>
-        {isPollOpen ? (
-          <span className="text-xs">
-            <span className="text-white">The poll is still open. </span>
-            <span className="text-blue-500">{remainingTimeText}</span>
-          </span>
-        ) : null}
+
+      <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs">
+        <div>
+          {isPollOpen ? (
+            <span className="text-gray-400">
+              Poll is <span className="text-green-500">open</span> —{" "}
+              <span className="text-blue-500">{remainingTimeText}</span>
+            </span>
+          ) : (
+            <span className="text-gray-500">Poll has ended.</span>
+          )}
+        </div>
+
+        <div className="mt-1 sm:mt-0 text-gray-400 dark:text-white">
+          Total votes: <strong>{poll_data.total_vote_count}</strong>
+        </div>
       </div>
-      <span className="dark:text-white text-xs my-2">
-        Total Votes: {poll_data.total_vote_count}
-      </span>
     </div>
   );
 };
