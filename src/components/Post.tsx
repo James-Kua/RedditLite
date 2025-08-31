@@ -18,7 +18,7 @@ import ExternalLink from "./ExternalLink";
 import UpvotePercentageLabel from "./UpvotePercentageLabel";
 
 const PostComponent = ({ post }: { post: Post }) => {
-  document.title = post.title;
+  document.title = he.decode(post.title);
 
   return (
     <div
