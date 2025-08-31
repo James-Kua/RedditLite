@@ -19,8 +19,7 @@ export type SubredditInfoProps = {
 
 const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
   const { accounts_active = 0, subscribers = 0, banner_background_image, banner_img, public_description_html, description_html } = subreddit || {};
-  const [showRules, setShowRules] = useState<boolean>(false);
-  const [showDescription, setShowDescription] = useState<boolean>(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedRuleIndex, setExpandedRuleIndex] = useState<number | null>(null);
 
   const bannerImage = banner_background_image || banner_img;
@@ -46,7 +45,7 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
         <div
           className="rich-text-content text-sm leading-relaxed overflow-hidden text-white prose dark:prose-invert max-w-none relative"
           dangerouslySetInnerHTML={{
-            __html: he.decode(public_description_html || ''),
+            __html: he.decode(public_description_html || ""),
           }}
         />
       </div>
@@ -76,28 +75,26 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
       <div className="flex space-x-2 mt-2">
         {description_html && (
           <button
-            onClick={() => {
-              setShowDescription(prev => !prev);
-            }}
+            onClick={() => setActiveSection(activeSection === "description" ? null : "description")}
             className="text-black dark:text-white font-medium text-xs bg-white/30 dark:bg-black/30 rounded-lg py-2 px-2 transition duration-200 hover:bg-white/50 dark:hover:bg-black/50"
           >
-            {showDescription ? "Hide Description" : "Show Description"}
+            {activeSection === "description" ? "Hide Description" : "Show Description"}
           </button>
         )}
         {rules && rules.length > 0 && (
           <button
             onClick={() => {
-              setShowRules(prev => !prev);
+              setActiveSection(activeSection === "rules" ? null : "rules");
               setExpandedRuleIndex(null);
             }}
             className="text-black dark:text-white font-medium text-xs bg-white/30 dark:bg-black/30 rounded-lg py-2 px-2 transition duration-200 hover:bg-white/50 dark:hover:bg-black/50"
           >
-            {showRules ? "Hide Rules" : "Show Rules"}
+            {activeSection === "rules" ? "Hide Rules" : "Show Rules"}
           </button>
         )}
       </div>
 
-      {showDescription && (
+      {activeSection === "description" && (
         <div className="mt-2">
           <div
             className="rich-text-content leading-relaxed overflow-auto relative p-1 rounded-md text-xs"
@@ -108,11 +105,14 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
         </div>
       )}
 
-      {showRules && (
+      {activeSection === "rules" && (
         <ul className="text-black dark:text-white">
           {rules?.map((rule, index) => (
             <li key={index} className="ml-2 mt-2">
-              <div onClick={() => setExpandedRuleIndex(expandedRuleIndex === index ? null : index)} className={`cursor-pointer font-medium text-xs mb-1 ${rule.description_html ? 'text-blue-500' : ''}`}>
+              <div
+                onClick={() => setExpandedRuleIndex(expandedRuleIndex === index ? null : index)}
+                className={`cursor-pointer font-medium text-xs mb-1 ${rule.description_html ? "text-blue-500" : ""}`}
+              >
                 {rule.short_name}
               </div>
               {expandedRuleIndex === index && rule.description_html && (
