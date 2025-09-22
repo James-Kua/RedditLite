@@ -18,7 +18,14 @@ export type SubredditInfoProps = {
 };
 
 const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
-  const { accounts_active = 0, subscribers = 0, banner_background_image, banner_img, public_description_html, description_html } = subreddit || {};
+  const {
+    accounts_active,
+    subscribers,
+    banner_background_image,
+    banner_img,
+    public_description_html,
+    description_html,
+  } = subreddit || {};
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [expandedRuleIndex, setExpandedRuleIndex] = useState<number | null>(null);
 
@@ -61,7 +68,7 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
           )}
         </div>
         <div className="flex items-center text-black dark:text-white bg-white/30 dark:bg-black/10 rounded-full px-1 py-1.5">
-          {accounts_active && (
+          {accounts_active != null && (
             <>
               <span aria-label="online" className="mr-2">
                 <UserOnlineIcon />
