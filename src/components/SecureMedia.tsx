@@ -3,7 +3,7 @@ import ReactPlayer from "react-player";
 
 export type SecureMediaProps = {
   reddit_video: {
-    hls_url: string;
+    hls_url?: string;
     fallback_url: string;
     width: number;
     height: number;
@@ -57,7 +57,7 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
     >
       {isVisible && (
         <ReactPlayer
-          src={hls_url ?? fallback_url}
+          src={hls_url || fallback_url}
           controls
           width="100%"
           height="100%"
