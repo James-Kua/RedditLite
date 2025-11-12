@@ -31,17 +31,18 @@
     "react-social-media-embed": "^2.5.17",
     "react-toastify": "^11.0.3",
     "react-twitch-embed": "^3.0.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "storybook": "^8.6.14"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.4",
+    "@chromatic-com/storybook": "^3.2.7",
     "@storybook/addon-essentials": "^8.5.1",
     "@storybook/addon-interactions": "^8.5.1",
-    "@storybook/addon-links": "^8.5.1",
-    "@storybook/addon-onboarding": "^8.5.1",
+    "@storybook/addon-links": "^10.0.0",
+    "@storybook/addon-onboarding": "^10.0.0",
     "@storybook/blocks": "^8.5.1",
-    "@storybook/react": "^8.5.1",
-    "@storybook/react-vite": "^8.5.1",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-vite": "^10.0.0",
     "@storybook/test": "^8.5.1",
     "@types/he": "^1.2.3",
     "@types/react": "^19.0.8",
@@ -49,7 +50,6 @@
     "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^5.0.0",
     "eslint": "^9.19.0",
-    "storybook": "^8.5.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3",
     "vite": "^6.0.11"
