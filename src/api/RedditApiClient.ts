@@ -12,7 +12,18 @@ export class RedditApiClient {
 
   static async fetch(url: string): Promise<any> {
     try {
-      const response = await fetch(url)
+      const headers = {
+        "accept": "application/json, text/plain, */*",
+        "User-Agent":
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) " +
+          "AppleWebKit/605.1.15 (KHTML, like Gecko) " +
+          "Version/17.0 Mobile/15E148 Safari/604.1",
+      };
+
+      const response = await fetch(
+        url,
+        { headers }
+      );
 
       if (response.ok) {
         this.rateLimited = false;
