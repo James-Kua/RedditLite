@@ -15,6 +15,7 @@ export type Comment = {
   author_flair_text_color?: string;
   replies: Replies;
   distinguished?: string;
+  profile_img?: string;
 };
 
 export interface Children {

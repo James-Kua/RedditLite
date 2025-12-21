@@ -57,6 +57,11 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
     <div className="bg-slate-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-lg pl-2 mr-1 pt-1 mb-2">
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center flex-wrap gap-2 overflow-hidden">
+          <img
+            src={comment.profile_img?.length ? comment.profile_img?.replace(/&amp;/g, "&") : ""}
+            alt={comment.author}
+            className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
+          />
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
             <h3 className="font-semibold text-sm text-blue-500 whitespace-nowrap hover:underline">{comment.author}</h3>
             {comment?.distinguished === "moderator" && (

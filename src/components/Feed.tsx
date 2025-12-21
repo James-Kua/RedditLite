@@ -244,11 +244,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                 <img
                   src={
                     post.sr_detail?.community_icon?.length! > 1
-                      ? post.sr_detail?.community_icon.replace("&amp;", "&")
+                      ? post.sr_detail?.community_icon.replace(/&amp;/g, "&")
                       : post.sr_detail?.icon_img?.length! > 1
-                      ? post.sr_detail?.icon_img.replace("&amp;", "&")
+                      ? post.sr_detail?.icon_img.replace(/&amp;/g, "&")
                       : post.sr_detail?.header_img?.length! > 1
-                      ? post.sr_detail?.header_img.replace("&amp;", "&")
+                      ? post.sr_detail?.header_img.replace(/&amp;/g, "&")
                       : "" 
                   }
                   alt={post.author}
