@@ -61,7 +61,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     if (!hasMore) return;
 
     RedditApiClient.fetch(
-      `https://www.reddit.com/r/${subreddit}/${sort}.json?after=${after}&t=${time}`
+      `https://www.reddit.com/r/${subreddit}/${sort}.json?after=${after}&t=${time}&sr_detail=true`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -79,7 +79,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     setAfter(null);
     setHasMore(true);
 
-    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}`)
+    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}&sr_detail=true`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map(
@@ -241,8 +241,23 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           >
             <div>
               <div className="flex items-center space-x-2 mb-2">
+                <img
+                  src={
+                    post.sr_detail?.community_icon?.length! > 1
+                      ? post.sr_detail?.community_icon.replace("&amp;", "&")
+                      : post.sr_detail?.icon_img?.length! > 1
+                      ? post.sr_detail?.icon_img.replace("&amp;", "&")
+                      : post.sr_detail?.header_img?.length! > 1
+                      ? post.sr_detail?.header_img.replace("&amp;", "&")
+                      : "" 
+                  }
+                  alt={post.author}
+                  className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
+                />
                 <a href={`/user/${post.author}`}>
-                  <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">{post.author}</h3>
+                  <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">
+                    {post.author}
+                  </h3>
                 </a>
                 <AuthorFlairText
                   author_flair_richtext={post.author_flair_richtext}
@@ -250,7 +265,6 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                   author_flair_background_color={post.author_flair_background_color}
                 />
               </div>
-
               <CreatedEditedLabel created={post.created} edited={post.edited} />
 
               <a href={parsePermalink(post.permalink)} className="block mt-2 group">

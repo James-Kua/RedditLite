@@ -26,8 +26,23 @@ const PostComponent = ({ post }: { post: Post }) => {
       className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
     >
       <div className="flex items-center space-x-2 mb-1">
+        <img
+          src={
+            post.sr_detail?.community_icon?.length! > 1
+              ? post.sr_detail?.community_icon.replace(/&amp;/g, "&")
+              : post.sr_detail?.icon_img?.length! > 1
+              ? post.sr_detail?.icon_img.replace(/&amp;/g, "&")
+              : post.sr_detail?.header_img?.length! > 1
+              ? post.sr_detail?.header_img.replace(/&amp;/g, "&")
+              : "/fallback_icon.png"
+          }
+          alt={post.author}
+          className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
+        />
         <a href={`/user/${post.author}`}>
-          <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">{post.author}</h3>
+          <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">
+            {post.author}
+          </h3>
         </a>
         <AuthorFlairText
           author_flair_richtext={post.author_flair_richtext}

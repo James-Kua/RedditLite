@@ -31,7 +31,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
 
       // First call to retrieve suggested_sort
       const res = await RedditApiClient.fetch(
-        `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}`
+        `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}&sr_detail=true`
       );
       const data = await res.json();
       const [postList, commentList] = data;
@@ -44,7 +44,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
       if (commentsSortOption === "" && suggested_sort) {
         setSortOption(suggested_sort);
         const sortedRes = await RedditApiClient.fetch(
-          `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${suggested_sort}`
+          `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${suggested_sort}?sr_detail=true`
         );
         const sortedData = await sortedRes.json();
         const [, sortedComments] = sortedData;

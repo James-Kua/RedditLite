@@ -37,6 +37,7 @@ export type Post = {
   locked: boolean
   crosspost_parent_list?: Post[]
   poll_data?: PollData
+  sr_detail?: SrDetail;
 };
 
 interface GalleryData {
@@ -129,3 +130,47 @@ export interface PollData {
   user_selection?: string;
   voting_end_timestamp: string;
 }
+
+export type SrDetail = {
+  default_set: boolean;
+  banner_img: string;
+  allowed_media_in_comments: string[];
+  user_is_banned: boolean | null;
+  free_form_reports: boolean;
+  community_icon: string;
+  show_media: boolean;
+  description: string;
+  user_is_muted: boolean | null;
+  display_name: string;
+  header_img: string;
+  title: string;
+  previous_names: string[];
+  user_is_moderator: boolean | null;
+  over_18: boolean;
+  icon_size: number[];
+  primary_color: string;
+  icon_img: string;
+  icon_color: string;
+  submit_link_label: string;
+  header_size: number[];
+  restrict_posting: boolean;
+  restrict_commenting: boolean;
+  subscribers: number;
+  submit_text_label: string;
+  link_flair_position: string;
+  display_name_prefixed: string;
+  key_color: string;
+  name: string;
+  created: number;
+  url: string;
+  quarantine: boolean;
+  created_utc: number;
+  banner_size: number[] | null;
+  user_is_contributor: boolean | null;
+  accept_followers: boolean;
+  public_description: string;
+  link_flair_enabled: boolean;
+  disable_contributor_requests: boolean;
+  subreddit_type: string;
+  user_is_subscriber: boolean | null;
+};
