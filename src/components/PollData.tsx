@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import he from "he";
 
 ChartJS.register(
   CategoryScale,
@@ -57,7 +58,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
   const remainingTimeText = `${parts.join(' ')} left`
 
   const data = {
-    labels: poll_data.options.map((option) => option.text),
+    labels: poll_data.options.map((option) => he.decode(option.text)),
     datasets: [
       {
         label: "Votes",
@@ -98,7 +99,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
       title: {
         display: true,
         text: "Poll Results",
-        color: "#1f2937",
+        color: "#6b7280",
         font: { size: 16 },
       },
       datalabels: {
@@ -116,7 +117,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
   return (
     <div className="w-full mx-auto p-4">
       <div className="w-full overflow-x-auto">
-        <div className="min-w-[400px] h-[300px]">
+        <div className="min-w-100 h-75">
           <Bar data={data} options={options} />
         </div>
       </div>
