@@ -197,14 +197,24 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         </div>
 
         <div className="my-2 w-full">
+          <div className="font-semibold">
+            Subreddits
+          </div>
           {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (
             <SubredditCard key={index} subreddit={subreddit} />
           ))}
         </div>
 
+        <div className="font-semibold mt-5 mb-2">
+          Posts
+        </div>
+
         {posts.map((post) => (
           <a href={parsePermalink(post.permalink)} key={post.id}>
-            <div className="prose text-gray-500 prose-sm prose-headings:font-normal prose-headings:text-xl mx-auto w-full mb-8 relative">
+            <div
+              key={post.id}
+              className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
+            >
               <div>
                 <div className="flex items-center space-x-2">
                   <h3 className="font-semibold text-blue-400">{post.author}</h3>
