@@ -35,7 +35,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/submitted.json?after=${after}`)
+    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/submitted.json?sr_detail=true&after=${after}`)
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
@@ -90,7 +90,23 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
       className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
     >
       <a href={`/r/${post.subreddit}`}>
-        <span className="whitespace-nowrap rounded-lg bg-slate-100 dark:bg-slate-800 p-1 my-1 text-sm text-blue-500 max-w-[95vw] overflow-x-auto inline-block font-bold">
+        {activeTab === "posts" && (
+          <div className="inline-flex items-center gap-2 p-1 w-fit my-1">
+            <img
+              src={
+                post.sr_detail?.community_icon && post.sr_detail.community_icon.length > 1
+                  ? post.sr_detail.community_icon.replace("&amp;", "&")
+                  : post.sr_detail?.icon_img && post.sr_detail.icon_img.length > 1
+                  ? post.sr_detail.icon_img.replace("&amp;", "&")
+                  : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
+                  ? post.sr_detail.header_img.replace("&amp;", "&")
+                  : ""
+              }
+              className="w-6 h-6 rounded-full"
+            />
+          </div>
+        )}
+        <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
           {post.subreddit_name_prefixed}
         </span>
       </a>
