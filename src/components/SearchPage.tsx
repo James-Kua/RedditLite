@@ -96,8 +96,8 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
     if (userQuery) {
       const searchUrl = subreddit
-        ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on`
-        : `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&t=${time}`;
+        ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on&sr_detail=true`
+        : `https://www.reddit.com/search.json?q=${userQuery}&sr_detail=true&sort=${sort}&t=${time}`;
 
         RedditApiClient.fetch(searchUrl)
         .then((response) => response.json())
@@ -214,10 +214,25 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                     author_flair_background_color={post.author_flair_background_color}
                   />
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-600 p-1 w-fit rounded-lg my-1">
-                  <span className="text-gray-500 text-sm font-semibold dark:text-white">
-                    <a href={`/${post.subreddit_name_prefixed}`}>{post.subreddit_name_prefixed}</a>
-                  </span>
+                <div className="flex items-center gap-2 p-1 w-fit my-1">
+                  <img
+                    src={
+                      post.sr_detail?.community_icon?.length! > 1
+                        ? post.sr_detail?.community_icon.replace("&amp;", "&")
+                        : post.sr_detail?.icon_img?.length! > 1
+                        ? post.sr_detail?.icon_img.replace("&amp;", "&")
+                        : post.sr_detail?.header_img?.length! > 1
+                        ? post.sr_detail?.header_img.replace("&amp;", "&")
+                        : ""
+                    }
+                    className="w-6 h-6 rounded-full"
+                  />
+                  <a
+                    href={`/${post.subreddit_name_prefixed}`}
+                    className="text-gray-500 text-sm font-semibold dark:text-white"
+                  >
+                    {post.subreddit_name_prefixed}
+                  </a>
                 </div>
                 <CreatedEditedLabel
                   created={post.created}
