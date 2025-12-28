@@ -196,14 +196,16 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
           )}
         </div>
 
-        <div className="my-2 w-full">
-          <div className="font-semibold">
-            Subreddits
+        {searchSubreddits.length > 0 && (
+          <div className="my-2 w-full">
+              <div className="font-semibold">
+                Subreddits
+              </div>
+            {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (
+              <SubredditCard key={index} subreddit={subreddit} />
+            ))}
           </div>
-          {!subreddit && searchSubreddits.slice(0, 4).map((subreddit, index) => (
-            <SubredditCard key={index} subreddit={subreddit} />
-          ))}
-        </div>
+        )}
 
         <div className="font-semibold mt-5 mb-2">
           Posts
