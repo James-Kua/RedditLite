@@ -181,7 +181,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                 icon_img={subredditInfo?.icon_img}
               />
             }
-            <h1 className="text-gray-500 dark:text-white font-bold text-lg tracking-wide mr-1">
+            <h1 className="text-gray-500 dark:text-white font-bold text-lg tracking-wide">
               {subreddit}
             </h1>
           </ol>

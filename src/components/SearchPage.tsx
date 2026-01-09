@@ -149,7 +149,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
             <li className="rtl:rotate-180">
               <ArrowIcon />
             </li>
-            <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">Search Results</h1>
+            <h1 className="text-gray-500 font-bold text-lg mr-1 whitespace-nowrap">Search Results</h1>
           </ol>
           <div className="search-input">
             <SearchInput
