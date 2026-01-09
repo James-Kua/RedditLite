@@ -152,7 +152,10 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
             <h1 className="text-gray-500 font-bold text-xl mr-1 whitespace-nowrap">Search Results</h1>
           </ol>
           <div className="search-input">
-            <SearchInput />
+            <SearchInput
+              initialSearchInSubreddit={!!subreddit}
+              currentSubreddit={subreddit}
+            />
           </div>
         </nav>
 
@@ -276,7 +279,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                   <img
                     src={post.url_overridden_by_dest}
                     alt="url_overridden_by_dest"
-                    className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm p-2 object-contain"
+                    className="mt-4 flex justify-center items-center max-w-full max-h-125 mx-auto border rounded-sm p-2 object-contain"
                   />
                 ) : (
                   <Thumbnail thumbnail={post.thumbnail || ""} />

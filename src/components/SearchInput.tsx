@@ -5,7 +5,14 @@ import he from "he";
 import SearchIcon from "../static/SearchIcon";
 import { RedditApiClient } from "../api/RedditApiClient";
 
-const SearchInput: React.FC = () => {
+interface SearchInputProps {
+  initialSearchInSubreddit?: boolean;
+  currentSubreddit?: string | null;
+}
+
+const SearchInput: React.FC<SearchInputProps> = ({
+  initialSearchInSubreddit = false,
+}) => {
   const isMobile = window.innerWidth <= 767;
   const [search, setSearch] = useState("");
   const [isExpanded, setIsExpanded] = useState(
@@ -14,10 +21,18 @@ const SearchInput: React.FC = () => {
   const [subredditSuggestions, setSubredditSuggestions] = useState<Subreddit[]>(
     []
   );
-  const [searchInSubreddit, setSearchInSubreddit] = useState(false);
+  const [searchInSubreddit, setSearchInSubreddit] = useState(initialSearchInSubreddit);
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isSubredditPath = matchPath(
+    { path: "/r/:subreddit/*" },
+    location.pathname
+  );
+
+  const currentSubreddit = isSubredditPath? isSubredditPath.params.subreddit : null;
+  const currentSubredditPrefixed = isSubredditPath? isSubredditPath.pathnameBase : null;
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -64,25 +79,22 @@ const SearchInput: React.FC = () => {
   };
 
   const handleButtonClick = () => {
-    if (search.trim() !== "") {
-      const encodedQuery = encodeURIComponent(search);
-      const searchUrl =
-        searchInSubreddit && currentSubreddit
-          ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&t=year`
-          : `/search/?q=${encodedQuery}&sort=relevance&t=year`;
-      navigate(searchUrl);
-      if (isMobile) {
-        setIsExpanded(false);
-      }
-      setSearch("");
-      setSubredditSuggestions([]);
-    }
+    if (search.trim() === "") return;
+
+    const encodedQuery = encodeURIComponent(search);
+    const searchUrl =
+      searchInSubreddit && currentSubreddit
+        ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&t=year`
+        : `/search/?q=${encodedQuery}&sort=relevance&t=year`;
+
+    navigate(searchUrl);
+    if (isMobile) setIsExpanded(false);
+    setSearch("");
+    setSubredditSuggestions([]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && search.trim() !== "") {
-      handleButtonClick();
-    }
+    if (e.key === "Enter" && search.trim() !== "") handleButtonClick();
   };
 
   const handleHotkey = (e: KeyboardEvent) => {
@@ -94,24 +106,12 @@ const SearchInput: React.FC = () => {
 
   useEffect(() => {
     window.addEventListener("keydown", handleHotkey);
-    return () => {
-      window.removeEventListener("keydown", handleHotkey);
-    };
+    return () => window.removeEventListener("keydown", handleHotkey);
   }, []);
 
   const toggleExpand = () => {
-    if (window.location.pathname !== "/") {
-      setIsExpanded(!isExpanded);
-    }
+    if (window.location.pathname !== "/") setIsExpanded(!isExpanded);
   };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInSubreddit(e.target.checked);
-  }
-  
-  const isSubredditPath = matchPath({ path: "/r/:subreddit/*"}, location.pathname);
-  const currentSubreddit = isSubredditPath ? isSubredditPath.params.subreddit : null;
-  const currentSubredditPrefixed = isSubredditPath ? isSubredditPath.pathnameBase : null; 
 
   return (
     <div className="relative">
@@ -155,33 +155,41 @@ const SearchInput: React.FC = () => {
           <span className="sr-only"></span>
         </button>
       </div>
-      {
+
+      {search.length !== 0 && (
         <div className="absolute mt-1 w-full rounded-md bg-white dark:bg-slate-800 shadow-lg z-10">
           <ul>
-            {search.length !== 0 && isSubredditPath && (
-              <div className="flex items-center px-4 py-3">
-                <input
-                  type="checkbox"
-                  id="search-in-subreddit"
-                  checked={searchInSubreddit}
-                  onChange={handleCheckboxChange}
-                  className="mr-2"
-                />
-                <label
-                  htmlFor="search-in-subreddit"
-                  className="text-xs text-gray-800 dark:text-white"
-                >
+            {isSubredditPath && (
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-xs font-medium text-gray-800 dark:text-gray-200">
                   Search in {currentSubredditPrefixed}
-                </label>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSearchInSubreddit(!searchInSubreddit)}
+                  className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none ${
+                    searchInSubreddit
+                      ? "bg-blue-500"
+                      : "bg-gray-300 dark:bg-slate-600"
+                  }`}
+                >
+                  <span
+                    className={`transform transition-transform duration-300 w-4 h-4 bg-white rounded-full ${
+                      searchInSubreddit ? "translate-x-5" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
             )}
+
+            {/* Subreddit suggestions */}
             {subredditSuggestions.slice(0, 6).map((subreddit, index) => (
               <a
                 href={`/${subreddit.display_name_prefixed}`}
-                className="text-gray-800"
                 key={index}
+                className="block text-gray-800 dark:text-white"
               >
-                <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 z-100">
+                <li className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md">
                   {subreddit?.community_icon ? (
                     <img
                       src={he.decode(subreddit.community_icon)}
@@ -203,7 +211,7 @@ const SearchInput: React.FC = () => {
             ))}
           </ul>
         </div>
-      }
+      )}
     </div>
   );
 };
