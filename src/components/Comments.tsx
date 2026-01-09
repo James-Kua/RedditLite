@@ -53,8 +53,20 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
 
   if (!comment?.body_html) return null;
 
+  const isOP = comment.author === postAuthor;
+
   return (
-    <div className="bg-slate-200 dark:bg-neutral-800 text-gray-800 dark:text-gray-100 rounded-lg pl-2 mr-1 pt-1 mb-2">
+    <div
+      className={`
+        rounded-lg pl-2 mr-1 pt-1 mb-2
+        text-gray-800 dark:text-gray-100
+        ${
+          isOP
+            ? "bg-blue-200 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800"
+            : "bg-slate-200 dark:bg-neutral-800"
+        }
+      `}
+    >
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center flex-wrap gap-2 overflow-hidden">
           <img
@@ -62,13 +74,17 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
             alt={comment.author}
             className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
           />
+
           <a href={`/user/${comment.author}`} className="flex items-center space-x-1">
-            <h3 className="font-semibold text-sm text-blue-500 whitespace-nowrap hover:underline">{comment.author}</h3>
+            <h3 className="font-semibold text-sm text-blue-500 whitespace-nowrap hover:underline">
+              {comment.author}
+            </h3>
             {comment?.distinguished === "moderator" && (
               <span className="text-green-500 text-xs font-semibold">MOD</span>
             )}
           </a>
-          {comment.author === postAuthor && (
+
+          {isOP && (
             <span className="rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-1 py-0.5 text-xs font-semibold">
               OP
             </span>
