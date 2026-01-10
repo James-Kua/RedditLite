@@ -249,7 +249,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                       ? post.sr_detail?.icon_img.replace(/&amp;/g, "&")
                       : post.sr_detail?.header_img?.length! > 1
                       ? post.sr_detail?.header_img.replace(/&amp;/g, "&")
-                      : "" 
+                      : "/fallback_reddit_icon.png"
                   }
                   alt={post.author}
                   className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"

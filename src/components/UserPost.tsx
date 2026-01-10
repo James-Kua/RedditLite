@@ -100,7 +100,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                   ? post.sr_detail.icon_img.replace("&amp;", "&")
                   : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
                   ? post.sr_detail.header_img.replace("&amp;", "&")
-                  : ""
+                  : "/fallback_reddit_icon.png"
               }
               className="w-6 h-6 rounded-full"
             />
