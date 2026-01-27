@@ -50,7 +50,7 @@ const PostGallery: React.FC<PostGalleryProps> = ({ galleryData, mediaMetadata })
                 className="max-h-[80vh] w-full flex items-center justify-center"
                 style={{ maxWidth: `${maxImageWidth}px` }}
               >
-                <img src={imageUrl} className="max-h-[50vh] max-w-full object-contain rounded-lg" alt="Gallery Image" />
+                <img src={imageUrl} className="max-h-[70vh] max-w-full object-contain rounded-lg" alt="Gallery Image" />
               </div>
             </div>
           ))}
