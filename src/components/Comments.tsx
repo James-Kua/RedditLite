@@ -57,15 +57,7 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
 
   return (
     <div
-      className={`
-        rounded-lg pl-2 mr-1 pt-1 mb-2
-        text-gray-800 dark:text-gray-100
-        ${
-          isOP
-            ? "bg-blue-200 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800"
-            : "bg-slate-200 dark:bg-neutral-800"
-        }
-      `}
+      className="rounded-lg pl-2 mr-1 pt-1 mb-2 text-gray-800 dark:text-gray-100 bg-slate-200 dark:bg-neutral-800"
     >
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center flex-wrap gap-2 overflow-hidden">
