@@ -16,6 +16,7 @@ export type Comment = {
   replies: Replies;
   distinguished?: string;
   profile_img?: string;
+  controversiality?: number;
 };
 
 export interface Children {

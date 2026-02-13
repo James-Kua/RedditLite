@@ -54,6 +54,7 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
   if (!comment?.body_html) return null;
 
   const isOP = comment.author === postAuthor;
+  const isControversial = (comment.controversiality ?? 0) > 0;
 
   return (
     <div
@@ -87,6 +88,15 @@ const SingleComment: React.FC<CommentProps> = ({ comment, postAuthor }) => {
             author_flair_background_color={comment.author_flair_background_color}
           />
           <CreatedEditedLabel created={comment.created} edited={comment.edited} />
+          
+          {isControversial && (
+            <span className="flex items-center gap-0.5 px-1.5 py-0.5 text-amber-600 dark:text-amber-100 rounded-md text-xs font-medium border border-slate-300">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <span>Controversial</span>
+            </span>
+          )}
         </div>
       </div>
 
