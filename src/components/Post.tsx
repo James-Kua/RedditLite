@@ -16,9 +16,39 @@ import PostLock from "./PostLock";
 import PollData from "./PollData";
 import ExternalLink from "./ExternalLink";
 import UpvotePercentageLabel from "./UpvotePercentageLabel";
+import { useState } from "react";
+import { summarizeText as summarizeTextApi } from "../api/GeminiClient";
 
 const PostComponent = ({ post }: { post: Post }) => {
   document.title = he.decode(post.title);
+  const [summarizedText, setSummarizedText] = useState("");
+  const [isSummarizing, setIsSummarizing] = useState(false);
+  const [summarizationError, setSummarizationError] = useState("");
+
+  const summarizeText = async () => {
+    setIsSummarizing(true);
+    setSummarizationError("");
+    try {
+      let textToSummarize = "";
+      if (post.url_overridden_by_dest && !isImage(post.url_overridden_by_dest)) {
+        textToSummarize = post.url_overridden_by_dest;
+      } else {
+        textToSummarize = post?.selftext_html ?? "";
+      }
+
+      if (textToSummarize.trim() === "") {
+        setSummarizationError("No text available to summarize.");
+        return;
+      }
+
+      const summary = await summarizeTextApi(textToSummarize);
+      setSummarizedText(summary);
+    } catch (error) {
+      setSummarizationError("Failed to summarize. Please try again.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
 
   return (
     <div
@@ -122,7 +152,26 @@ const PostComponent = ({ post }: { post: Post }) => {
         )}
       </a>
       <PostLock locked={post.locked} />
-      <PostStats score={post.score} num_comments={post.num_comments} />
+      <div className="flex justify-between items-center">
+        <PostStats score={post.score} num_comments={post.num_comments} />
+        <button
+          onClick={summarizeText}
+          className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mt-2"
+        >
+          {isSummarizing ? "Summarizing..." : "✨ AI Summarize"}
+        </button>
+      </div>
+      {summarizationError && (
+        <div className="text-sm mt-3 p-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
+          <p>{summarizationError}</p>
+        </div>
+      )}
+      {summarizedText && (
+        <div className="text-sm mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md border border-gray-300 dark:border-gray-600">
+          <h3 className="font-bold mb-2">✨ AI Summary</h3>
+          <p>{summarizedText}</p>
+        </div>
+      )}
     </div>
   );
 };
