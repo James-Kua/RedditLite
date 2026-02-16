@@ -1,10 +1,26 @@
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
+const isValidUrl = (text: string) => {
+  try {
+    new URL(text);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 export const summarizeText = async (text: string) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
+    let promptText = "";
+    if (isValidUrl(text)) {
+      promptText = `Summarise the article at the following URL in a sentence: ${text}`;
+    } else {
+      promptText = `Summarise the following paragraph in a sentence: ${text}`;
+    }
+
     const response = await fetch(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
       {
@@ -18,7 +34,7 @@ export const summarizeText = async (text: string) => {
             {
               parts: [
                 {
-                  text: `Summarise the following paragraph in a sentence:${text}`,
+                  text: promptText,
                 },
               ],
             },
@@ -44,3 +60,4 @@ export const summarizeText = async (text: string) => {
     throw error;
   }
 };
+

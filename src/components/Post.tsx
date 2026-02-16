@@ -29,7 +29,18 @@ const PostComponent = ({ post }: { post: Post }) => {
     setIsSummarizing(true);
     setSummarizationError("");
     try {
-      const textToSummarize = post?.selftext_html ?? "";
+      let textToSummarize = "";
+      if (post.url_overridden_by_dest && !isImage(post.url_overridden_by_dest)) {
+        textToSummarize = post.url_overridden_by_dest;
+      } else {
+        textToSummarize = post?.selftext_html ?? "";
+      }
+
+      if (textToSummarize.trim() === "") {
+        setSummarizationError("No text available to summarize.");
+        return;
+      }
+
       const summary = await summarizeTextApi(textToSummarize);
       setSummarizedText(summary);
     } catch (error) {
@@ -151,7 +162,7 @@ const PostComponent = ({ post }: { post: Post }) => {
         </button>
       </div>
       {summarizationError && (
-        <div className="text-sm mt-4 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
+        <div className="text-sm mt-3 p-2 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-md">
           <p>{summarizationError}</p>
         </div>
       )}
