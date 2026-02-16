@@ -55,7 +55,11 @@ export const summarizeText = async (text: string) => {
     }
 
     const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+    const summary = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!summary) {
+      throw new Error('Invalid response format from Gemini API');
+    }
+    return summary;
   } catch (error) {
     throw error;
   }
