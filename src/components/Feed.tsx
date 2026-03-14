@@ -64,7 +64,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
       .then((response) => response.json())
       .then((data) => {
         const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
-        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+        setPosts((prevPosts) => {
+          const existingPostIds = new Set(prevPosts.map((p: Post) => p.id));
+          const uniqueNewPosts = fetchedPosts.filter((p: Post) => !existingPostIds.has(p.id));
+          return [...prevPosts, ...uniqueNewPosts];
+        });
         setAfter(data.data.after);
         setHasMore(!!data.data.after);
       });
