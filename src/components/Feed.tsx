@@ -25,6 +25,7 @@ import ArrowIcon from "../static/ArrowIcon";
 import PollData from "./PollData";
 import { RedditApiClient } from "../api/RedditApiClient";
 import { useNavigate, useParams } from "react-router-dom";
+import SegmentedControl from "./SegmentedControl";
 
 export interface FeedProps {
   subreddit: string;
@@ -178,28 +179,23 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         <div className="mb-4 flex flex-wrap gap-3">
           {filterOptions.map((optionGroup, index) =>
             optionGroup.label === "Time" && sort !== "top" ? null : (
-              <div className="flex items-center" key={index}>
+              <div className="flex items-center overflow-x-auto hide-scrollbar" key={index}>
                 <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">{optionGroup.label}</label>
-                <select
-                  value={optionGroup.label === "Sort by" ? sort : time}
-                  onChange={(e) => {
+                <SegmentedControl
+                  options={optionGroup.options}
+                  currentValue={optionGroup.label === "Sort by" ? sort : time}
+                  onChange={(value) => {
                     switch (optionGroup.label) {
                       case "Sort by":
-                        setSort(e.target.value);
+                        setSort(value);
                         break;
                       case "Time":
-                        setTime(e.target.value);
+                        setTime(value);
                         break;
                     }
                   }}
-                  className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-1 py-1 font-medium text-gray-800 dark:text-gray-200 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {optionGroup.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.key}
-                    </option>
-                  ))}
-                </select>
+                  label={optionGroup.label}
+                />
               </div>
             ),
           )}
