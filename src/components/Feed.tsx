@@ -27,6 +27,9 @@ import { RedditApiClient } from "../api/RedditApiClient";
 import { useNavigate, useParams } from "react-router-dom";
 import SegmentedControl from "./SegmentedControl";
 import BackToTopButton from "./BackToTopButton";
+import TopPosterStatusBar from "./TopPosterStatusBar";
+
+const NUM_TOP_POSTERS = 6;
 
 export interface FeedProps {
   subreddit: string;
@@ -50,6 +53,17 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [isStarred, setIsStarred] = useState<boolean>(
     localStorage.getItem("reddit-lite-starred")?.includes(subreddit) || false,
   );
+  const [topPosters, setTopPosters] = useState<[string, number][]>([]);
+
+  useEffect(() => {
+    const authorCounts: { [key: string]: number } = {};
+    posts.forEach((post) => {
+      authorCounts[post.author] = (authorCounts[post.author] || 0) + 1;
+    });
+
+    const sortedAuthors = Object.entries(authorCounts).sort(([, countA], [, countB]) => countB - countA);
+    setTopPosters(sortedAuthors.slice(0, NUM_TOP_POSTERS));
+  }, [posts]);
 
   useEffect(() => {
     if (sort === "top") {
@@ -291,6 +305,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         </div>
         <div ref={sentinel} className="h-1"></div>{" "}
         <BackToTopButton />
+        <TopPosterStatusBar topPosters={topPosters} />
       </div>
     </div>
   );
