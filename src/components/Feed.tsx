@@ -26,6 +26,7 @@ import PollData from "./PollData";
 import { RedditApiClient } from "../api/RedditApiClient";
 import { useNavigate, useParams } from "react-router-dom";
 import SegmentedControl from "./SegmentedControl";
+import BackToTopButton from "./BackToTopButton";
 
 export interface FeedProps {
   subreddit: string;
@@ -289,6 +290,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           ))}
         </div>
         <div ref={sentinel} className="h-1"></div>{" "}
+        <BackToTopButton />
       </div>
     </div>
   );
