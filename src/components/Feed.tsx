@@ -31,6 +31,14 @@ import TopPosterStatusBar from "./TopPosterStatusBar";
 
 const NUM_TOP_POSTERS = 6;
 
+const columnClasses: { [key: number]: string } = {
+    1: "lg:columns-1",
+    2: "lg:columns-2",
+    3: "lg:columns-3",
+    4: "lg:columns-4",
+    5: "lg:columns-5",
+};
+
 export interface FeedProps {
   subreddit: string;
   initialTime: string;
@@ -48,6 +56,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
+  const [numColumns, setNumColumns] = useState(3);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
   const [isStarred, setIsStarred] = useState<boolean>(
@@ -215,7 +224,19 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
             ),
           )}
         </div>
-        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
+        <div className="hidden md:flex items-center gap-2.5 shrink-0 mb-4 w-full justify-start">
+          <label htmlFor="columns" className="text-[11px] font-medium text-zinc-600 uppercase tracking-wide">Cols</label>
+          <input
+            id="columns"
+            type="range"
+            min="1"
+            max="5"
+            value={numColumns}
+            onChange={(e) => setNumColumns(Number(e.target.value))}
+            className="w-20 h-0.75 bg-zinc-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(96,165,250,0.5)]"
+          /><span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
+        </div>
+        <div className={`columns-1 ${columnClasses[numColumns]} gap-4`}>
           {posts.map((post) => (
             <div
               key={post.id}
