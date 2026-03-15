@@ -32,11 +32,11 @@ import TopPosterStatusBar from "./TopPosterStatusBar";
 const NUM_TOP_POSTERS = 6;
 
 const columnClasses: { [key: number]: string } = {
-    1: "lg:columns-1",
-    2: "lg:columns-2",
-    3: "lg:columns-3",
-    4: "lg:columns-4",
-    5: "lg:columns-5",
+  1: "lg:columns-1",
+  2: "lg:columns-2",
+  3: "lg:columns-3",
+  4: "lg:columns-4",
+  5: "lg:columns-5",
 };
 
 export interface FeedProps {
@@ -56,7 +56,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
-  const [postTypeFilter, setPostTypeFilter] = useState<string>('all');
+  const [postTypeFilter, setPostTypeFilter] = useState<string>("all");
   const [numColumns, setNumColumns] = useState(3);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
@@ -65,15 +65,22 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   );
   const [topPosters, setTopPosters] = useState<[string, number][]>([]);
 
+  const filteredPosts = useMemo(() => {
+    if (postTypeFilter === "all") {
+      return posts;
+    }
+    return posts.filter((post) => getPostType(post) === postTypeFilter);
+  }, [posts, postTypeFilter]);
+
   useEffect(() => {
     const authorCounts: { [key: string]: number } = {};
-    posts.forEach((post) => {
+    filteredPosts.forEach((post) => {
       authorCounts[post.author] = (authorCounts[post.author] || 0) + 1;
     });
 
     const sortedAuthors = Object.entries(authorCounts).sort(([, countA], [, countB]) => countB - countA);
     setTopPosters(sortedAuthors.slice(0, NUM_TOP_POSTERS));
-  }, [posts]);
+  }, [filteredPosts]);
 
   useEffect(() => {
     if (sort === "top") {
@@ -169,13 +176,6 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     { label: "Time", options: timeOptions },
   ];
 
-  const filteredPosts = useMemo(() => {
-    if (postTypeFilter === 'all') {
-      return posts;
-    }
-    return posts.filter(post => getPostType(post) === postTypeFilter);
-  }, [posts, postTypeFilter]);
-
   return (
     <div className="dark:bg-custom-black dark:text-white">
       <div className="max-w-[95vw] mx-auto relative py-4">
@@ -242,7 +242,9 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           </div>
         </div>
         <div className="hidden md:flex items-center gap-2.5 shrink-0 mb-4 w-full justify-start">
-          <label htmlFor="columns" className="text-[11px] font-medium text-zinc-600 uppercase tracking-wide">Cols</label>
+          <label htmlFor="columns" className="text-[11px] font-medium text-zinc-600 uppercase tracking-wide">
+            Cols
+          </label>
           <input
             id="columns"
             type="range"
@@ -251,7 +253,8 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
             value={numColumns}
             onChange={(e) => setNumColumns(Number(e.target.value))}
             className="w-20 h-0.75 bg-zinc-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(96,165,250,0.5)]"
-          /><span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
+          />
+          <span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
         </div>
         <div className={`columns-1 ${columnClasses[numColumns]} gap-4`}>
           {filteredPosts.map((post) => (
@@ -341,8 +344,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
             </div>
           ))}
         </div>
-        <div ref={sentinel} className="h-1"></div>{" "}
-        <BackToTopButton />
+        <div ref={sentinel} className="h-1"></div> <BackToTopButton />
         <TopPosterStatusBar topPosters={topPosters} />
       </div>
     </div>
