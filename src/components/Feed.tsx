@@ -84,9 +84,9 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
   useEffect(() => {
     if (sort === "top") {
-      navigate(`/r/${subreddit}/${sort}/?t=${time}`, { replace: true });
+      navigate(`/r/${subreddit}/${sort}/?t=${time}`);
     } else {
-      navigate(`/r/${subreddit}/${sort}/`, { replace: true });
+      navigate(`/r/${subreddit}/${sort}/`);
     }
   }, [sort, time, subreddit, navigate]);
 
