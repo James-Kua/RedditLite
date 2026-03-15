@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef, useCallback, memo } from "react";
+import { useEffect, useState, useRef, useCallback, memo, useMemo } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
-import { parsePermalink, isImage } from "../utils/parser";
+import { parsePermalink, isImage, getPostType } from "../utils/parser";
 import { Post } from "../types/post";
 import { Subreddit, SubredditRules } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
@@ -14,7 +14,7 @@ import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
-import { timeOptions } from "../utils/timeOptions";
+import { timeOptions, postTypeOptions } from "../utils/timeOptions";
 import { subredditSortOptions } from "../utils/sortOptions";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
@@ -56,6 +56,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
+  const [postTypeFilter, setPostTypeFilter] = useState<string>('all');
   const [numColumns, setNumColumns] = useState(3);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef(null);
@@ -168,6 +169,13 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     { label: "Time", options: timeOptions },
   ];
 
+  const filteredPosts = useMemo(() => {
+    if (postTypeFilter === 'all') {
+      return posts;
+    }
+    return posts.filter(post => getPostType(post) === postTypeFilter);
+  }, [posts, postTypeFilter]);
+
   return (
     <div className="dark:bg-custom-black dark:text-white">
       <div className="max-w-[95vw] mx-auto relative py-4">
@@ -223,6 +231,15 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
               </div>
             ),
           )}
+          <div className="flex items-center overflow-x-auto hide-scrollbar">
+            <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">Post Type</label>
+            <SegmentedControl
+              options={postTypeOptions}
+              currentValue={postTypeFilter}
+              onChange={(value) => setPostTypeFilter(value)}
+              label="Post Type"
+            />
+          </div>
         </div>
         <div className="hidden md:flex items-center gap-2.5 shrink-0 mb-4 w-full justify-start">
           <label htmlFor="columns" className="text-[11px] font-medium text-zinc-600 uppercase tracking-wide">Cols</label>
@@ -237,7 +254,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           /><span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
         </div>
         <div className={`columns-1 ${columnClasses[numColumns]} gap-4`}>
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <div
               key={post.id}
               className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl break-inside-avoid"

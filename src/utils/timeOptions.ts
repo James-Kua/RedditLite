@@ -6,3 +6,12 @@ export const timeOptions = [
   { key: "Past Month", value: "month" },
   { key: "Past Year", value: "year" },
 ];
+
+export const postTypeOptions = [
+  { key: "All", value: "all" },
+  { key: "Image", value: "image" },
+  { key: "Video", value: "video" },
+  { key: "Text", value: "text" },
+  { key: "Link", value: "link" },
+  { key: "Gallery", value: "gallery" },
+];

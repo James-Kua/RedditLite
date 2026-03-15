@@ -1,3 +1,5 @@
+import { Post } from "../types/post";
+
 export function parsePermalink(permalink: string) {
   const parts = permalink.split("/").filter(Boolean);
   if (parts.length >= 2) {
@@ -83,3 +85,22 @@ export function parseInlineImagesFromHtml(html: string) {
 
   return tempDiv.innerHTML;
 }
+
+export const getPostType = (post: Post): 'image' | 'video' | 'text' | 'link' | 'gallery' => {
+  if (post.gallery_data) {
+    return 'gallery';
+  }
+  if (post.secure_media?.reddit_video || post.secure_media_embed?.content) {
+    return 'video';
+  }
+  if (post.post_hint === 'image') {
+    return 'image';
+  }
+  if (post.post_hint === 'link') {
+    return 'link';
+  }
+  if (post.selftext_html) {
+    return 'text';
+  }
+  return 'link';
+};
