@@ -212,7 +212,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
           {filterOptions.map((optionGroup, index) =>
             optionGroup.label === "Time" && sort !== "top" ? null : (
               <div className="flex items-center overflow-x-auto hide-scrollbar" key={index}>
-                <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">{optionGroup.label}</label>
+                <label className="mr-2 font-medium text-xs text-gray-700 dark:text-gray-300">{optionGroup.label}</label>
                 <SegmentedControl
                   options={optionGroup.options}
                   currentValue={optionGroup.label === "Sort by" ? sort : time}
@@ -232,7 +232,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
             ),
           )}
           <div className="flex items-center overflow-x-auto hide-scrollbar">
-            <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">Post Type</label>
+            <label className="mr-2 font-medium text-xs text-gray-700 dark:text-gray-300">Post Type</label>
             <SegmentedControl
               options={postTypeOptions}
               currentValue={postTypeFilter}
