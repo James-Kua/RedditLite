@@ -21,6 +21,15 @@ import { Subreddit } from "../types/subreddit";
 import SubredditCard from "./SubredditCard";
 import { RedditApiClient } from "../api/RedditApiClient";
 import CreatedEditedLabel from "./CreatedEditedLabel";
+import SegmentedControl from "./SegmentedControl";
+
+const columnClasses: { [key: number]: string } = {
+  1: "lg:columns-1",
+  2: "lg:columns-2",
+  3: "lg:columns-3",
+  4: "lg:columns-4",
+  5: "lg:columns-5",
+};
 
 export interface SearchPageProps {
   query: string;
@@ -39,6 +48,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
+  const [numColumns, setNumColumns] = useState(3);
   const observer = useRef<IntersectionObserver | null>(null);
   const sentinel = useRef<HTMLDivElement | null>(null);
 
@@ -79,11 +89,11 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
     } else {
       setSearchSubreddits([]);
     }
-  }, [userQuery]);
+  }, [userQuery, sort]);
 
   useEffect(() => {
     fetchSubredditSuggestions();
-  }, [userQuery]);
+  }, [userQuery, fetchSubredditSuggestions]);
 
   useEffect(() => {
     setUserQuery(query);
@@ -99,7 +109,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on&sr_detail=true`
         : `https://www.reddit.com/search.json?q=${userQuery}&sr_detail=true&sort=${sort}&t=${time}`;
 
-        RedditApiClient.fetch(searchUrl)
+      RedditApiClient.fetch(searchUrl)
         .then((response) => response.json())
         .then((data) => {
           const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
@@ -137,7 +147,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
   return (
     <div className="dark:bg-custom-black dark:text-white min-h-screen">
-      <div className="mx-auto md:w-8/12 xl:w-1/2 max-w-[95vw] flex flex-col justify-center relative py-4">
+      <div className="max-w-[95vw] mx-auto relative py-4">
         <nav aria-label="Breadcrumb" className="flex items-center justify-between mb-5">
           <ol className="flex items-center gap-1 text-sm text-gray-600">
             <li>
@@ -152,10 +162,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
             <h1 className="text-gray-500 font-bold text-lg mr-1 whitespace-nowrap">Search Results</h1>
           </ol>
           <div className="search-input">
-            <SearchInput
-              initialSearchInSubreddit={!!subreddit}
-              currentSubreddit={subreddit}
-            />
+            <SearchInput initialSearchInSubreddit={!!subreddit} currentSubreddit={subreddit} />
           </div>
         </nav>
 
@@ -167,40 +174,32 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         <div className="mb-4 flex flex-wrap gap-3">
           {filterOptions.map((optionGroup, index) =>
             optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
-              <div
-                className="flex items-center"
-                key={index}
-              >
-                <label className="mr-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+              <div className="flex items-center overflow-x-auto hide-scrollbar" key={index}>
+                <label className="mr-2 font-medium text-xs text-gray-700 dark:text-gray-300">
                   {optionGroup.label}
                 </label>
-                <select
-                  value={optionGroup.label === "Sort by" ? sort : time}
-                  onChange={(e) => {
+                <SegmentedControl
+                  options={optionGroup.options}
+                  currentValue={optionGroup.label === "Sort by" ? sort : time}
+                  onChange={(value) => {
                     switch (optionGroup.label) {
                       case "Sort by":
-                        setSort(e.target.value);
+                        setSort(value);
                         break;
                       case "Time":
-                        setTime(e.target.value);
+                        setTime(value);
                         break;
                     }
                   }}
-                  className="text-sm border border-gray-200 dark:border-gray-600 rounded-md px-1 py-1 font-medium text-gray-800 dark:text-gray-200 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {optionGroup.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.key}
-                    </option>
-                  ))}
-                </select>
+                  label={optionGroup.label}
+                />
               </div>
             )
           )}
         </div>
 
         {searchSubreddits.length > 0 && !subreddit && (
-            <div className="my-2 w-full">
+          <div className="my-2 w-full">
             <div className="font-semibold mb-2">Subreddits</div>
             {searchSubreddits.slice(0, 4).map((subreddit, index) => (
               <SubredditCard key={index} subreddit={subreddit} />
@@ -208,19 +207,41 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
           </div>
         )}
 
-        <div className="font-semibold mt-5 mb-2">
-          Posts
+        <div className="hidden md:flex items-center gap-2.5 shrink-0 mb-4 w-full justify-start">
+          <label htmlFor="columns" className="text-[11px] font-medium text-zinc-600 uppercase tracking-wide">
+            Cols
+          </label>
+          <input
+            id="columns"
+            type="range"
+            min="1"
+            max="5"
+            value={numColumns}
+            onChange={(e) => setNumColumns(Number(e.target.value))}
+            className="w-20 h-0.75 bg-zinc-800 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-400 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(96,165,250,0.5)]"
+          />
+          <span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
         </div>
 
-        {posts.map((post) => (
-          <a href={parsePermalink(post.permalink)} key={post.id}>
-            <div
+        <div className="font-semibold mt-5 mb-2">Posts</div>
+
+        <div className={`columns-1 ${columnClasses[numColumns]} gap-4`}>
+          {posts.map((post) => (
+            <a
+              href={parsePermalink(post.permalink)}
               key={post.id}
-              className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl overflow-auto"
+              className="block bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 mb-4 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl break-inside-avoid"
             >
               <div>
                 <div className="flex items-center space-x-2">
-                  <h3 className="font-semibold text-blue-400">{post.author}</h3>
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/user/${post.author}`;
+                    }}
+                  >
+                    <h3 className="font-semibold text-blue-400">{post.author}</h3>
+                  </div>
                   <AuthorFlairText
                     author_flair_richtext={post.author_flair_richtext}
                     author_flair_text={post.author_flair_text}
@@ -233,33 +254,39 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                       post.sr_detail?.community_icon?.length! > 1
                         ? post.sr_detail?.community_icon.replace("&amp;", "&")
                         : post.sr_detail?.icon_img?.length! > 1
-                        ? post.sr_detail?.icon_img.replace("&amp;", "&")
-                        : post.sr_detail?.header_img?.length! > 1
-                        ? post.sr_detail?.header_img.replace("&amp;", "&")
-                        : "/fallback_reddit_icon.png"
+                          ? post.sr_detail?.icon_img.replace("&amp;", "&")
+                          : post.sr_detail?.header_img?.length! > 1
+                            ? post.sr_detail?.header_img.replace("&amp;", "&")
+                            : "/fallback_reddit_icon.png"
                     }
                     className="w-6 h-6 rounded-full"
                   />
-                  <a
-                    href={`/${post.subreddit_name_prefixed}`}
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/${post.subreddit_name_prefixed}`;
+                    }}
                     className="text-gray-500 text-sm font-semibold dark:text-white"
                   >
                     {post.subreddit_name_prefixed}
-                  </a>
+                  </div>
                 </div>
-                <CreatedEditedLabel
-                  created={post.created}
-                  edited={post.edited}
-                />
-                <h2 className="text-lg font-semibold my-1 dark:text-white">{he.decode(post.title)}</h2>
-                <LinkFlairText
-                  link_flair_richtext={post.link_flair_richtext}
-                  link_flair_text={post.link_flair_text}
-                  link_flair_background_color={post.link_flair_background_color}
-                />
+                <CreatedEditedLabel created={post.created} edited={post.edited} />
+                <div className="block mt-2 group">
+                  <h2 className="text-lg font-semibold my-1 dark:text-white group-hover:underline">
+                    {he.decode(post.title)}
+                  </h2>
+                  <LinkFlairText
+                    link_flair_richtext={post.link_flair_richtext}
+                    link_flair_text={post.link_flair_text}
+                    link_flair_background_color={post.link_flair_background_color}
+                  />
+                </div>
               </div>
               <div
-                className={`${post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur" : ""}`}
+                className={`${
+                  post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
+                }`}
               >
                 {post.secure_media_embed?.media_domain_url ? (
                   <SecureMediaEmbed url_overridden_by_dest={post.url_overridden_by_dest} {...post.secure_media_embed} />
@@ -288,9 +315,9 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                 )}
                 <PostStats score={post.score} num_comments={post.num_comments} />
               </div>
-            </div>
-          </a>
-        ))}
+            </a>
+          ))}
+        </div>
         <div ref={sentinel} className="h-1"></div>
       </div>
     </div>
