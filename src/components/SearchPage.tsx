@@ -55,12 +55,9 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
   const fetchPosts = useCallback(() => {
     if (!hasMore || !userQuery) return;
 
-    const isAlreadyEncoded = userQuery.match(/%[0-9A-F]{2}/i);
-    const encodedQuery = isAlreadyEncoded ? encodeURIComponent(userQuery) : userQuery;
-
     const searchUrl = subreddit
-      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
-      : `https://www.reddit.com/search.json?q=${encodedQuery}&after=${after}&sort=${sort}&t=${time}`;
+      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
+      : `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`;
 
     RedditApiClient.fetch(searchUrl)
       .then((response) => response.json())
@@ -74,8 +71,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
   const fetchSubredditSuggestions = useCallback(() => {
     if (userQuery.trim() !== "") {
-      const encodedQuery = encodeURIComponent(userQuery);
-      const searchUrl = `https://www.reddit.com/search.json?q=${encodedQuery}&sort=${sort}&type=sr&sr_detail=true`;
+      const searchUrl = `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&type=sr&sr_detail=true`;
 
       RedditApiClient.fetch(searchUrl)
         .then((response) => response.json())
