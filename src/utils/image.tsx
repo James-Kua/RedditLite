@@ -9,7 +9,7 @@ export const FetchImage = ({ url }: { url: string }) => {
 
     const fetchImage = async () => {
       try {
-        const response = await fetch(`https://metafy.vercel.app/api?url=${url}`);
+        const response = await fetch(`https://metafy-sigma.vercel.app/api?url=${url}`);
         const data = await response.json();
 
         if (!isMounted) return;
