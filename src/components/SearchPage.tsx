@@ -168,7 +168,13 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
         <div className="mb-2 font-medium text-gray-400">
           Showing search results for <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span> in{" "}
-          {subreddit ? `r/${subreddit}` : "all subreddits"}
+          {subreddit ? (
+            <a href={`/r/${subreddit}`} className="text-blue-500 hover:underline">
+              r/{subreddit}
+            </a>
+          ) : (
+            "all subreddits"
+          )}
         </div>
 
         <div className="mb-4 flex flex-wrap gap-3">
