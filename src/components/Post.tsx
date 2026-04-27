@@ -135,7 +135,7 @@ const PostComponent = ({ post }: { post: Post }) => {
             <img
               src={post.url_overridden_by_dest}
               alt="url_overridden_by_dest"
-              className="mt-4 max-w-full max-h-[500px] mx-auto border rounded-md p-2 object-contain"
+              className="mt-4 max-w-full max-h-[500px] mx-auto rounded-lg"
             />
           ) : (
             <FetchImage url={post.url_overridden_by_dest} />

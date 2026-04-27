@@ -49,7 +49,7 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
   return (
     <div
       ref={containerRef}
-      className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto border rounded-sm"
+      className="mt-4 flex justify-center items-center max-w-full max-h-[500px] mx-auto bg-neutral-900 rounded-lg overflow-hidden"
       style={{
         width: `${width}px`,
         height: `${height}px`,
@@ -62,9 +62,6 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
           width="100%"
           height="100%"
           playing={playing}
-          style={{
-            border: "1px solid #e0e0e0"
-          }}
           muted
           onClick={handlePlayerClick}
         />

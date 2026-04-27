@@ -330,7 +330,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                             <img
                               src={post.url_overridden_by_dest}
                               alt="url_overridden_by_dest"
-                              className="mt-4 max-w-full max-h-125 mx-auto border rounded-md p-2 object-contain"
+                              className="mt-4 max-w-full max-h-125 mx-auto rounded-lg"
                             />
                           ) : (
                             <FetchImage url={post.url_overridden_by_dest} />

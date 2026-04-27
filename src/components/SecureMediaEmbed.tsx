@@ -68,7 +68,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   return (
     <div
       ref={containerRef}
-      className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative border rounded-sm"
+      className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative bg-neutral-900 rounded-lg overflow-hidden"
       style={{ paddingTop: `${aspectRatio}%` }}
     >
       {isVisible &&
