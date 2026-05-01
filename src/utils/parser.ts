@@ -47,7 +47,40 @@ export function parseInlineImagesFromHtml(html: string) {
 
   links.forEach((link) => {
     const href = link.getAttribute("href");
-    if (href && /\.(jpeg|jpg|gif|png|webp)(\?.*)?$/.test(href)) {
+    if (!href) return;
+
+    const giphyId = parseGiphyId(href);
+
+    if (giphyId) {
+      const gif = document.createElement("img");
+      gif.src = `https://media.giphy.com/media/${giphyId}/giphy.gif`;
+      gif.alt = link.textContent || "Giphy GIF";
+      gif.loading = "lazy";
+      gif.style.display = "block";
+      gif.style.maxWidth = "100%";
+      gif.style.width = "min(320px, 100%)";
+      gif.style.height = "auto";
+      gif.style.maxHeight = "220px";
+      gif.style.objectFit = "contain";
+      gif.style.margin = "0";
+      gif.style.borderRadius = "0.5rem";
+
+      const newLink = document.createElement("a");
+      newLink.href = href;
+      newLink.target = "_blank";
+      newLink.rel = "noopener noreferrer";
+      newLink.style.display = "block";
+      newLink.style.width = "fit-content";
+      newLink.appendChild(gif);
+
+      const figure = document.createElement("figure");
+      figure.style.display = "block";
+      figure.style.margin = "0.35rem 0 0.75rem";
+      figure.style.textAlign = "left";
+      figure.appendChild(newLink);
+
+      link.replaceWith(figure);
+    } else if (/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/.test(href)) {
       const img = document.createElement("img");
       img.src = href;
       img.alt = link.textContent || "";
@@ -84,6 +117,24 @@ export function parseInlineImagesFromHtml(html: string) {
   });
 
   return tempDiv.innerHTML;
+}
+
+function parseGiphyId(url: string) {
+  try {
+    const parsedUrl = new URL(url, window.location.origin);
+    if (parsedUrl.hostname !== "giphy.com" && parsedUrl.hostname !== "www.giphy.com") {
+      return null;
+    }
+
+    const [, type, slugOrId] = parsedUrl.pathname.split("/");
+    if (type !== "gifs" || !slugOrId) {
+      return null;
+    }
+
+    return slugOrId.split("-").pop() || null;
+  } catch {
+    return null;
+  }
 }
 
 export const getPostType = (post: Post): 'image' | 'video' | 'text' | 'link' | 'gallery' => {
