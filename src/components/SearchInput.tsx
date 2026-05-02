@@ -11,9 +11,9 @@ interface SearchInputProps {
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = false }) => {
-  const isMobile = window.innerWidth <= 767;
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 767);
   const [search, setSearch] = useState("");
-  const [isExpanded, setIsExpanded] = useState(!isMobile || window.location.pathname === "/");
+  const [isExpanded, setIsExpanded] = useState(() => !isMobile || window.location.pathname === "/");
   const [subredditSuggestions, setSubredditSuggestions] = useState<Subreddit[]>([]);
   const [searchInSubreddit, setSearchInSubreddit] = useState(initialSearchInSubreddit);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -24,6 +24,23 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
 
   const isSubredditPath = matchPath({ path: "/r/:subreddit/*" }, location.pathname);
   const currentSubreddit = isSubredditPath ? isSubredditPath.params.subreddit : null;
+  const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const handleResize = () => {
+      const nextIsMobile = window.innerWidth <= 767;
+      setIsMobile(nextIsMobile);
+      setIsExpanded((expanded) => (!nextIsMobile || isHome ? true : expanded));
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isHome]);
+
+  useEffect(() => {
+    setSearchInSubreddit(initialSearchInSubreddit);
+  }, [initialSearchInSubreddit]);
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -107,11 +124,13 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       const totalItems = subredditSuggestions.length + (isSubredditPath ? 1 : 0);
+      if (totalItems === 0) return;
       const nextIndex = (activeIndex + 1) % totalItems;
       setActiveIndex(nextIndex);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       const totalItems = subredditSuggestions.length + (isSubredditPath ? 1 : 0);
+      if (totalItems === 0) return;
       const prevIndex = activeIndex <= 0 ? totalItems - 1 : activeIndex - 1;
       setActiveIndex(prevIndex);
     } else if (e.key === "Escape") {
@@ -137,7 +156,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
   }, []);
 
   const toggleExpand = () => {
-    if (window.location.pathname !== "/") {
+    if (!isHome) {
       setIsExpanded(!isExpanded);
       if (!isExpanded) {
         setTimeout(() => inputRef.current?.focus(), 10);
@@ -155,14 +174,24 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
 
   const showDropdown = search.length !== 0 && (!isMobile || isExpanded);
   const hasResults = subredditSuggestions.length > 0;
+  const useMobileOverlay = isMobile && isExpanded && !isHome;
+  const alignRightOnly = isMobile && !isHome;
 
   return (
-    <div className="relative" ref={containerRef}>
-      <div className="relative">
+    <div className={`relative ${alignRightOnly ? "flex justify-end" : "w-full"}`} ref={containerRef}>
+      {useMobileOverlay && (
+        <button
+          type="button"
+          aria-label="Close search"
+          onClick={() => setIsExpanded(false)}
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px]"
+        />
+      )}
+      <div className={`relative ${alignRightOnly ? "" : "w-full"}`}>
         {!isExpanded && isMobile && (
           <button
             onClick={toggleExpand}
-            className="flex items-center justify-center w-12 h-12 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-white/70 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
             aria-label="Open search"
           >
             <div className="w-5 h-5">
@@ -172,7 +201,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
         )}
 
         {(isExpanded || !isMobile) && (
-          <div className="relative">
+          <div className={useMobileOverlay ? "fixed left-3 right-3 top-3 z-50" : "relative"}>
             <input
               type="text"
               ref={inputRef}
@@ -180,20 +209,22 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
               onChange={handleSearch}
               onKeyDown={handleKeyDown}
               placeholder="Search Reddit"
-              className="w-full h-12 pl-8 lg:pr-32 rounded-2xl border-2 border-gray-300 dark:border-slate-700 shadow-lg text-sm dark:bg-slate-900 dark:text-white bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 focus:outline-none"
+              className={`h-10 w-full rounded-xl border border-slate-300 bg-white/95 pl-9 text-sm font-medium text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/20 dark:border-white/10 dark:bg-neutral-800 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-blue-400 dark:focus:bg-neutral-800 dark:focus:ring-blue-400/20 lg:h-12 lg:rounded-2xl lg:pr-32 ${
+                isMobile && isHome ? "pr-4" : "pr-10"
+              }`}
               autoComplete="off"
               aria-label="Search Reddit"
             />
 
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4">
+            <div className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-zinc-500">
               <SearchIcon />
             </div>
 
             <div className="absolute right-0 top-0 h-full flex items-center">
-              {isMobile && (
+              {isMobile && !isHome && (
                 <button
                   onClick={toggleExpand}
-                  className="w-10 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="flex h-full w-10 items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   aria-label="Close search"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,8 +246,14 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full mt-1 left-0 right-0 mx-auto max-w-full sm:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg bg-white dark:bg-slate-900 shadow-xl z-50 border border-gray-200 dark:border-slate-700 overflow-hidden">
-          <div className="max-h-[70vh] overflow-y-auto">
+        <div
+          className={`z-50 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-white/10 dark:bg-neutral-900 ${
+            useMobileOverlay
+              ? "fixed left-3 right-3 top-14"
+              : "absolute left-0 right-0 top-full mx-auto mt-1 max-w-full sm:max-w-md lg:max-w-lg xl:max-w-xl"
+          }`}
+        >
+          <div className="max-h-[65vh] overflow-y-auto overscroll-contain">
             {isSubredditPath && (
               <div
                 className={`px-3 py-3 border-b dark:border-slate-700 cursor-pointer ${
