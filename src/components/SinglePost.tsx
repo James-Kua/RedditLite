@@ -6,6 +6,7 @@ import { commentSortOptions } from "../utils/sortOptions";
 import { FaTimes, FaSyncAlt } from "react-icons/fa";
 import HomeIcon from "../static/HomeIcon";
 import ArrowIcon from "../static/ArrowIcon";
+import SearchIcon from "../static/SearchIcon";
 import PostComponent from "./Post";
 import CommentsComponent from "./Comments";
 import { RedditApiClient } from "../api/RedditApiClient";
@@ -114,20 +115,27 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
           All Comments
         </div>
 
-        <div className="flex justify-between items-center mb-4 text-sm">
-          <div className="flex items-center relative">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="relative min-w-0 flex-1 sm:max-w-64">
+            <div className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-zinc-500">
+              <SearchIcon />
+            </div>
             <input
               type="text"
               value={commentsSearchTerm}
               onChange={handleSearchChange}
               placeholder="Search comments"
-              className="border border-gray-300 dark:bg-transparent rounded p-1 mr-2 sm: max-w-36 lg:max-w-48"
+              className="h-8 w-full rounded-lg border border-slate-300 bg-white/95 pl-8 pr-8 text-xs font-medium text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400/20 dark:border-white/10 dark:bg-neutral-800 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-blue-400 dark:focus:bg-neutral-800 dark:focus:ring-blue-400/20"
             />
             {commentsSearchTerm && (
-              <FaTimes
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600 mr-1"
+              <button
+                type="button"
+                aria-label="Clear comment search"
+                className="absolute right-1.5 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-md text-gray-400 transition hover:bg-slate-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-200"
                 onClick={handleClearSearch}
-              />
+              >
+                <FaTimes size={12} />
+              </button>
             )}
           </div>
           <div className="flex items-center whitespace-nowrap">
