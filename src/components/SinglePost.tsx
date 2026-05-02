@@ -9,6 +9,7 @@ import ArrowIcon from "../static/ArrowIcon";
 import PostComponent from "./Post";
 import CommentsComponent from "./Comments";
 import { RedditApiClient } from "../api/RedditApiClient";
+import CustomDropdown from "./CustomDropdown";
 
 export type SinglePostProps = {
   subreddit: string;
@@ -57,10 +58,6 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
 
     load();
   }, [commentsSortOption, refreshKey]);
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSortOption(e.target.value);
-  };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -135,17 +132,12 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
           </div>
           <div className="flex items-center whitespace-nowrap">
             <label className="mr-2">Sort by:</label>
-            <select
+            <CustomDropdown
+              label="Sort comments"
+              options={commentSortOptions}
               value={commentsSortOption}
-              onChange={handleSortChange}
-              className="border border-gray-300 dark:bg-transparent rounded p-1"
-            >
-              {commentSortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.key}
-                </option>
-              ))}
-            </select>
+              onChange={setSortOption}
+            />
             <FaSyncAlt
               onClick={handleRefreshComments}
               className={`ml-2 text-blue-500 cursor-pointer ${
