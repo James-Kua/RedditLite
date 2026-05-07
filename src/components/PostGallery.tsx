@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, memo, useMemo, useRef } from "react";
 import { parseImageType } from "../utils/parser";
+import he from "he";
+import { Post } from "../types/post";
 
 const MAX_VISIBLE_THUMBNAILS = 4;
 
@@ -10,9 +12,10 @@ type PostGalleryProps = {
     }[];
   };
   mediaMetadata?: any[];
+  post?: Post;
 };
 
-const PostGallery: React.FC<PostGalleryProps> = memo(({ galleryData, mediaMetadata }) => {
+const PostGallery: React.FC<PostGalleryProps> = memo(({ galleryData, mediaMetadata, post }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -124,24 +127,44 @@ const PostGallery: React.FC<PostGalleryProps> = memo(({ galleryData, mediaMetada
           }}
         >
           <div
-            className="flex items-center justify-between px-4 py-3 bg-black/50"
+            className="flex flex-col px-4 py-3 bg-black/50"
           >
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-              className="text-white hover:bg-white/20 rounded-full p-2"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <span className="text-white text-sm">
-              {currentIndex + 1} / {imageUrls.length}
-            </span>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                className="text-white hover:bg-white/20 rounded-full p-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="flex-1 px-4 text-white overflow-hidden">
+                {post ? (
+                  <div className="flex flex-col py-0.5">
+                    <div className="flex items-center gap-2 text-xs font-bold">
+                      <span className="text-blue-400 truncate max-w-[150px]">u/{post.author}</span>
+                      <span className="text-gray-600">•</span>
+                      <span className="truncate">{post.subreddit_name_prefixed}</span>
+                    </div>
+                    <h2 className="text-sm font-bold mt-0.5 line-clamp-1 leading-tight opacity-90">
+                      {he.decode(post.title)}
+                    </h2>
+                  </div>
+                ) : (
+                  <div className="flex flex-col">
+                    <span className="text-lg font-semibold truncate">Gallery</span>
+                  </div>
+                )}
+              </div>
+              <span className="text-white text-sm whitespace-nowrap">
+                {currentIndex + 1} / {imageUrls.length}
+              </span>
+            </div>
           </div>
 
           <div

@@ -320,7 +320,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                         ) : post.media_metadata ? (
                           <div className="relative mt-2">
                             {post.gallery_data ? (
-                              <PostGallery galleryData={post.gallery_data} mediaMetadata={post.media_metadata} />
+                              <PostGallery 
+                                galleryData={post.gallery_data} 
+                                mediaMetadata={post.media_metadata} 
+                                post={post}
+                              />
                             ) : null}
                           </div>
                         ) : post.preview ? (
