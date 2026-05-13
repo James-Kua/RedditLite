@@ -59,11 +59,24 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   const isTikTokUrl = (url: string) => url.includes("tiktok.com");
   const isInstagramUrl = (url: string) => url.includes("instagram.com");
   const isTwitchUrl = (url: string) => url.includes("clips.twitch.tv/");
+  const hasIframeContent = (html: string) => html.includes("<iframe");
 
   const getTwitchClipId = (url: string) => {
     const match = url.match(/clips\.twitch\.tv\/([A-Za-z0-9_-]+)/);
     return match ? match[1] : null;
   };
+
+  const renderIframe = (src: string, title: string) => (
+    <div className="absolute inset-0 flex justify-center items-center w-full h-full">
+      <iframe
+        src={src}
+        title={title}
+        className="w-full h-full border-0"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture;"
+        allowFullScreen
+      />
+    </div>
+  );
 
   return (
     <div
@@ -99,6 +112,13 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
             <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-auto">
               <TwitchClip clip={getTwitchClipId(url_overridden_by_dest) || ""} autoplay={false} muted />
             </div>
+          ) : decodedContent && hasIframeContent(decodedContent) ? (
+            <div
+              className="absolute inset-0 w-full h-full overflow-hidden [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
+              dangerouslySetInnerHTML={{ __html: decodedContent }}
+            />
+          ) : media_domain_url ? (
+            renderIframe(media_domain_url, "Reddit media embed")
           ) : (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full">
               <ReactPlayer
@@ -112,21 +132,9 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
               />
             </div>
           )
-        ) : media_domain_url ? (
-          <div className="absolute inset-0 flex justify-center items-center w-full h-full">
-            <ReactPlayer
-              src={media_domain_url}
-              controls
-              width="100%"
-              height="100%"
-              playing={playing}
-              muted
-              onClick={handlePlayerClick}
-            />
-          </div>
         ) : decodedContent ? (
           <div
-            className="flex justify-center items-center w-full h-full"
+            className="absolute inset-0 flex justify-center items-center w-full h-full [&>iframe]:w-full [&>iframe]:h-full [&>iframe]:border-0"
             dangerouslySetInnerHTML={{ __html: decodedContent }}
           />
         ) : null)}
