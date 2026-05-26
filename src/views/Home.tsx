@@ -1,33 +1,134 @@
-import { useEffect, useState } from "react";
+import { type DragEvent, useEffect, useState } from "react";
 import SearchInput from "../components/SearchInput";
 import SubredditIcon from "../components/SubredditIcon";
-import { Subreddit } from "../types/subreddit";
 import { RedditApiClient } from "../api/RedditApiClient";
 
+const STARRED_STORAGE_KEY = "reddit-lite-starred";
+
+type StarredSubreddit = {
+  name: string;
+  community_icon: string;
+  icon_img: string;
+};
+
+const getStarredSubredditNames = () => {
+  try {
+    const storedValue = localStorage.getItem(STARRED_STORAGE_KEY);
+    const subreddits = storedValue ? JSON.parse(storedValue) : [];
+
+    if (!Array.isArray(subreddits)) {
+      return [];
+    }
+
+    return Array.from(
+      new Set(
+        subreddits.filter((subreddit): subreddit is string => typeof subreddit === "string" && subreddit.length > 0),
+      ),
+    );
+  } catch {
+    return [];
+  }
+};
+
+const saveStarredSubredditOrder = (subreddits: StarredSubreddit[]) => {
+  localStorage.setItem(STARRED_STORAGE_KEY, JSON.stringify(subreddits.map(({ name }) => name)));
+};
+
+const fetchStarredSubreddit = async (name: string): Promise<StarredSubreddit> => {
+  try {
+    const response = await RedditApiClient.fetch(`https://www.reddit.com/r/${name}/about.json`);
+    const data = await response.json();
+
+    return {
+      name,
+      community_icon: data.data.community_icon,
+      icon_img: data.data.icon_img,
+    };
+  } catch {
+    return {
+      name,
+      community_icon: "",
+      icon_img: "",
+    };
+  }
+};
+
 const Home = () => {
-  const [starredSubreddits, setStarredSubreddits] = useState<Subreddit[]>([]);
+  const [starredSubreddits, setStarredSubreddits] = useState<StarredSubreddit[]>([]);
+  const [isReordering, setIsReordering] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const starred = localStorage.getItem("reddit-lite-starred");
-    if (starred) {
-      const subreddits = JSON.parse(starred);
-      const fetchSubredditIcons = async () => {
-        const subredditData = await Promise.all(
-          subreddits.map(async (subreddit: string) => {
-            const response = await RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about.json`);
-            const data = await response.json();
-            return {
-              name: subreddit,
-              community_icon: data.data.community_icon,
-              icon_img: data.data.icon_img,
-            };
-          })
-        );
-        setStarredSubreddits(subredditData);
-      };
-      fetchSubredditIcons();
+    const subreddits = getStarredSubredditNames();
+
+    if (subreddits.length === 0) {
+      setStarredSubreddits([]);
+      return;
     }
+
+    let isActive = true;
+
+    setStarredSubreddits(subreddits.map((name) => ({ name, community_icon: "", icon_img: "" })));
+
+    const fetchSubredditIcons = async () => {
+      const subredditData = await Promise.all(subreddits.map(fetchStarredSubreddit));
+
+      if (!isActive) {
+        return;
+      }
+
+      const subredditDataByName = new Map(subredditData.map((subreddit) => [subreddit.name, subreddit]));
+
+      setStarredSubreddits((currentSubreddits) =>
+        currentSubreddits.map((subreddit) => subredditDataByName.get(subreddit.name) ?? subreddit),
+      );
+    };
+
+    fetchSubredditIcons();
+
+    return () => {
+      isActive = false;
+    };
   }, []);
+
+  const moveStarredSubreddit = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) {
+      return;
+    }
+
+    setStarredSubreddits((currentSubreddits) => {
+      if (!currentSubreddits[fromIndex] || !currentSubreddits[toIndex]) {
+        return currentSubreddits;
+      }
+
+      const nextSubreddits = [...currentSubreddits];
+      const [movedSubreddit] = nextSubreddits.splice(fromIndex, 1);
+      nextSubreddits.splice(toIndex, 0, movedSubreddit);
+      saveStarredSubredditOrder(nextSubreddits);
+
+      return nextSubreddits;
+    });
+  };
+
+  const handleDragStart = (event: DragEvent<HTMLSpanElement>, index: number) => {
+    setDraggedIndex(index);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>, index: number) => {
+    event.preventDefault();
+
+    if (draggedIndex !== null) {
+      moveStarredSubreddit(draggedIndex, index);
+    }
+
+    setDraggedIndex(null);
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-50 text-slate-950 dark:bg-black dark:text-white">
@@ -81,39 +182,125 @@ const Home = () => {
 
           {starredSubreddits.length > 0 && (
             <div className="mx-auto w-full max-w-xl rounded-2xl border border-slate-200 bg-white text-left shadow-xl shadow-slate-950/5 dark:border-white/10 dark:bg-[#101214] dark:shadow-black/20">
-              <div className="border-b border-slate-200 px-4 py-3 dark:border-white/10">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10">
                 <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400">
                   Your Starred Communities
                 </h2>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsReordering((currentValue) => !currentValue);
+                    setDraggedIndex(null);
+                  }}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/20 dark:hover:bg-white/5 dark:hover:text-white"
+                  aria-pressed={isReordering}
+                >
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path
+                      d="M6 4h8M6 10h8M6 16h8"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  {isReordering ? "Done" : "Edit order"}
+                </button>
               </div>
               <div className="divide-y divide-slate-200 dark:divide-white/10">
-                {starredSubreddits.map(({ name, community_icon, icon_img }) => (
-                  <a
+                {starredSubreddits.map(({ name, community_icon, icon_img }, index) => (
+                  <div
                     key={name}
-                    href={`/r/${name}`}
-                    className="group flex min-w-0 items-center px-4 py-3 text-left transition hover:bg-slate-100/80 dark:hover:bg-white/[0.04]"
+                    onDragOver={isReordering ? handleDragOver : undefined}
+                    onDrop={isReordering ? (event) => handleDrop(event, index) : undefined}
+                    className={`group flex min-w-0 items-center gap-3 px-4 py-3 text-left transition ${
+                      draggedIndex === index
+                        ? "bg-orange-50 dark:bg-orange-300/10"
+                        : "hover:bg-slate-100/80 dark:hover:bg-white/[0.04]"
+                    }`}
                   >
-                    <div className="shrink-0 transition-transform group-hover:scale-105">
-                      <SubredditIcon community_icon={community_icon} icon_img={icon_img} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">r/{name}</p>
-                    </div>
-                    <svg
-                      className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-[#ff4500] dark:group-hover:text-orange-300"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M7.5 4.75 12.75 10 7.5 15.25"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </a>
+                    {isReordering && (
+                      <span
+                        draggable
+                        onDragStart={(event) => handleDragStart(event, index)}
+                        onDragEnd={() => setDraggedIndex(null)}
+                        className="inline-flex h-9 w-7 shrink-0 cursor-grab items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 active:cursor-grabbing dark:hover:bg-white/10 dark:hover:text-slate-100"
+                        title={`Drag r/${name}`}
+                        aria-hidden="true"
+                      >
+                        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none">
+                          <path
+                            d="M7 5.5h.01M13 5.5h.01M7 10h.01M13 10h.01M7 14.5h.01M13 14.5h.01"
+                            stroke="currentColor"
+                            strokeWidth="2.8"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </span>
+                    )}
+                    <a href={`/r/${name}`} className="flex min-w-0 flex-1 items-center gap-3">
+                      <div className="shrink-0 transition-transform group-hover:scale-105">
+                        <SubredditIcon community_icon={community_icon} icon_img={icon_img} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">r/{name}</p>
+                      </div>
+                    </a>
+                    {isReordering ? (
+                      <div className="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveStarredSubreddit(index, index - 1)}
+                          disabled={index === 0}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                          aria-label={`Move r/${name} up`}
+                          title={`Move r/${name} up`}
+                        >
+                          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path
+                              d="M10 15V5M5.75 9.25 10 5l4.25 4.25"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveStarredSubreddit(index, index + 1)}
+                          disabled={index === starredSubreddits.length - 1}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
+                          aria-label={`Move r/${name} down`}
+                          title={`Move r/${name} down`}
+                        >
+                          <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path
+                              d="M10 5v10M14.25 10.75 10 15l-4.25-4.25"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ) : (
+                      <svg
+                        className="h-4 w-4 shrink-0 text-slate-400 transition group-hover:translate-x-0.5 group-hover:text-[#ff4500] dark:group-hover:text-orange-300"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M7.5 4.75 12.75 10 7.5 15.25"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
