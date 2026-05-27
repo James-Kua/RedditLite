@@ -7,7 +7,7 @@ const CommentIcon: React.FC = () => (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    className="w-4 h-4 cursor-pointer flex-none"
+    className="w-3.5 h-3.5 cursor-pointer flex-none"
   >
     <path
       stroke-linecap="round"

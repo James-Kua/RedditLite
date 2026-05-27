@@ -8,21 +8,15 @@ export interface PostStatsProps {
 }
 
 const PostStats: React.FC<PostStatsProps> = ({score, num_comments}) => (
-  <div className="text-gray-600 text-xs mt-2 dark:text-slate-200 flex items-center space-x-4 font-medium">
-    <div className="flex items-center space-x-1 cursor-pointer">
+  <div className="text-[#8C9EB5] text-xs mt-2 dark:text-slate-400 flex items-center space-x-6 font-bold">
+    <div className="flex items-center space-x-1.5 cursor-pointer hover:text-gray-500 transition-colors">
       <UpvoteIcon />
-      <span className="font-bold text-xs">{score.toLocaleString("en-US")}</span>
-      <span className="text-xs">
-        {score === 1 ? "upvote" : "upvotes"}
-      </span>
+      <span>{score.toLocaleString("en-US")}</span>
     </div>
     {num_comments !== undefined && (
-      <div className="flex items-center space-x-1 cursor-pointer">
+      <div className="flex items-center space-x-1.5 cursor-pointer hover:text-gray-500 transition-colors">
         <CommentIcon />
-        <span className="font-bold text-xs">{num_comments.toLocaleString("en-US")}</span>
-        <span className="text-xs">
-          {num_comments === 1 ? "comment" : "comments"}
-        </span>
+        <span>{num_comments.toLocaleString("en-US")}</span>
       </div>
     )}
   </div>
