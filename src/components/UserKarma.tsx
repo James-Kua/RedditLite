@@ -8,20 +8,30 @@ export interface UserKarmaProps {
 
 const UserKarma: React.FC<UserKarmaProps> = ({ icon_img: icon_img, total_karma, comment_karma }) => {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-md p-4 flex items-center gap-4">
+    <div className="flex items-center gap-5 py-3 mb-6">
       {icon_img && (
-        <div className="shrink-0 rounded-full border-2 border-gray-300 dark:border-zinc-700 p-1">
+        <div className="shrink-0 w-12 h-12 rounded-full overflow-hidden bg-gray-100 dark:bg-zinc-800">
           <AvatarIcon iconImg={icon_img} />
         </div>
       )}
-      <div className="flex flex-col">
-        <div className="flex items-center gap-2 text-gray-700 dark:text-white text-sm font-semibold">
-          <span className="text-yellow-500">🏆</span>
-          <span>{(total_karma ?? 0).toLocaleString("en-US")} post karma</span>
+      
+      <div className="flex gap-8">
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold text-gray-900 dark:text-zinc-100 leading-tight">
+            {(total_karma ?? 0).toLocaleString("en-US")}
+          </span>
+          <span className="text-[11px] text-gray-500 dark:text-zinc-400 font-medium tracking-wide uppercase mt-0.5">
+            Post Karma
+          </span>
         </div>
-        <div className="flex items-center gap-2 text-gray-700 dark:text-white text-sm font-semibold mt-1">
-          <span className="text-blue-500">💬</span>
-          <span>{(comment_karma ?? 0).toLocaleString("en-US")} comment karma</span>
+        
+        <div className="flex flex-col">
+          <span className="text-sm font-semibold text-gray-900 dark:text-zinc-100 leading-tight">
+            {(comment_karma ?? 0).toLocaleString("en-US")}
+          </span>
+          <span className="text-[11px] text-gray-500 dark:text-zinc-400 font-medium tracking-wide uppercase mt-0.5">
+            Comment Karma
+          </span>
         </div>
       </div>
     </div>
