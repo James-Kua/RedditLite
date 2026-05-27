@@ -35,14 +35,13 @@
     }
 
     blockquote {
-        margin: 0.75rem 0;
-        border-left: 3px solid #60a5fa;
+        margin: 0.5rem 0;
+        border-left: 3px solid #cbd5e1;
         color: #475569;
-        padding: 0.75rem 0.9rem;
-        border-radius: 0.5rem;
-        background: #f8fafc;
-        font-style: normal;
-        line-height: 1.65;
+        padding: 0.25rem 0 0.25rem 1rem;
+        background: transparent;
+        font-style: italic;
+        line-height: 1.6;
     }
 
     blockquote::before {
@@ -105,9 +104,9 @@
 
     @media (prefers-color-scheme: dark) {
         blockquote {
-            border-left-color: #3b82f6;
-            color: #d4d4d8;
-            background: #18181b;
+            border-left-color: #3f3f46;
+            color: #a1a1aa;
+            background: transparent;
         }
 
         table {
