@@ -37,7 +37,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
   const [userQuery, setUserQuery] = useState<string>(query);
   const [posts, setPosts] = useState<Post[]>([]);
   const [searchSubreddits, setSearchSubreddits] = useState<Subreddit[]>([]);
-  const [after, setAfter] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState<string>(initialSort);
   const [time, setTime] = useState<string>(initialTime);
@@ -48,34 +48,26 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
   const isMobile = useMobileDetection();
 
   const fetchPosts = useCallback(() => {
-    if (!hasMore || !userQuery) return;
+    if (!hasMore || !userQuery || !subreddit) return;
 
-    const searchUrl = subreddit
-      ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}&restrict_sr=on`
-      : `https://www.reddit.com/search.json?q=${userQuery}&after=${after}&sort=${sort}&t=${time}`;
-
-    RedditApiClient.fetch(searchUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
-        setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        setAfter(data.data.after);
-        setHasMore(!!data.data.after);
+    RedditApiClient.getPosts({
+      subreddit,
+      query: decodeURIComponent(userQuery),
+      cursor,
+      sort,
+      time,
+    })
+      .then(({ items, nextCursor }) => {
+        setPosts((prevPosts) => [...prevPosts, ...items]);
+        setCursor(nextCursor);
+        setHasMore(!!nextCursor);
       });
-  }, [userQuery, after, hasMore, sort, subreddit, time]);
+  }, [userQuery, cursor, hasMore, sort, subreddit, time]);
 
   const fetchSubredditSuggestions = useCallback(() => {
     if (userQuery.trim() !== "") {
-      const searchUrl = `https://www.reddit.com/search.json?q=${userQuery}&sort=${sort}&type=sr&sr_detail=true`;
-
-      RedditApiClient.fetch(searchUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const suggestions: Subreddit[] = data.data.children.map((child: any) => ({
-            ...child.data,
-          }));
-          setSearchSubreddits(suggestions);
-        })
+      RedditApiClient.searchSubreddits(decodeURIComponent(userQuery), 4)
+        .then(setSearchSubreddits)
         .catch(() => setSearchSubreddits([]));
     } else {
       setSearchSubreddits([]);
@@ -92,21 +84,20 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
   useEffect(() => {
     setPosts([]);
-    setAfter(null);
-    setHasMore(true);
+    setCursor(null);
+    setHasMore(!!subreddit);
 
-    if (userQuery) {
-      const searchUrl = subreddit
-        ? `https://www.reddit.com/r/${subreddit}/search.json?q=${userQuery}&sort=${sort}&t=${time}&restrict_sr=on&sr_detail=true`
-        : `https://www.reddit.com/search.json?q=${userQuery}&sr_detail=true&sort=${sort}&t=${time}`;
-
-      RedditApiClient.fetch(searchUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
-          setPosts(fetchedPosts);
-          setAfter(data.data.after);
-          setHasMore(!!data.data.after);
+    if (userQuery && subreddit) {
+      RedditApiClient.getPosts({
+        subreddit,
+        query: decodeURIComponent(userQuery),
+        sort,
+        time,
+      })
+        .then(({ items, nextCursor }) => {
+          setPosts(items);
+          setCursor(nextCursor);
+          setHasMore(!!nextCursor);
         });
     }
   }, [userQuery, sort, time, subreddit]);
@@ -167,19 +158,19 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
         </nav>
 
         <div className="mb-2 font-medium text-gray-400">
-          Showing search results for <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span> in{" "}
+          {subreddit ? "Showing archived posts for " : "Showing communities matching "}
+          <span className="font-semibold italic">{decodeURIComponent(userQuery)}</span>
+          {subreddit && " in "}
           {subreddit ? (
             <a href={`/r/${subreddit}`} className="text-blue-500 hover:underline">
               r/{subreddit}
             </a>
-          ) : (
-            "all subreddits"
-          )}
+          ) : null}
         </div>
 
         <div className="mb-4 flex flex-wrap gap-3">
           {filterOptions.map((optionGroup, index) =>
-            optionGroup.label === "Time" && !["relevance", "top", "comments"].includes(sort) ? null : (
+            (
               <div className="flex items-center overflow-x-auto hide-scrollbar" key={index}>
                 <label className="mr-2 font-medium text-xs text-gray-700 dark:text-gray-300">{optionGroup.label}</label>
                 <SegmentedControl
@@ -229,9 +220,15 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
           </div>
         )}
 
-        <div className="font-semibold mt-5 mb-2">Posts</div>
+        {!subreddit && (
+          <p className="my-5 text-sm text-gray-500 dark:text-gray-400">
+            Arctic Shift keyword search requires a subreddit. Choose a community above, then search within it.
+          </p>
+        )}
 
-        <div className="flex justify-center gap-4">
+        {subreddit && <div className="font-semibold mt-5 mb-2">Posts</div>}
+
+        {subreddit && <div className="flex justify-center gap-4">
           {columns.map((columnPosts: Post[], columnIndex) => (
             <div key={columnIndex} className="flex flex-1 flex-col gap-4 min-w-0">
               {columnPosts.map((post) => (
@@ -334,7 +331,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
               ))}
             </div>
           ))}
-        </div>
+        </div>}
         <div ref={sentinel} className="h-1"></div>
       </div>
     </div>
