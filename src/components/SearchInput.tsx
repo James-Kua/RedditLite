@@ -77,11 +77,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
 
   const fetchSubredditSuggestions = async () => {
     try {
-      const response = await RedditApiClient.fetch(`https://www.reddit.com/subreddits/search.json?q=${search}&limit=6`);
-      const data = await response.json();
-      if (data?.data?.children) {
-        setSubredditSuggestions(data.data.children.map((child: any) => child.data));
-      }
+      setSubredditSuggestions(await RedditApiClient.searchSubreddits(search, 6));
     } catch (error) {
       console.error("Error fetching subreddit suggestions:", error);
     }
@@ -98,8 +94,8 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
     const encodedQuery = encodeURIComponent(searchQuery);
     const searchUrl =
       searchInSubreddit && currentSubreddit
-        ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=relevance&t=year`
-        : `/search/?q=${encodedQuery}&sort=relevance&t=year`;
+        ? `/r/${currentSubreddit}/search/?q=${encodedQuery}&sort=newest&t=year`
+        : `/search/?q=${encodedQuery}&sort=newest&t=year`;
 
     navigate(searchUrl);
     if (isMobile) setIsExpanded(false);
