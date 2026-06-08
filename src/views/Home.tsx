@@ -36,13 +36,12 @@ const saveStarredSubredditOrder = (subreddits: StarredSubreddit[]) => {
 
 const fetchStarredSubreddit = async (name: string): Promise<StarredSubreddit> => {
   try {
-    const response = await RedditApiClient.fetch(`https://www.reddit.com/r/${name}/about.json`);
-    const data = await response.json();
+    const subreddit = await RedditApiClient.getSubreddit(name);
 
     return {
       name,
-      community_icon: data.data.community_icon,
-      icon_img: data.data.icon_img,
+      community_icon: subreddit?.community_icon ?? "",
+      icon_img: subreddit?.icon_img ?? "",
     };
   } catch {
     return {

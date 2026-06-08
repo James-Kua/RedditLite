@@ -26,4 +26,5 @@ export interface UserFlairRichtext {
 export interface SubredditRules {
   short_name: string;
   description_html?: string;
+  description?: string;
 }
