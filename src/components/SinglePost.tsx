@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Post } from "../types/post";
 import { Comment } from "../types/comment";
 import SearchInput from "./SearchInput";
@@ -19,46 +19,101 @@ export type SinglePostProps = {
   comment_id?: string;
 };
 
-const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comment_id }) => {
+const sortCommentsByTimestamp = (comments: Comment[], direction: "newest" | "oldest"): Comment[] => {
+  const multiplier = direction === "newest" ? -1 : 1;
+
+  return comments
+    .map((comment) => {
+      const children = comment.replies?.data?.children;
+
+      if (!children?.length) {
+        return comment;
+      }
+
+      const sortedReplies = sortCommentsByTimestamp(
+        children.map((child) => child.data),
+        direction,
+      );
+
+      return {
+        ...comment,
+        replies: {
+          ...comment.replies,
+          data: {
+            ...comment.replies.data,
+            children: sortedReplies.map((reply) => ({
+              kind: "t1",
+              data: reply,
+            })),
+          },
+        },
+      };
+    })
+    .sort((left, right) => {
+      const timestampDifference = left.created_utc - right.created_utc;
+      return timestampDifference === 0
+        ? left.id.localeCompare(right.id) * multiplier
+        : timestampDifference * multiplier;
+    });
+};
+
+const getReplyComments = (comment: Comment): Comment[] => {
+  return comment.replies?.data?.children?.map((child) => child.data).filter(Boolean) ?? [];
+};
+
+const countComments = (comments: Comment[]): number => {
+  return comments.reduce((total, comment) => total + 1 + countComments(getReplyComments(comment)), 0);
+};
+
+const findComment = (comments: Comment[], commentId: string): Comment | null => {
+  const normalizedCommentId = commentId.replace(/^t1_/, "");
+
+  for (const comment of comments) {
+    if (comment.id === normalizedCommentId || comment.id === commentId) {
+      return comment;
+    }
+
+    const childMatch = findComment(getReplyComments(comment), normalizedCommentId);
+    if (childMatch) {
+      return childMatch;
+    }
+  }
+
+  return null;
+};
+
+const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, comment_id }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [commentsSortOption, setSortOption] = useState("");
+  const [commentsSortOption, setSortOption] = useState<"newest" | "oldest">("newest");
   const [commentsSearchTerm, setSearchTerm] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const sortedComments = useMemo(() => {
+    return sortCommentsByTimestamp(comments, commentsSortOption);
+  }, [comments, commentsSortOption]);
 
   useEffect(() => {
     const load = async () => {
       setIsRefreshing(true);
 
-      // First call to retrieve suggested_sort
-      const res = await RedditApiClient.fetch(
-        `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${commentsSortOption}&sr_detail=true&profile_img=true`
-      );
-      const data = await res.json();
-      const [postList, commentList] = data;
+      try {
+        const [post, commentTree] = await Promise.all([
+          RedditApiClient.getPost(postId),
+          RedditApiClient.getCommentTree(postId),
+        ]);
+        const selectedComment = comment_id ? findComment(commentTree, comment_id) : null;
+        const numComments = countComments(commentTree);
 
-      const postData = postList.data.children.map((child: { data: Post }) => child.data)
-      
-      setPosts(postData);
-
-      const suggested_sort = postData[0]?.suggested_sort;
-      if (commentsSortOption === "" && suggested_sort) {
-        setSortOption(suggested_sort);
-        const sortedRes = await RedditApiClient.fetch(
-          `https://www.reddit.com/r/${subreddit}/comments/${postId}/${title}/${comment_id}.json?sort=${suggested_sort}&sr_detail=true&profile_img=true`
-        );
-        const sortedData = await sortedRes.json();
-        const [, sortedComments] = sortedData;
-        setComments(sortedComments.data.children.map((child: { data: Post }) => child.data));
-      } else {
-        setComments(commentList.data.children.map((child: { data: Post }) => child.data));
+        setPosts(post ? [{ ...post, num_comments: numComments }] : []);
+        setComments(selectedComment ? [selectedComment] : commentTree);
+      } finally {
+        setIsRefreshing(false);
       }
-      setIsRefreshing(false);
     };
 
     load();
-  }, [commentsSortOption, refreshKey]);
+  }, [postId, comment_id, refreshKey]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -144,7 +199,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
               label="Sort comments"
               options={commentSortOptions}
               value={commentsSortOption}
-              onChange={setSortOption}
+              onChange={(value) => setSortOption(value === "oldest" ? "oldest" : "newest")}
             />
             <FaSyncAlt
               onClick={handleRefreshComments}
@@ -157,7 +212,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ subreddit, postId, title, comme
         </div>
 
         <CommentsComponent
-          comments={comments}
+          comments={sortedComments}
           postAuthor={posts[0]?.author || ""}
           searchTerm={commentsSearchTerm}
         />
