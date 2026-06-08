@@ -10,7 +10,6 @@ function App() {
     <>
       <ToastContainer newestOnTop />
       <Router>
-        <SiteStatusToast />
         <Routes>
           <Route path="/r/:subreddit" element={<FeedWrapper />} />
           <Route path="/r/:subreddit/:sort" element={<FeedWrapper />} />
@@ -37,11 +36,10 @@ import SinglePost from "./components/SinglePost";
 import SearchPage from "./components/SearchPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SiteStatusToast from "./components/SiteStatusToast";
 import UserPost from "./components/UserPost";
 
 const FeedWrapper = () => {
-  const { subreddit, sort = "hot" } = useParams();
+  const { subreddit, sort = "newest" } = useParams();
   const [searchParams] = useSearchParams();
   const time = searchParams.get("t") || "year";
 
@@ -75,7 +73,7 @@ const SearchWrapper = () => {
   const { subreddit } = useParams();
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
-  const sort = searchParams.get("sort") || "relevance";
+  const sort = searchParams.get("sort") || "newest";
   const time = searchParams.get("t") || "year";
 
   const encodedQuery = query ? encodeURIComponent(query) : "";
