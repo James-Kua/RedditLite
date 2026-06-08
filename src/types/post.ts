@@ -4,6 +4,7 @@ export type Post = {
   author_flair_text?: string;
   author_flair_background_color?: string;
   author_flair_richtext: AuthorFlairRichtext[]
+  selftext?: string;
   body_html?: string;
   created: number;
   created_utc: number;
@@ -38,6 +39,10 @@ export type Post = {
   crosspost_parent_list?: Post[]
   poll_data?: PollData
   sr_detail?: SrDetail;
+  suggested_sort?: string;
+  removed_by?: string | null;
+  removed_by_category?: string | null;
+  removal_reason?: string | null;
 };
 
 interface GalleryData {

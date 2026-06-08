@@ -34,7 +34,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [comments, setComments] = useState<Post[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [after, setAfter] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [activeTab, setActiveTab] = useState<"posts" | "comments">("posts");
   const [numColumns, setNumColumns] = useState(3);
@@ -79,33 +79,22 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/submitted.json?sr_detail=true&after=${after}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
+    RedditApiClient.getPosts({ author: username, cursor })
+      .then(({ items: fetchedPosts, nextCursor }) => {
         setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-        setAfter(data.data.after);
-        setHasMore(!!data.data.after);
+        setCursor(nextCursor);
+        setHasMore(!!nextCursor);
       });
-  }, [username, after, hasMore]);
+  }, [username, cursor, hasMore]);
 
   const fetchComments = useCallback(() => {
-    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/comments.json?sr_detail=true&limit=100`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedComments = data.data.children.map((child: { data: Post }) => child.data);
-        setComments(fetchedComments);
-      });
+    RedditApiClient.getUserComments(username).then(setComments);
   }, [username]);
 
   useEffect(() => {
     fetchComments();
 
-    RedditApiClient.fetch(`https://www.reddit.com/user/${username}/about.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        setUserProfile(data.data);
-      });
+    RedditApiClient.getUser(username).then(setUserProfile);
   }, [username]);
 
   useEffect(() => {
@@ -147,7 +136,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
           <div className="my-2">
             <UserKarma
               icon_img={userProfile.icon_img}
-              total_karma={userProfile.total_karma}
+              total_karma={userProfile.link_karma}
               comment_karma={userProfile.comment_karma}
             />
           </div>
@@ -237,7 +226,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                         </p>
                         {post.body_html && <BodyHtml body_html={post.body_html} />}
                         {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
-                        <PostStats score={post.score} num_comments={0} />{" "}
+                        <PostStats score={post.score} />{" "}
                       </a>
                     </div>
                   ) : (

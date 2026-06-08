@@ -45,7 +45,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
-  const [after, setAfter] = useState<string | null>(null);
+  const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [time, setTime] = useState<string>(initialTime);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
@@ -87,55 +87,39 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   }, [filteredPosts]);
 
   useEffect(() => {
-    if (sort === "top") {
-      navigate(`/r/${subreddit}/${sort}/?t=${time}`);
-    } else {
-      navigate(`/r/${subreddit}/${sort}/`);
-    }
+    navigate(`/r/${subreddit}/${sort}/?t=${time}`);
   }, [sort, time, subreddit, navigate]);
 
   const fetchPosts = useCallback(() => {
     if (!hasMore) return;
 
-    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?after=${after}&t=${time}&sr_detail=true`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
+    RedditApiClient.getPosts({ subreddit, sort, time, cursor })
+      .then(({ items: fetchedPosts, nextCursor }) => {
         setPosts((prevPosts) => {
           const existingPostIds = new Set(prevPosts.map((p: Post) => p.id));
           const uniqueNewPosts = fetchedPosts.filter((p: Post) => !existingPostIds.has(p.id));
           return [...prevPosts, ...uniqueNewPosts];
         });
-        setAfter(data.data.after);
-        setHasMore(!!data.data.after);
+        setCursor(nextCursor);
+        setHasMore(!!nextCursor);
       });
-  }, [subreddit, after, hasMore]);
+  }, [subreddit, sort, time, cursor, hasMore]);
 
   useEffect(() => {
     setPosts([]);
-    setAfter(null);
+    setCursor(null);
     setHasMore(true);
 
-    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json?t=${time}&sr_detail=true`)
-      .then((response) => response.json())
-      .then((data) => {
-        const fetchedPosts = data.data.children.map((child: { data: Post }) => child.data);
-        setPosts(fetchedPosts);
-        setAfter(data.data.after);
-        setHasMore(!!data.data.after);
+    RedditApiClient.getPosts({ subreddit, sort, time })
+      .then(({ items, nextCursor }) => {
+        setPosts(items);
+        setCursor(nextCursor);
+        setHasMore(!!nextCursor);
       });
 
-    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        setSubredditInfo(data.data);
-      });
+    RedditApiClient.getSubreddit(subreddit).then(setSubredditInfo);
 
-    RedditApiClient.fetch(`https://www.reddit.com/r/${subreddit}/about/rules.json`)
-      .then((response) => response.json())
-      .then((data) => {
-        setSubredditRules(data.rules as SubredditRules[]);
-      });
+    RedditApiClient.getSubredditRules(subreddit).then(setSubredditRules);
 
     document.title = `🤖 ${subreddit}`;
   }, [subreddit, sort, time]);
@@ -214,7 +198,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         </div>
         <div className="mb-4 flex flex-wrap gap-3">
           {filterOptions.map((optionGroup, index) =>
-            optionGroup.label === "Time" && sort !== "top" ? null : (
+            (
               <div className="flex items-center overflow-x-auto hide-scrollbar" key={index}>
                 <label className="mr-2 font-medium text-xs text-gray-700 dark:text-gray-300">{optionGroup.label}</label>
                 <SegmentedControl

@@ -139,19 +139,24 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
                   className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-xs font-semibold text-slate-800 transition hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400 dark:text-gray-100 dark:hover:text-blue-300"
                 >
                   <span>{rule.short_name}</span>
-                  {rule.description_html && (
+                  {(rule.description_html || rule.description) && (
                     <span className="text-[10px] font-bold uppercase tracking-wide text-blue-500">
                       {expandedRuleIndex === index ? "Close" : "View"}
                     </span>
                   )}
                 </button>
-                {expandedRuleIndex === index && rule.description_html && (
-                  <div
-                    className="rich-text-content border-t border-slate-200 px-3 py-2 text-xs leading-6 text-slate-600 dark:border-white/10 dark:text-gray-300"
-                    dangerouslySetInnerHTML={{
-                      __html: cleanDescriptionHtml(rule.description_html),
-                    }}
-                  />
+                {expandedRuleIndex === index && (rule.description_html || rule.description) && (
+                  <div className="rich-text-content whitespace-pre-wrap border-t border-slate-200 px-3 py-2 text-xs leading-6 text-slate-600 dark:border-white/10 dark:text-gray-300">
+                    {rule.description_html ? (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: cleanDescriptionHtml(rule.description_html),
+                        }}
+                      />
+                    ) : (
+                      rule.description
+                    )}
+                  </div>
                 )}
               </li>
             ))}
