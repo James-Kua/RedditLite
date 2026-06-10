@@ -15,10 +15,18 @@ const SiteStatusToast = () => {
     toast.warn(
       (
         <div className="space-y-2 rounded-md ">
-          <p className="text-sm font-semibold">This site is not functioning right now.</p>
+          <p className="text-sm font-semibold">This site is no longer functioning.</p>
           <p className="text-sm leading-6">
-            From 29 May, Reddit is deprecating and shutting down unauthenticated JSON 
-            endpoints to protect communities from scrapers and platform abuse.
+            Reddit has deprecated unauthenticated JSON endpoints. Please visit{" "}
+            <a
+              href="https://reddit-arctic-lite.pages.dev"
+              className="font-semibold underline underline-offset-2"
+              target="_blank"
+              rel="noreferrer"
+            >
+              reddit-arctic-lite.pages.dev
+            </a>
+            {" "}instead (limited features).
           </p>
         </div>
       ),
