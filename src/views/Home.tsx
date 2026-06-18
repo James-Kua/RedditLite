@@ -162,10 +162,10 @@ const Home = () => {
             <div className="mt-4 text-sm text-slate-600 dark:text-slate-300">
               <span>Browse the most popular posts from</span>
               <a
-                href="/r/popular"
+                href="/r/worldcup"
                 className="ml-2 inline-flex items-center gap-1.5 font-semibold text-[#d93a00] transition hover:text-[#b83200] dark:text-orange-300 dark:hover:text-orange-200"
               >
-                /r/popular
+                /r/worldcup
                 <svg className="h-4 w-4" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path
                     d="M7.5 4.75 12.75 10 7.5 15.25"
