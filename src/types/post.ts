@@ -83,11 +83,11 @@ export interface LinkFlairRichtext {
 }
 
 export interface SecureMedia {
-  reddit_video: RedditVideo
+  reddit_video?: RedditVideo
 }
 
 export interface RedditVideo {
-  hls_url: string
+  hls_url?: string
   fallback_url: string
   height: number
   width: number
