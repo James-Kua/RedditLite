@@ -1,13 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
+import type { RedditVideo } from "../types/post";
 
 export type SecureMediaProps = {
-  reddit_video: {
-    hls_url?: string;
-    fallback_url: string;
-    width: number;
-    height: number;
-  };
+  reddit_video?: RedditVideo;
   playing?: boolean;
 };
 
@@ -15,9 +11,12 @@ const SecureMedia: React.FC<SecureMediaProps> = ({
   reddit_video,
   playing = false,
 }) => {
-  const { hls_url, fallback_url, width, height } = reddit_video;
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  if (!reddit_video) return null;
+
+  const { hls_url, fallback_url, width, height } = reddit_video;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
