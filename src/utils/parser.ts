@@ -43,6 +43,18 @@ export function parseLinkFlairTextColor(backgroundColor: string) {
 export function parseInlineImagesFromHtml(html: string) {
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = html;
+
+  const redditGiphyImages = tempDiv.querySelectorAll("img[data-media-id], img[src]");
+  redditGiphyImages.forEach((image) => {
+    const giphyId = parseRedditGiphyId(
+      image.getAttribute("data-media-id") ?? image.getAttribute("src") ?? "",
+    );
+
+    if (giphyId) {
+      image.replaceWith(createGiphyFigure(giphyId, image.getAttribute("alt") || "Giphy GIF"));
+    }
+  });
+
   const links = tempDiv.querySelectorAll("a");
 
   links.forEach((link) => {
@@ -52,34 +64,7 @@ export function parseInlineImagesFromHtml(html: string) {
     const giphyId = parseGiphyId(href);
 
     if (giphyId) {
-      const gif = document.createElement("img");
-      gif.src = `https://media.giphy.com/media/${giphyId}/giphy.gif`;
-      gif.alt = link.textContent || "Giphy GIF";
-      gif.loading = "lazy";
-      gif.style.display = "block";
-      gif.style.maxWidth = "100%";
-      gif.style.width = "min(320px, 100%)";
-      gif.style.height = "auto";
-      gif.style.maxHeight = "220px";
-      gif.style.objectFit = "contain";
-      gif.style.margin = "0";
-      gif.style.borderRadius = "0.5rem";
-
-      const newLink = document.createElement("a");
-      newLink.href = href;
-      newLink.target = "_blank";
-      newLink.rel = "noopener noreferrer";
-      newLink.style.display = "block";
-      newLink.style.width = "fit-content";
-      newLink.appendChild(gif);
-
-      const figure = document.createElement("figure");
-      figure.style.display = "block";
-      figure.style.margin = "0.35rem 0 0.75rem";
-      figure.style.textAlign = "left";
-      figure.appendChild(newLink);
-
-      link.replaceWith(figure);
+      link.replaceWith(createGiphyFigure(giphyId, link.textContent || "Giphy GIF", href));
     } else if (/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/.test(href)) {
       const img = document.createElement("img");
       img.src = href;
@@ -119,6 +104,37 @@ export function parseInlineImagesFromHtml(html: string) {
   return tempDiv.innerHTML;
 }
 
+function createGiphyFigure(giphyId: string, alt: string, href = `https://giphy.com/gifs/${giphyId}`) {
+  const gif = document.createElement("img");
+  gif.src = `https://media.giphy.com/media/${giphyId}/giphy.gif`;
+  gif.alt = alt;
+  gif.loading = "lazy";
+  gif.style.display = "block";
+  gif.style.maxWidth = "100%";
+  gif.style.width = "min(320px, 100%)";
+  gif.style.height = "auto";
+  gif.style.maxHeight = "220px";
+  gif.style.objectFit = "contain";
+  gif.style.margin = "0";
+  gif.style.borderRadius = "0.5rem";
+
+  const newLink = document.createElement("a");
+  newLink.href = href;
+  newLink.target = "_blank";
+  newLink.rel = "noopener noreferrer";
+  newLink.style.display = "block";
+  newLink.style.width = "fit-content";
+  newLink.appendChild(gif);
+
+  const figure = document.createElement("figure");
+  figure.style.display = "block";
+  figure.style.margin = "0.35rem 0 0.75rem";
+  figure.style.textAlign = "left";
+  figure.appendChild(newLink);
+
+  return figure;
+}
+
 function parseGiphyId(url: string) {
   try {
     const parsedUrl = new URL(url, window.location.origin);
@@ -135,6 +151,24 @@ function parseGiphyId(url: string) {
   } catch {
     return null;
   }
+}
+
+function parseRedditGiphyId(mediaId: string) {
+  let decodedMediaId = mediaId;
+
+  try {
+    decodedMediaId = decodeURIComponent(mediaId);
+  } catch {
+    return null;
+  }
+
+  const [provider, id] = decodedMediaId.split("|");
+
+  if (provider !== "giphy" || !id) {
+    return null;
+  }
+
+  return id;
 }
 
 export const getPostType = (post: Post): 'image' | 'video' | 'text' | 'link' | 'gallery' => {
