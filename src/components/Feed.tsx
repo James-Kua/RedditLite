@@ -14,7 +14,7 @@ import SelfTextHtml from "./SelfTextHtml";
 import PostStats from "./PostStats";
 import PostPreview from "./PostPreview";
 import CreatedEditedLabel from "./CreatedEditedLabel";
-import { timeOptions, postTypeOptions } from "../utils/timeOptions";
+import { postTypeOptions, resolveTimeForSort, timeOptionsForSort } from "../utils/timeOptions";
 import { subredditSortOptions } from "../utils/sortOptions";
 import SecureMediaEmbed from "./SecureMediaEmbed";
 import SecureMedia from "./SecureMedia";
@@ -47,8 +47,8 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
-  const [time, setTime] = useState<string>(initialTime);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
+  const [time, setTime] = useState<string>(resolveTimeForSort(params.sort || initialSort, initialTime));
   const [postTypeFilter, setPostTypeFilter] = useState<string>("all");
   const [numColumns, setNumColumns] = useState(3);
   const observer = useRef<IntersectionObserver | null>(null);
@@ -161,7 +161,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
   const filterOptions = [
     { label: "Sort by", options: subredditSortOptions },
-    { label: "Time", options: timeOptions },
+    { label: "Time", options: timeOptionsForSort(sort) },
   ];
 
   return (
@@ -208,6 +208,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                     switch (optionGroup.label) {
                       case "Sort by":
                         setSort(value);
+                        setTime((currentTime) => resolveTimeForSort(value, currentTime));
                         break;
                       case "Time":
                         setTime(value);
