@@ -7,6 +7,10 @@ import { UserProfile } from "../types/user";
 
 const ARCTIC_SHIFT_BASE_URL = "https://arctic-shift.photon-reddit.com";
 const DEFAULT_PAGE_SIZE = 50;
+const TOP_SCAN_SEGMENTS = 10;
+const TOP_SCAN_REQUESTS_PER_SEGMENT = 14;
+const TOP_SCAN_MAX_WINDOW = 30 * 24 * 60 * 60;
+const TOP_RESULT_LIMIT = 100;
 
 type QueryValue = string | number | boolean | null | undefined;
 
@@ -26,6 +30,22 @@ type CommentTreeItem = {
 
 type ArcticShiftRuleGroup = {
   rules: Array<SubredditRules & { description?: string }>;
+};
+
+type GetPostsOptions = {
+  subreddit?: string;
+  author?: string;
+  query?: string;
+  cursor?: string | null;
+  time?: string;
+  sort?: string;
+  limit?: number;
+};
+
+type ScoredPostRef = {
+  id: string;
+  score: number;
+  created_utc: number;
 };
 
 type ArcticShiftUser = {
@@ -129,15 +149,105 @@ export class RedditApiClient {
     return duration ? Math.floor(Date.now() / 1000) - duration : undefined;
   }
 
-  static async getPosts(options: {
-    subreddit?: string;
-    author?: string;
-    query?: string;
-    cursor?: string | null;
-    time?: string;
-    sort?: string;
-    limit?: number;
-  }): Promise<ArcticShiftPage<Post>> {
+  /**
+   * Pages one slice of the time window from newest to oldest, recording every
+   * score it sees. Stops at the slice boundary, when the feed runs dry, or once
+   * the request budget is spent — a spent budget means the slice was too busy
+   * to scan fully, so the ranking becomes a sample of it rather than the whole.
+   */
+  private static async scanSegment(
+    options: GetPostsOptions,
+    bounds: { after: number; before: number },
+    scores: Map<string, number>,
+  ) {
+    let before = bounds.before;
+
+    for (let request = 0; request < TOP_SCAN_REQUESTS_PER_SEGMENT; request += 1) {
+      const items = await this.request<ScoredPostRef>("/api/posts/search", {
+        subreddit: options.subreddit,
+        author: options.author,
+        after: bounds.after,
+        before,
+        sort: "desc",
+        limit: "auto",
+        fields: "id,score,created_utc",
+      });
+
+      if (items.length === 0) break;
+
+      items.forEach((item) => scores.set(item.id, item.score));
+
+      const oldest = items[items.length - 1].created_utc;
+      if (oldest >= before) break;
+
+      before = oldest;
+      if (oldest <= bounds.after) break;
+    }
+  }
+
+  /**
+   * Arctic Shift can only sort by `created_utc`, so a score ranking has to be
+   * built client side by walking the whole time window. The walk asks for ids
+   * and scores only (a few KB per request) and full posts are hydrated later,
+   * one page at a time. The window is split into segments scanned in parallel:
+   * it keeps the wall time down, and when a subreddit is too busy to scan
+   * exhaustively the shortfall is spread evenly across the window instead of
+   * lopping off everything older than the first few days.
+   */
+  private static async scanWindowByScore(options: GetPostsOptions): Promise<string[]> {
+    const now = Math.floor(Date.now() / 1000);
+    const start = this.afterForTime(options.time ?? "all") ?? now - TOP_SCAN_MAX_WINDOW;
+    const segment = Math.ceil((now - start) / TOP_SCAN_SEGMENTS);
+    const scores = new Map<string, number>();
+
+    await Promise.all(
+      Array.from({ length: TOP_SCAN_SEGMENTS }, (_, index) =>
+        this.scanSegment(
+          options,
+          {
+            after: start + index * segment,
+            before: index === TOP_SCAN_SEGMENTS - 1 ? now : start + (index + 1) * segment,
+          },
+          scores,
+        ),
+      ),
+    );
+
+    return [...scores]
+      .sort(([, leftScore], [, rightScore]) => rightScore - leftScore)
+      .map(([id]) => id);
+  }
+
+  /**
+   * Returns the whole ranking in one page. Paging it would mean either holding
+   * the scan between calls or re-running it per page, so the feed takes the top
+   * slice up front and stops there.
+   */
+  private static async getTopPosts(options: GetPostsOptions): Promise<ArcticShiftPage<Post>> {
+    const ranking = (await this.scanWindowByScore(options)).slice(0, TOP_RESULT_LIMIT);
+
+    if (ranking.length === 0) {
+      return { items: [], nextCursor: null };
+    }
+
+    const posts = await this.request<Post>("/api/posts/ids", { ids: ranking.join(","), md2html: true });
+    const postsById = new Map(posts.map((post) => [post.id, post]));
+
+    return {
+      items: ranking
+        .map((id) => postsById.get(id))
+        .filter((post): post is Post => !!post && !this.isRemovedPost(post)),
+      nextCursor: null,
+    };
+  }
+
+  static async getPosts(options: GetPostsOptions): Promise<ArcticShiftPage<Post>> {
+    // Ranking a keyword search would need the same multi-request scan, but
+    // those run on Arctic Shift's 5 requests/minute limit — fall back to time.
+    if (options.sort === "top" && !options.query) {
+      return this.getTopPosts(options);
+    }
+
     const limit = options.limit ?? DEFAULT_PAGE_SIZE;
     const isAscending = options.sort === "oldest";
     const items = await this.request<Post>("/api/posts/search", {
