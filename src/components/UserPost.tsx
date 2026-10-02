@@ -26,6 +26,12 @@ import { useMobileDetection } from "../utils/useMobileDetection";
 
 const NUM_TOP_COMMUNITIES = 6;
 
+const getSubredditName = (post: Post): string =>
+  post.subreddit ||
+  post.subreddit_name_prefixed?.replace(/^r\//i, "") ||
+  post.permalink?.match(/\/r\/([^/]+)/i)?.[1] ||
+  "";
+
 export interface UserPostProps {
   username: string;
 }
@@ -67,8 +73,9 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
     const communityCounts: { [key: string]: number } = {};
 
     [...posts, ...comments].forEach((item) => {
-      if (item.subreddit) {
-        communityCounts[item.subreddit] = (communityCounts[item.subreddit] || 0) + 1;
+      const subreddit = getSubredditName(item);
+      if (subreddit) {
+        communityCounts[subreddit] = (communityCounts[subreddit] || 0) + 1;
       }
     });
 
@@ -198,7 +205,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                 >
                   {activeTab === "comments" ? (
                     <div>
-                      <a href={`/r/${post.subreddit}`}>
+                      <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
                         <div className="inline-flex items-center gap-2 w-fit my-1">
                           <img
                             src={
@@ -214,16 +221,18 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                           />
                         </div>
                         <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
-                          {post.subreddit_name_prefixed}
+                          {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
                         </span>
                         <div className="flex items-center space-x-2 mb-2">
                           <CreatedEditedLabel created={post.created} edited={post.edited} />
                         </div>
                       </a>
                       <a href={`${post.permalink}`} className="block mt-2 group">
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-300 p-1.5 bg-slate-300 dark:bg-slate-800 rounded-md">
-                          {he.decode(post.link_title ?? post.link_permalink ?? "")}
-                        </p>
+                        {post.link_title && (
+                          <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 p-1.5 bg-slate-300 dark:bg-slate-800 rounded-md group-hover:underline">
+                            {he.decode(post.link_title)}
+                          </p>
+                        )}
                         {post.body_html && <BodyHtml body_html={post.body_html} />}
                         {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
                         <PostStats score={post.score} />{" "}
@@ -232,7 +241,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                   ) : (
                     <div>
                       {activeTab === "posts" && (
-                        <a href={`/r/${post.subreddit}`}>
+                        <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
                           <div className="inline-flex items-center gap-2 p-1 w-fit my-1">
                             <img
                               src={
@@ -248,7 +257,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                             />
                           </div>
                           <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
-                            {post.subreddit_name_prefixed}
+                            {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
                           </span>
                         </a>
                       )}

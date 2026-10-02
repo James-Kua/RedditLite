@@ -293,7 +293,34 @@ export class RedditApiClient {
       sort: "desc",
       md2html: true,
     });
-    return (comments as unknown as Post[]).filter((comment) => !this.isRemovedPost(comment));
+    const visibleComments = (comments as unknown as Array<Post & { link_id?: string }>)
+      .filter((comment) => !this.isRemovedPost(comment));
+    const postIds = [...new Set(visibleComments
+      .filter((comment) => !comment.link_title)
+      .map((comment) => comment.link_id?.replace(/^t3_/, ""))
+      .filter((id): id is string => !!id))];
+
+    if (postIds.length === 0) return visibleComments;
+
+    try {
+      const batches = Array.from({ length: Math.ceil(postIds.length / 50) }, (_, index) =>
+        postIds.slice(index * 50, (index + 1) * 50),
+      );
+      const posts = (await Promise.all(batches.map((ids) =>
+        this.request<Pick<Post, "id" | "title">>("/api/posts/ids", {
+          ids: ids.join(","),
+          fields: "id,title",
+        }),
+      ))).flat();
+      const titles = new Map(posts.map((post) => [post.id, post.title]));
+
+      return visibleComments.map((comment) => ({
+        ...comment,
+        link_title: comment.link_title || titles.get(comment.link_id?.replace(/^t3_/, "") ?? ""),
+      }));
+    } catch {
+      return visibleComments;
+    }
   }
 
   static async getSubreddit(name: string): Promise<Subreddit | undefined> {
