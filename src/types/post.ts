@@ -64,7 +64,7 @@ export interface SecureMediaEmbed {
   content: string
   width: number
   scrolling: boolean
-  media_domain_url: string
+  media_domain_url?: string
   height: number
 }
 
