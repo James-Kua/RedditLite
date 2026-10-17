@@ -13,6 +13,25 @@ export type SecureMediaEmbedProps = {
   playing?: boolean;
 };
 
+function getTikTokPlayerUrl(content: string | null): string | null {
+  if (!content) return null;
+
+  const iframe = new DOMParser().parseFromString(content, "text/html").querySelector("iframe[src]");
+  const src = iframe?.getAttribute("src");
+  if (!src) return null;
+
+  try {
+    const url = new URL(src);
+    return url.protocol === "https:" &&
+      url.hostname === "www.tiktok.com" &&
+      /^\/player\/v1\/\d+$/.test(url.pathname)
+      ? url.toString()
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   content,
   media_domain_url,
@@ -22,7 +41,10 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   playing = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const decodedContent = content ? he.decode(content) : null;
+  // Reddit sometimes returns literal HTML and sometimes an escaped HTML string.
+  // Decoding literal HTML would turn `&timestamp` in a TikTok URL into `×tamp`.
+  const decodedContent = content ? (content.trimStart().startsWith("<") ? content : he.decode(content)) : null;
+  const tikTokPlayerUrl = getTikTokPlayerUrl(decodedContent);
   const aspectRatio = Math.min((height / width) * 100, 90);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +104,9 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
     <div
       ref={containerRef}
       className="my-4 flex justify-center items-center w-full max-w-full max-h-[500px] mx-auto relative bg-neutral-900 rounded-lg overflow-hidden"
-      style={{ paddingTop: `${aspectRatio}%` }}
+      style={tikTokPlayerUrl
+        ? { width: Math.min(width, (width / height) * 500), aspectRatio: `${width} / ${height}` }
+        : { paddingTop: `${aspectRatio}%` }}
     >
       {isVisible &&
         (url_overridden_by_dest ? (
@@ -101,9 +125,11 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
               <PinterestEmbed url={url_overridden_by_dest} />
             </div>
           ) : isTikTokUrl(url_overridden_by_dest) ? (
-            <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-auto">
-              <TikTokEmbed url={url_overridden_by_dest} />
-            </div>
+            tikTokPlayerUrl ? renderIframe(tikTokPlayerUrl, "TikTok video") : (
+              <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-auto">
+                <TikTokEmbed url={url_overridden_by_dest} />
+              </div>
+            )
           ) : isInstagramUrl(url_overridden_by_dest) ? (
             <div className="absolute inset-0 flex justify-center items-center w-full h-full overflow-auto">
               <InstagramEmbed url={url_overridden_by_dest} />

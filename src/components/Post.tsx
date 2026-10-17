@@ -114,7 +114,7 @@ const PostComponent = ({ post }: { post: Post }) => {
           </div>
         ) : post.preview?.reddit_video_preview ? (
           <PostPreview preview={post.preview} />
-        ) : post.secure_media_embed?.media_domain_url ? (
+        ) : post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
           <SecureMediaEmbed
             url_overridden_by_dest={post.url_overridden_by_dest}
             playing={true}
