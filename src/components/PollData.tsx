@@ -5,10 +5,10 @@ export type PollDataProps = {
   poll_data?: {
     options: {
       text: string;
-      vote_count: number;
+      vote_count: number | null;
       id: string;
     }[];
-    total_vote_count: number;
+    total_vote_count: number | null;
     user_selection?: string;
     voting_end_timestamp: string;
   };
@@ -19,7 +19,8 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
     return null;
   }
 
-  const { options = [], total_vote_count = 0, user_selection, voting_end_timestamp } = poll_data;
+  const { options = [], user_selection, voting_end_timestamp } = poll_data;
+  const total_vote_count = poll_data.total_vote_count ?? 0;
   
   const currentTimestamp = new Date();
   const endTimestamp = new Date(voting_end_timestamp);
@@ -38,7 +39,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
   
   const remainingTimeText = parts.join(" ");
 
-  const getPercentage = (votes: number | undefined) => {
+  const getPercentage = (votes: number | null | undefined) => {
     const v = votes || 0;
     if (total_vote_count === 0) return 0;
     return Math.round((v / total_vote_count) * 100);
