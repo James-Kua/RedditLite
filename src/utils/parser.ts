@@ -19,6 +19,11 @@ export function parseImageType(imageType?: string): string {
   return parts.length === 2 ? parts[1] : "jpg";
 }
 
+export function getGalleryImageUrl(mediaId: string, metadata: Post["media_metadata"]): string {
+  const imageType = parseImageType(metadata?.[mediaId as unknown as number]?.m);
+  return `https://i.redd.it/${mediaId}.${imageType}`;
+}
+
 export function isImage(url: string) {
   return url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".jpeg");
 }
