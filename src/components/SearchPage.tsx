@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, memo, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import SearchInput from "./SearchInput";
 import { Post } from "../types/post";
 import { isImage, parsePermalink } from "../utils/parser";
@@ -22,6 +22,7 @@ import SubredditCard from "./SubredditCard";
 import { RedditApiClient } from "../api/RedditApiClient";
 import CreatedEditedLabel from "./CreatedEditedLabel";
 import SegmentedControl from "./SegmentedControl";
+import Masonry from "./Masonry";
 import { useMobileDetection } from "../utils/useMobileDetection";
 
 export interface SearchPageProps {
@@ -122,15 +123,6 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
     }
   }, [fetchPosts, hasMore]);
 
-  const columns = useMemo(() => {
-    const columnsToUse = isMobile ? 1 : numColumns;
-    const newColumns: Post[][] = Array.from({ length: columnsToUse }, () => []);
-    posts.forEach((post, i) => {
-      newColumns[i % columnsToUse].push(post);
-    });
-    return newColumns;
-  }, [posts, numColumns, isMobile]);
-
   const filterOptions = [
     { label: "Sort by", options: searchSortOptions },
     { label: "Time", options: timeOptions },
@@ -228,110 +220,108 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
 
         {subreddit && <div className="font-semibold mt-5 mb-2">Posts</div>}
 
-        {subreddit && <div className="flex justify-center gap-4">
-          {columns.map((columnPosts: Post[], columnIndex) => (
-            <div key={columnIndex} className="flex flex-1 flex-col gap-4 min-w-0">
-              {columnPosts.map((post) => (
-                <a
-                  href={parsePermalink(post.permalink)}
-                  key={post.id}
-                  className="block bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
+        {subreddit && (
+          <Masonry columns={isMobile ? 1 : numColumns}>
+            {posts.map((post) => (
+              <a
+                href={parsePermalink(post.permalink)}
+                key={post.id}
+                className="block bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
+              >
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = `/user/${post.author}`;
+                      }}
+                    >
+                      <h3 className="font-semibold text-blue-400">{post.author}</h3>
+                    </div>
+                    <AuthorFlairText
+                      author_flair_richtext={post.author_flair_richtext}
+                      author_flair_text={post.author_flair_text}
+                      author_flair_background_color={post.author_flair_background_color}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 p-1 w-fit my-1">
+                    <img
+                      src={
+                        post.sr_detail?.community_icon?.length! > 1
+                          ? post.sr_detail?.community_icon.replace("&amp;", "&")
+                          : post.sr_detail?.icon_img?.length! > 1
+                            ? post.sr_detail?.icon_img.replace("&amp;", "&")
+                            : post.sr_detail?.header_img?.length! > 1
+                              ? post.sr_detail?.header_img.replace("&amp;", "&")
+                              : "/fallback_reddit_icon.png"
+                      }
+                      className="w-6 h-6 rounded-full"
+                    />
+                    <div
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = `/${post.subreddit_name_prefixed}`;
+                      }}
+                      className="text-gray-500 text-sm font-semibold dark:text-white"
+                    >
+                      {post.subreddit_name_prefixed}
+                    </div>
+                  </div>
+                  <CreatedEditedLabel created={post.created} edited={post.edited} />
+                  <div className="block mt-2 group">
+                    <h2 className="text-lg font-semibold my-1 dark:text-white group-hover:underline">
+                      {he.decode(post.title)}
+                    </h2>
+                    <LinkFlairText
+                      link_flair_richtext={post.link_flair_richtext}
+                      link_flair_text={post.link_flair_text}
+                      link_flair_background_color={post.link_flair_background_color}
+                    />
+                  </div>
+                </div>
+                <div
+                  className={`${
+                    post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
+                  }`}
                 >
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <div
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/user/${post.author}`;
-                        }}
-                      >
-                        <h3 className="font-semibold text-blue-400">{post.author}</h3>
-                      </div>
-                      <AuthorFlairText
-                        author_flair_richtext={post.author_flair_richtext}
-                        author_flair_text={post.author_flair_text}
-                        author_flair_background_color={post.author_flair_background_color}
-                      />
+                  {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
+                    <SecureMediaEmbed
+                      url_overridden_by_dest={post.url_overridden_by_dest}
+                      {...post.secure_media_embed}
+                    />
+                  ) : post.secure_media ? (
+                    <SecureMedia {...post.secure_media} />
+                  ) : post.media_metadata ? (
+                    <div className="relative mt-2">
+                      {post.gallery_data ? (
+                        <PostGallery
+                          galleryData={post.gallery_data}
+                          mediaMetadata={post.media_metadata}
+                          post={post}
+                        />
+                      ) : null}
                     </div>
-                    <div className="flex items-center gap-2 p-1 w-fit my-1">
-                      <img
-                        src={
-                          post.sr_detail?.community_icon?.length! > 1
-                            ? post.sr_detail?.community_icon.replace("&amp;", "&")
-                            : post.sr_detail?.icon_img?.length! > 1
-                              ? post.sr_detail?.icon_img.replace("&amp;", "&")
-                              : post.sr_detail?.header_img?.length! > 1
-                                ? post.sr_detail?.header_img.replace("&amp;", "&")
-                                : "/fallback_reddit_icon.png"
-                        }
-                        className="w-6 h-6 rounded-full"
-                      />
-                      <div
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/${post.subreddit_name_prefixed}`;
-                        }}
-                        className="text-gray-500 text-sm font-semibold dark:text-white"
-                      >
-                        {post.subreddit_name_prefixed}
-                      </div>
-                    </div>
-                    <CreatedEditedLabel created={post.created} edited={post.edited} />
-                    <div className="block mt-2 group">
-                      <h2 className="text-lg font-semibold my-1 dark:text-white group-hover:underline">
-                        {he.decode(post.title)}
-                      </h2>
-                      <LinkFlairText
-                        link_flair_richtext={post.link_flair_richtext}
-                        link_flair_text={post.link_flair_text}
-                        link_flair_background_color={post.link_flair_background_color}
-                      />
-                    </div>
-                  </div>
-                  <div
-                    className={`${
-                      post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
-                    }`}
-                  >
-                    {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
-                      <SecureMediaEmbed
-                        url_overridden_by_dest={post.url_overridden_by_dest}
-                        {...post.secure_media_embed}
-                      />
-                    ) : post.secure_media ? (
-                      <SecureMedia {...post.secure_media} />
-                    ) : post.media_metadata ? (
-                      <div className="relative mt-2">
-                        {post.gallery_data ? (
-                          <PostGallery 
-                            galleryData={post.gallery_data} 
-                            mediaMetadata={post.media_metadata} 
-                            post={post}
-                          />
-                        ) : null}
-                      </div>
-                    ) : post.preview ? (
-                      <PostPreview preview={post.preview} />
-                    ) : post.url_overridden_by_dest && isImage(post.url_overridden_by_dest) ? (
-                      <img
-                        src={post.url_overridden_by_dest}
-                        alt="url_overridden_by_dest"
-                        className="mt-4 flex justify-center items-center max-w-full max-h-125 mx-auto border rounded-sm p-2 object-contain"
-                      />
-                    ) : (
-                      <Thumbnail thumbnail={post.thumbnail || ""} />
-                    )}
-                    {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
-                    {post.url_overridden_by_dest && post.post_hint === "link" && (
-                      <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
-                    )}
-                    <PostStats score={post.score} num_comments={post.num_comments} />
-                  </div>
-                </a>
-              ))}
-            </div>
-          ))}
-        </div>}
+                  ) : post.preview ? (
+                    <PostPreview preview={post.preview} />
+                  ) : post.url_overridden_by_dest && isImage(post.url_overridden_by_dest) ? (
+                    <img
+                      src={post.url_overridden_by_dest}
+                      alt="url_overridden_by_dest"
+                      className="mt-4 flex justify-center items-center max-w-full max-h-125 mx-auto border rounded-sm p-2 object-contain"
+                    />
+                  ) : (
+                    <Thumbnail thumbnail={post.thumbnail || ""} />
+                  )}
+                  {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
+                  {post.url_overridden_by_dest && post.post_hint === "link" && (
+                    <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
+                  )}
+                  <PostStats score={post.score} num_comments={post.num_comments} />
+                </div>
+              </a>
+            ))}
+          </Masonry>
+        )}
         <div ref={sentinel} className="h-1"></div>
       </div>
     </div>

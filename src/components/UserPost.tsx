@@ -22,6 +22,7 @@ import SegmentedControl from "./SegmentedControl";
 import TopCommunitiesStatusBar from "./TopCommunitiesStatusBar";
 import { useNavigate } from "react-router-dom";
 import HomeIcon from "../static/HomeIcon";
+import Masonry from "./Masonry";
 import { useMobileDetection } from "../utils/useMobileDetection";
 
 const NUM_TOP_COMMUNITIES = 6;
@@ -59,15 +60,6 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
     }
     return posts.filter((post) => getPostType(post) === postTypeFilter);
   }, [posts, comments, postTypeFilter, activeTab]);
-
-  const columns = useMemo(() => {
-    const columnsToUse = isMobile ? 1 : numColumns;
-    const newColumns: Post[][] = Array.from({ length: columnsToUse }, () => []);
-    filteredPosts.forEach((post, i) => {
-      newColumns[i % columnsToUse].push(post);
-    });
-    return newColumns;
-  }, [filteredPosts, numColumns, isMobile]);
 
   const topCommunities = useMemo(() => {
     const communityCounts: { [key: string]: number } = {};
@@ -195,133 +187,129 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
           </div>
         )}
 
-        <div className="flex justify-center gap-4">
-          {columns.map((columnPosts: Post[], columnIndex) => (
-            <div key={columnIndex} className="flex flex-1 flex-col gap-4 min-w-0">
-              {columnPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
-                >
-                  {activeTab === "comments" ? (
-                    <div>
-                      <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
-                        <div className="inline-flex items-center gap-2 w-fit my-1">
-                          <img
-                            src={
-                              post.sr_detail?.community_icon && post.sr_detail.community_icon.length > 1
-                                ? post.sr_detail.community_icon.replace(/&amp;/g, "&")
-                                : post.sr_detail?.icon_img && post.sr_detail.icon_img.length > 1
-                                  ? post.sr_detail.icon_img.replace(/&amp;/g, "&")
-                                  : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
-                                    ? post.sr_detail.header_img.replace(/&amp;/g, "&")
-                                    : "/fallback_reddit_icon.png"
-                            }
-                            className="w-6 h-6 rounded-full"
-                          />
-                        </div>
-                        <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
-                          {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
-                        </span>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <CreatedEditedLabel created={post.created} edited={post.edited} />
-                        </div>
-                      </a>
-                      <a href={`${post.permalink}`} className="block mt-2 group">
-                        {post.link_title && (
-                          <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 p-1.5 bg-slate-300 dark:bg-slate-800 rounded-md group-hover:underline">
-                            {he.decode(post.link_title)}
-                          </p>
-                        )}
-                        {post.body_html && <BodyHtml body_html={post.body_html} />}
-                        {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
-                        <PostStats score={post.score} />{" "}
-                      </a>
+        <Masonry columns={isMobile ? 1 : numColumns}>
+          {filteredPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
+            >
+              {activeTab === "comments" ? (
+                <div>
+                  <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
+                    <div className="inline-flex items-center gap-2 w-fit my-1">
+                      <img
+                        src={
+                          post.sr_detail?.community_icon && post.sr_detail.community_icon.length > 1
+                            ? post.sr_detail.community_icon.replace(/&amp;/g, "&")
+                            : post.sr_detail?.icon_img && post.sr_detail.icon_img.length > 1
+                              ? post.sr_detail.icon_img.replace(/&amp;/g, "&")
+                              : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
+                                ? post.sr_detail.header_img.replace(/&amp;/g, "&")
+                                : "/fallback_reddit_icon.png"
+                        }
+                        className="w-6 h-6 rounded-full"
+                      />
                     </div>
-                  ) : (
-                    <div>
-                      {activeTab === "posts" && (
-                        <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
-                          <div className="inline-flex items-center gap-2 p-1 w-fit my-1">
-                            <img
-                              src={
-                                post.sr_detail?.community_icon && post.sr_detail.community_icon.length > 1
-                                  ? post.sr_detail.community_icon.replace(/&amp;/g, "&")
-                                  : post.sr_detail?.icon_img && post.sr_detail.icon_img.length > 1
-                                    ? post.sr_detail.icon_img.replace(/&amp;/g, "&")
-                                    : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
-                                      ? post.sr_detail.header_img.replace(/&amp;/g, "&")
-                                      : "/fallback_reddit_icon.png"
-                              }
-                              className="w-6 h-6 rounded-full"
-                            />
-                          </div>
-                          <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
-                            {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
-                          </span>
-                        </a>
-                      )}
+                    <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
+                      {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
+                    </span>
+                    <div className="flex items-center space-x-2 mb-2">
                       <CreatedEditedLabel created={post.created} edited={post.edited} />
-                      <a href={`${post.permalink ?? post.link_permalink}`} className="block mt-2 group">
-                        <h2 className="text-lg font-bold dark:text-white group-hover:underline">
-                          {he.decode(post.title ?? "")}
-                        </h2>
-                        {post.link_title && (
-                          <div className="bg-slate-50 dark:bg-gray-800 rounded-lg p-1.5 border border-gray-300 dark:border-gray-700 text-sm">
-                            <h1 className="text-md font-medium text-gray-900 dark:text-white">{post.link_title}</h1>
-                          </div>
-                        )}
-
-                        <div
-                          className={`mt-3 ${
-                            post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
-                          }`}
-                        >
-                          {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
-                            <SecureMediaEmbed
-                              url_overridden_by_dest={post.url_overridden_by_dest}
-                              {...post.secure_media_embed}
-                            />
-                          ) : post.secure_media ? (
-                            <SecureMedia {...post.secure_media} />
-                          ) : post.media_metadata ? (
-                            <div className="relative mt-2">
-                              {post.gallery_data && (
-                                <PostGallery 
-                                  galleryData={post.gallery_data} 
-                                  mediaMetadata={post.media_metadata} 
-                                  post={post}
-                                />
-                              )}
-                            </div>
-                          ) : post.preview ? (
-                            <PostPreview preview={post.preview} />
-                          ) : post.url_overridden_by_dest ? (
-                            isImage(post.url_overridden_by_dest) ? (
-                              <img
-                                src={post.url_overridden_by_dest}
-                                alt="url_overridden_by_dest"
-                                className="mt-4 flex justify-center items-center max-w-full max-h-125 mx-auto border rounded-sm p-2 object-contain"
-                              />
-                            ) : (
-                              <FetchImage url={post.url_overridden_by_dest} />
-                            )
-                          ) : (
-                            <Thumbnail thumbnail={post.thumbnail || ""} />
-                          )}
-                          {post.body_html && <BodyHtml body_html={post.body_html} />}
-                          {post.poll_data && <PollData poll_data={post.poll_data} />}
-                          {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
-                          <PostStats score={post.score} num_comments={post.num_comments} />
-                        </div>
-                      </a>
                     </div>
-                  )}
+                  </a>
+                  <a href={`${post.permalink}`} className="block mt-2 group">
+                    {post.link_title && (
+                      <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 p-1.5 bg-slate-300 dark:bg-slate-800 rounded-md group-hover:underline">
+                        {he.decode(post.link_title)}
+                      </p>
+                    )}
+                    {post.body_html && <BodyHtml body_html={post.body_html} />}
+                    {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
+                    <PostStats score={post.score} />{" "}
+                  </a>
                 </div>
-              ))}
+              ) : (
+                <div>
+                  {activeTab === "posts" && (
+                    <a href={getSubredditName(post) ? `/r/${getSubredditName(post)}` : post.permalink}>
+                      <div className="inline-flex items-center gap-2 p-1 w-fit my-1">
+                        <img
+                          src={
+                            post.sr_detail?.community_icon && post.sr_detail.community_icon.length > 1
+                              ? post.sr_detail.community_icon.replace(/&amp;/g, "&")
+                              : post.sr_detail?.icon_img && post.sr_detail.icon_img.length > 1
+                                ? post.sr_detail.icon_img.replace(/&amp;/g, "&")
+                                : post.sr_detail?.header_img && post.sr_detail.header_img.length > 1
+                                  ? post.sr_detail.header_img.replace(/&amp;/g, "&")
+                                  : "/fallback_reddit_icon.png"
+                          }
+                          className="w-6 h-6 rounded-full"
+                        />
+                      </div>
+                      <span className="whitespace-nowrap rounded-lg text-blue-500 p-1 text-sm max-w-[95vw] overflow-x-auto inline-block font-bold">
+                        {getSubredditName(post) ? `r/${getSubredditName(post)}` : "Unknown community"}
+                      </span>
+                    </a>
+                  )}
+                  <CreatedEditedLabel created={post.created} edited={post.edited} />
+                  <a href={`${post.permalink ?? post.link_permalink}`} className="block mt-2 group">
+                    <h2 className="text-lg font-bold dark:text-white group-hover:underline">
+                      {he.decode(post.title ?? "")}
+                    </h2>
+                    {post.link_title && (
+                      <div className="bg-slate-50 dark:bg-gray-800 rounded-lg p-1.5 border border-gray-300 dark:border-gray-700 text-sm">
+                        <h1 className="text-md font-medium text-gray-900 dark:text-white">{post.link_title}</h1>
+                      </div>
+                    )}
+
+                    <div
+                      className={`mt-3 ${
+                        post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
+                      }`}
+                    >
+                      {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
+                        <SecureMediaEmbed
+                          url_overridden_by_dest={post.url_overridden_by_dest}
+                          {...post.secure_media_embed}
+                        />
+                      ) : post.secure_media ? (
+                        <SecureMedia {...post.secure_media} />
+                      ) : post.media_metadata ? (
+                        <div className="relative mt-2">
+                          {post.gallery_data && (
+                            <PostGallery
+                              galleryData={post.gallery_data}
+                              mediaMetadata={post.media_metadata}
+                              post={post}
+                            />
+                          )}
+                        </div>
+                      ) : post.preview ? (
+                        <PostPreview preview={post.preview} />
+                      ) : post.url_overridden_by_dest ? (
+                        isImage(post.url_overridden_by_dest) ? (
+                          <img
+                            src={post.url_overridden_by_dest}
+                            alt="url_overridden_by_dest"
+                            className="mt-4 flex justify-center items-center max-w-full max-h-125 mx-auto border rounded-sm p-2 object-contain"
+                          />
+                        ) : (
+                          <FetchImage url={post.url_overridden_by_dest} />
+                        )
+                      ) : (
+                        <Thumbnail thumbnail={post.thumbnail || ""} />
+                      )}
+                      {post.body_html && <BodyHtml body_html={post.body_html} />}
+                      {post.poll_data && <PollData poll_data={post.poll_data} />}
+                      {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
+                      <PostStats score={post.score} num_comments={post.num_comments} />
+                    </div>
+                  </a>
+                </div>
+              )}
             </div>
           ))}
-        </div>
+        </Masonry>
         <div ref={sentinel} className="h-1"></div>
         <TopCommunitiesStatusBar topCommunities={topCommunities} />
       </div>

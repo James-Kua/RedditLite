@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback, memo, useMemo } from "react";
+import { useEffect, useState, useRef, memo, useMemo } from "react";
 import he from "he";
 import SearchInput from "./SearchInput";
 import { parsePermalink, isImage, getPostType } from "../utils/parser";
@@ -28,6 +28,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import SegmentedControl from "./SegmentedControl";
 import BackToTopButton from "./BackToTopButton";
 import TopPosterStatusBar from "./TopPosterStatusBar";
+import Masonry from "./Masonry";
 import { useMobileDetection } from "../utils/useMobileDetection";
 
 const NUM_TOP_POSTERS = 6;
@@ -45,14 +46,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [posts, setPosts] = useState<Post[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
   const [time, setTime] = useState<string>(resolveTimeForSort(params.sort || initialSort, initialTime));
   const [postTypeFilter, setPostTypeFilter] = useState<string>("all");
   const [numColumns, setNumColumns] = useState(3);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const sentinel = useRef(null);
+  const sentinel = useRef<HTMLDivElement>(null);
   const [isStarred, setIsStarred] = useState<boolean>(
     localStorage.getItem("reddit-lite-starred")?.includes(subreddit) || false,
   );
@@ -66,15 +64,6 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     }
     return posts.filter((post) => getPostType(post) === postTypeFilter);
   }, [posts, postTypeFilter]);
-
-  const columns = useMemo(() => {
-    const columnsToUse = isMobile ? 1 : numColumns;
-    const newColumns: Post[][] = Array.from({ length: columnsToUse }, () => []);
-    filteredPosts.forEach((post, i) => {
-      newColumns[i % columnsToUse].push(post);
-    });
-    return newColumns;
-  }, [filteredPosts, numColumns, isMobile]);
 
   useEffect(() => {
     const authorCounts: { [key: string]: number } = {};
@@ -90,59 +79,57 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
     navigate(`/r/${subreddit}/${sort}/?t=${time}`);
   }, [sort, time, subreddit, navigate]);
 
-  const fetchPosts = useCallback(() => {
-    if (!hasMore) return;
+  useEffect(() => {
+    const target = sentinel.current;
+    if (!target) return;
 
-    RedditApiClient.getPosts({ subreddit, sort, time, cursor })
-      .then(({ items: fetchedPosts, nextCursor }) => {
-        setPosts((prevPosts) => {
-          const existingPostIds = new Set(prevPosts.map((p: Post) => p.id));
-          const uniqueNewPosts = fetchedPosts.filter((p: Post) => !existingPostIds.has(p.id));
-          return [...prevPosts, ...uniqueNewPosts];
+    let active = true;
+    let cursor: string | null = null;
+    let loading = false;
+
+    setPosts([]);
+
+    const loadPage = async () => {
+      loading = true;
+      try {
+        const { items, nextCursor } = await RedditApiClient.getPosts({ subreddit, sort, time, cursor });
+        if (!active) return;
+
+        setPosts((previous) => {
+          const existingIds = new Set(previous.map((post) => post.id));
+          return [...previous, ...items.filter((post) => !existingIds.has(post.id))];
         });
-        setCursor(nextCursor);
-        setHasMore(!!nextCursor);
-      });
-  }, [subreddit, sort, time, cursor, hasMore]);
+        observer.unobserve(target);
+        if (nextCursor && nextCursor !== cursor) observer.observe(target);
+        cursor = nextCursor;
+      } catch {
+        // RedditApiClient reports request failures.
+      } finally {
+        loading = false;
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (active && entry.isIntersecting && !loading) void loadPage();
+      },
+      { rootMargin: "0px 0px 400px" },
+    );
+    void loadPage();
+
+    return () => {
+      active = false;
+      observer.disconnect();
+    };
+  }, [subreddit, sort, time]);
 
   useEffect(() => {
-    setPosts([]);
-    setCursor(null);
-    setHasMore(true);
-
-    RedditApiClient.getPosts({ subreddit, sort, time })
-      .then(({ items, nextCursor }) => {
-        setPosts(items);
-        setCursor(nextCursor);
-        setHasMore(!!nextCursor);
-      });
-
     RedditApiClient.getSubreddit(subreddit).then(setSubredditInfo);
 
     RedditApiClient.getSubredditRules(subreddit).then(setSubredditRules);
 
     document.title = `🤖 ${subreddit}`;
-  }, [subreddit, sort, time]);
-
-  useEffect(() => {
-    if (observer.current) observer.current.disconnect();
-
-    const options = {
-      root: null,
-      rootMargin: "20px",
-      threshold: 1.0,
-    };
-
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore) {
-        fetchPosts();
-      }
-    }, options);
-
-    if (observer.current && sentinel.current) {
-      observer.current.observe(sentinel.current);
-    }
-  }, [fetchPosts, hasMore]);
+  }, [subreddit]);
 
   const toggleSubredditStar = () => {
     let starredSubreddits: string[] = JSON.parse(localStorage.getItem("reddit-lite-starred") || "[]");
@@ -166,7 +153,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
   return (
     <div className="dark:bg-custom-black dark:text-white">
-      <div className="max-w-[95vw] mx-auto relative py-4">
+      <div className={`max-w-[95vw] mx-auto relative py-4 ${topPosters.length ? "md:pb-12" : ""}`}>
         <nav aria-label="Breadcrumb" className="flex items-center justify-between mb-5">
           <ol className="flex items-center gap-1 text-sm text-gray-600">
             <li>
@@ -247,104 +234,100 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
             <span className="text-xs font-mono text-zinc-400 w-4 text-center tabular-nums">{numColumns}</span>
           </div>
         )}
-        <div className="flex justify-center gap-4">
-          {columns.map((columnPosts: Post[], columnIndex) => (
-            <div key={columnIndex} className="flex flex-1 flex-col gap-4 min-w-0">
-              {columnPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
-                >
-                  <div>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <img
-                        src={
-                          post.sr_detail?.community_icon?.length! > 1
-                            ? post.sr_detail?.community_icon.replace(/&amp;/g, "&")
-                            : post.sr_detail?.icon_img?.length! > 1
-                              ? post.sr_detail?.icon_img.replace(/&amp;/g, "&")
-                              : post.sr_detail?.header_img?.length! > 1
-                                ? post.sr_detail?.header_img.replace(/&amp;/g, "&")
-                                : "/fallback_reddit_icon.png"
-                        }
-                        alt={post.author}
-                        className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
-                      />
-                      <a href={`/user/${post.author}`}>
-                        <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">{post.author}</h3>
-                      </a>
-                      <AuthorFlairText
-                        author_flair_richtext={post.author_flair_richtext}
-                        author_flair_text={post.author_flair_text}
-                        author_flair_background_color={post.author_flair_background_color}
-                      />
-                    </div>
-                    <CreatedEditedLabel created={post.created} edited={post.edited} />
-
-                    <a href={parsePermalink(post.permalink)} className="block mt-2 group">
-                      <h2 className="text-lg font-bold dark:text-white group-hover:underline">
-                        {he.decode(post.title)}
-                      </h2>
-                      <LinkFlairText
-                        link_flair_richtext={post.link_flair_richtext}
-                        link_flair_text={post.link_flair_text}
-                        link_flair_background_color={post.link_flair_background_color}
-                      />
-                      <div
-                        className={`mt-3 ${
-                          post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
-                        }`}
-                      >
-                        {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
-                          <SecureMediaEmbed
-                            url_overridden_by_dest={post.url_overridden_by_dest}
-                            {...post.secure_media_embed}
-                          />
-                        ) : post.secure_media ? (
-                          <SecureMedia {...post.secure_media} />
-                        ) : post.media_metadata ? (
-                          <div className="relative mt-2">
-                            {post.gallery_data ? (
-                              <PostGallery 
-                                galleryData={post.gallery_data} 
-                                mediaMetadata={post.media_metadata} 
-                                post={post}
-                              />
-                            ) : null}
-                          </div>
-                        ) : post.preview ? (
-                          <PostPreview preview={post.preview} />
-                        ) : post.url_overridden_by_dest ? (
-                          isImage(post.url_overridden_by_dest) ? (
-                            <img
-                              src={post.url_overridden_by_dest}
-                              alt="url_overridden_by_dest"
-                              className="mt-4 max-w-full max-h-125 mx-auto rounded-lg"
-                            />
-                          ) : (
-                            <FetchImage url={post.url_overridden_by_dest} />
-                          )
-                        ) : (
-                          <Thumbnail thumbnail={post.thumbnail || ""} />
-                        )}
-
-                        {post.poll_data && <PollData poll_data={post.poll_data} />}
-
-                        {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
-
-                        {post.url_overridden_by_dest && post.post_hint === "link" && (
-                          <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
-                        )}
-
-                        <PostStats score={post.score} num_comments={post.num_comments} />
-                      </div>
-                    </a>
-                  </div>
+        <Masonry columns={isMobile ? 1 : numColumns}>
+          {filteredPosts.map((post) => (
+            <div
+              key={post.id}
+              className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
+            >
+              <div>
+                <div className="flex items-center space-x-2 mb-2">
+                  <img
+                    src={
+                      post.sr_detail?.community_icon?.length! > 1
+                        ? post.sr_detail?.community_icon.replace(/&amp;/g, "&")
+                        : post.sr_detail?.icon_img?.length! > 1
+                          ? post.sr_detail?.icon_img.replace(/&amp;/g, "&")
+                          : post.sr_detail?.header_img?.length! > 1
+                            ? post.sr_detail?.header_img.replace(/&amp;/g, "&")
+                            : "/fallback_reddit_icon.png"
+                    }
+                    alt={post.author}
+                    className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600"
+                  />
+                  <a href={`/user/${post.author}`}>
+                    <h3 className="text-blue-500 font-semibold whitespace-nowrap hover:underline">{post.author}</h3>
+                  </a>
+                  <AuthorFlairText
+                    author_flair_richtext={post.author_flair_richtext}
+                    author_flair_text={post.author_flair_text}
+                    author_flair_background_color={post.author_flair_background_color}
+                  />
                 </div>
-              ))}
+                <CreatedEditedLabel created={post.created} edited={post.edited} />
+
+                <a href={parsePermalink(post.permalink)} className="block mt-2 group">
+                  <h2 className="text-lg font-bold dark:text-white group-hover:underline">
+                    {he.decode(post.title)}
+                  </h2>
+                  <LinkFlairText
+                    link_flair_richtext={post.link_flair_richtext}
+                    link_flair_text={post.link_flair_text}
+                    link_flair_background_color={post.link_flair_background_color}
+                  />
+                  <div
+                    className={`mt-3 ${
+                      post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
+                    }`}
+                  >
+                    {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
+                      <SecureMediaEmbed
+                        url_overridden_by_dest={post.url_overridden_by_dest}
+                        {...post.secure_media_embed}
+                      />
+                    ) : post.secure_media ? (
+                      <SecureMedia {...post.secure_media} />
+                    ) : post.media_metadata ? (
+                      <div className="relative mt-2">
+                        {post.gallery_data ? (
+                          <PostGallery
+                            galleryData={post.gallery_data}
+                            mediaMetadata={post.media_metadata}
+                            post={post}
+                          />
+                        ) : null}
+                      </div>
+                    ) : post.preview ? (
+                      <PostPreview preview={post.preview} />
+                    ) : post.url_overridden_by_dest ? (
+                      isImage(post.url_overridden_by_dest) ? (
+                        <img
+                          src={post.url_overridden_by_dest}
+                          alt="url_overridden_by_dest"
+                          className="mt-4 max-w-full max-h-125 mx-auto rounded-lg"
+                        />
+                      ) : (
+                        <FetchImage url={post.url_overridden_by_dest} />
+                      )
+                    ) : (
+                      <Thumbnail thumbnail={post.thumbnail || ""} />
+                    )}
+
+                    {post.poll_data && <PollData poll_data={post.poll_data} />}
+
+                    {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
+
+                    {post.url_overridden_by_dest && post.post_hint === "link" && (
+                      <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
+                    )}
+
+                    <PostStats score={post.score} num_comments={post.num_comments} />
+                  </div>
+                </a>
+              </div>
             </div>
           ))}
-        </div>
+        </Masonry>
         <div ref={sentinel} className="h-1"></div> <BackToTopButton />
         <TopPosterStatusBar topPosters={topPosters} />
       </div>
