@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef, memo, useMemo } from "react";
+import { useCallback, useEffect, useState, useRef, memo, useMemo } from "react";
+import type { SyntheticEvent } from "react";
 import { decode } from "he";
 import SearchInput from "./SearchInput";
-import { parsePermalink, isImage, getPostType } from "../utils/parser";
+import { parsePermalink, isImage, getPostType, getGalleryImageUrl, isRedditImagePlaceholder } from "../utils/parser";
 import { Post } from "../types/post";
 import { Subreddit, SubredditRules } from "../types/subreddit";
 import AuthorFlairText from "./AuthorFlairText";
@@ -39,11 +40,13 @@ export interface FeedProps {
   initialSort: string;
 }
 
+type FeedPost = Post & { mediaUnavailable?: boolean };
+
 const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort }) => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<FeedPost[]>([]);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
@@ -51,12 +54,48 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const [postTypeFilter, setPostTypeFilter] = useState<string>("all");
   const [numColumns, setNumColumns] = useState(3);
   const sentinel = useRef<HTMLDivElement>(null);
+  const checkedMedia = useRef(new WeakSet<Post>());
   const [isStarred, setIsStarred] = useState<boolean>(
     localStorage.getItem("reddit-lite-starred")?.includes(subreddit) || false,
   );
   const [topPosters, setTopPosters] = useState<[string, number][]>([]);
 
   const isMobile = useMobileDetection();
+
+  const hideUnavailableMedia = useCallback((post: Post) => {
+    const keepPost = post.poll_data || post.selftext?.trim() || post.selftext_html?.trim();
+    const updateUnavailableMedia = (previous: FeedPost[]) => {
+      if (!keepPost) return previous.filter((item) => item.id !== post.id);
+      return previous.map((item) => item.id === post.id ? { ...item, mediaUnavailable: true } : item);
+    };
+    setPosts(updateUnavailableMedia);
+  }, []);
+
+  const checkUnavailableMedia = async (event: SyntheticEvent<HTMLDivElement>, post: FeedPost) => {
+    if (post.gallery_data && post.media_metadata) return;
+    if (post.mediaUnavailable || post.poll_data || checkedMedia.current.has(post)) return;
+    if (!(event.target instanceof HTMLImageElement) || !isRedditImagePlaceholder(event.target)) return;
+
+    const postType = getPostType(post);
+    const hasText = post.selftext?.trim() || post.selftext_html?.trim();
+    if (hasText && postType !== "image" && postType !== "gallery") return;
+
+    const originalUrls = post.gallery_data?.items.map(({ media_id }) => getGalleryImageUrl(media_id, post.media_metadata))
+      ?? [post.url_overridden_by_dest || post.url];
+    if (!originalUrls.length || !originalUrls.every((url) => url?.startsWith("https://i.redd.it/"))) return;
+    if (post.gallery_data && !Array.from(event.currentTarget.querySelectorAll("img")).every(isRedditImagePlaceholder)) {
+      return;
+    }
+
+    checkedMedia.current.add(post);
+    const missing = await Promise.all(originalUrls.map((url) =>
+      fetch(url, { method: "HEAD", redirect: "error" })
+        .then(({ status }) => status === 404 || status === 410)
+        .catch(() => false),
+    ));
+
+    if (missing.every(Boolean)) hideUnavailableMedia(post);
+  };
 
   const filteredPosts = useMemo(() => {
     if (postTypeFilter === "all") {
@@ -276,11 +315,12 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                     link_flair_background_color={post.link_flair_background_color}
                   />
                   <div
+                    onLoadCapture={(event) => void checkUnavailableMedia(event, post)}
                     className={`mt-3 ${
                       post.thumbnail === "spoiler" || post.thumbnail === "nsfw" || post.over_18 ? "blur-sm" : ""
                     }`}
                   >
-                    {post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
+                    {post.mediaUnavailable ? null : post.secure_media_embed?.content || post.secure_media_embed?.media_domain_url ? (
                       <SecureMediaEmbed
                         url_overridden_by_dest={post.url_overridden_by_dest}
                         {...post.secure_media_embed}
@@ -294,6 +334,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
                             galleryData={post.gallery_data}
                             mediaMetadata={post.media_metadata}
                             post={post}
+                            onAllImagesDeleted={hideUnavailableMedia}
                           />
                         ) : null}
                       </div>
@@ -315,7 +356,11 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
                     {post.poll_data && <PollData poll_data={post.poll_data} />}
 
-                    {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />}
+                    {post.selftext_html?.trim() ? (
+                      <SelfTextHtml selftext_html={post.selftext_html} truncateLines={10} />
+                    ) : post.mediaUnavailable && post.selftext ? (
+                      <p className="whitespace-pre-wrap">{post.selftext}</p>
+                    ) : null}
 
                     {post.url_overridden_by_dest && post.post_hint === "link" && (
                       <ExternalLink url_overridden_by_dest={post.url_overridden_by_dest} />
