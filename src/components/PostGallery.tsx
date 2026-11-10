@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, memo, useMemo, useRef } from "react";
-import { parseImageType } from "../utils/parser";
+import { getGalleryImageUrl } from "../utils/parser";
 import he from "he";
 import { Post } from "../types/post";
 
@@ -22,11 +22,10 @@ const PostGallery: React.FC<PostGalleryProps> = memo(({ galleryData, mediaMetada
 
   const imageUrls = useMemo(() => {
     if (!galleryData?.items) return [];
-    return galleryData.items.map((item) => {
-      const imageType = parseImageType(mediaMetadata?.[item.media_id as unknown as number]?.m ?? "");
-      const imageUrl = `https://i.redd.it/${item.media_id}.${imageType}`;
-      return { media_id: item.media_id, imageUrl };
-    });
+    return galleryData.items.map(({ media_id }) => ({
+      media_id,
+      imageUrl: getGalleryImageUrl(media_id, mediaMetadata),
+    }));
   }, [galleryData, mediaMetadata]);
 
   const goToPrev = useCallback(() => {
