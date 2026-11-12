@@ -32,7 +32,7 @@
     "react-social-media-embed": "^2.5.17",
     "react-toastify": "^11.0.3",
     "react-twitch-embed": "^3.0.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^2.0.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
