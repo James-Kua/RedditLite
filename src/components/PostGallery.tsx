@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, memo, useMemo, useRef } from "react";
 import { parseImageType } from "../utils/parser";
-import he from "he";
+import { decode } from "he";
 import { Post } from "../types/post";
 
 const MAX_VISIBLE_THUMBNAILS = 4;
@@ -152,7 +152,7 @@ const PostGallery: React.FC<PostGalleryProps> = memo(({ galleryData, mediaMetada
                       <span className="truncate">{post.subreddit_name_prefixed}</span>
                     </div>
                     <h2 className="text-sm font-bold mt-0.5 line-clamp-1 leading-tight opacity-90">
-                      {he.decode(post.title)}
+                      {decode(post.title)}
                     </h2>
                   </div>
                 ) : (

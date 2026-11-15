@@ -1,5 +1,5 @@
 import React from "react";
-import he from "he";
+import { decode } from "he";
 
 export type PollDataProps = {
   poll_data?: {
@@ -74,7 +74,7 @@ const PollData: React.FC<PollDataProps> = ({ poll_data }) => {
             <div key={option.id} className="relative">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-1.5">
-                  {he.decode(option.text)}
+                  {decode(option.text)}
                   {isSelected && (
                     <span className="px-1.5 py-0.5 bg-blue-500 text-white text-[10px] font-bold rounded">
                       YOU

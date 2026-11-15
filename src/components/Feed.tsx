@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback, memo, useMemo } from "react";
-import he from "he";
+import { decode } from "he";
 import SearchInput from "./SearchInput";
 import { parsePermalink, isImage, getPostType } from "../utils/parser";
 import { Post } from "../types/post";
@@ -298,7 +298,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
 
                     <a href={parsePermalink(post.permalink)} className="block mt-2 group">
                       <h2 className="text-lg font-bold dark:text-white group-hover:underline">
-                        {he.decode(post.title)}
+                        {decode(post.title)}
                       </h2>
                       <LinkFlairText
                         link_flair_richtext={post.link_flair_richtext}

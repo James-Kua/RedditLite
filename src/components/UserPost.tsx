@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback, memo, useMemo } from "react";
 import { UserProfile } from "../types/user";
 import { Post } from "../types/post";
-import he from "he";
+import { decode } from "he";
 import { FetchImage } from "../utils/image";
 import { isImage, getPostType } from "../utils/parser";
 import UserKarma from "./UserKarma";
@@ -233,7 +233,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                       </a>
                       <a href={`${post.permalink}`} className="block mt-2 group">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-300 p-1.5 bg-slate-300 dark:bg-slate-800 rounded-md">
-                          {he.decode(post.link_title ?? post.link_permalink ?? "")}
+                          {decode(post.link_title ?? post.link_permalink ?? "")}
                         </p>
                         {post.body_html && <BodyHtml body_html={post.body_html} />}
                         {post.selftext_html && <SelfTextHtml selftext_html={post.selftext_html} />}
@@ -266,7 +266,7 @@ const UserPost: React.FC<UserPostProps> = memo(({ username }) => {
                       <CreatedEditedLabel created={post.created} edited={post.edited} />
                       <a href={`${post.permalink ?? post.link_permalink}`} className="block mt-2 group">
                         <h2 className="text-lg font-bold dark:text-white group-hover:underline">
-                          {he.decode(post.title ?? "")}
+                          {decode(post.title ?? "")}
                         </h2>
                         {post.link_title && (
                           <div className="bg-slate-50 dark:bg-gray-800 rounded-lg p-1.5 border border-gray-300 dark:border-gray-700 text-sm">

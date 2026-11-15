@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import he from "he";
+import { decode } from "he";
 import UserGroupIcon from "../static/UserGroupIcon";
 import UserOnlineIcon from "../static/UserOnlineIcon";
 import { SubredditRules } from "../types/subreddit";
@@ -20,7 +20,7 @@ export type SubredditInfoProps = {
 const cleanDescriptionHtml = (html?: string) => {
   if (!html) return "";
   const cleaned = html.replace(/<!-- SC_OFF -->(.*?)<!-- SC_ON -->/gs, "$1");
-  return he.decode(cleaned);
+  return decode(cleaned);
 };
 
 const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
@@ -51,7 +51,7 @@ const SubredditInfo: React.FC<SubredditInfoProps> = ({ subreddit, rules }) => {
       <div
         className="relative overflow-hidden bg-slate-200 dark:bg-slate-800"
         style={{
-          backgroundImage: bannerImage ? `url(${he.decode(bannerImage)})` : undefined,
+          backgroundImage: bannerImage ? `url(${decode(bannerImage)})` : undefined,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

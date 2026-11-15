@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, memo, useMemo } from "react";
 import SearchInput from "./SearchInput";
 import { Post } from "../types/post";
 import { isImage, parsePermalink } from "../utils/parser";
-import he from "he";
+import { decode } from "he";
 import LinkFlairText from "./LinkFlairText";
 import AuthorFlairText from "./AuthorFlairText";
 import Thumbnail from "./Thumbnail";
@@ -282,7 +282,7 @@ const SearchPage: React.FC<SearchPageProps> = memo(({ query, sort: initialSort, 
                     <CreatedEditedLabel created={post.created} edited={post.edited} />
                     <div className="block mt-2 group">
                       <h2 className="text-lg font-semibold my-1 dark:text-white group-hover:underline">
-                        {he.decode(post.title)}
+                        {decode(post.title)}
                       </h2>
                       <LinkFlairText
                         link_flair_richtext={post.link_flair_richtext}

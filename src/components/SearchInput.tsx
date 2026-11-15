@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, matchPath } from "react-router-dom";
 import { Subreddit } from "../types/subreddit";
-import he from "he";
+import { decode } from "he";
 import SearchIcon from "../static/SearchIcon";
 import { RedditApiClient } from "../api/RedditApiClient";
 
@@ -328,7 +328,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ initialSearchInSubreddit = fa
                     <div className="relative shrink-0 mr-3">
                       {subreddit.community_icon || subreddit.icon_img ? (
                         <img
-                          src={he.decode(subreddit.community_icon || subreddit.icon_img)}
+                          src={decode(subreddit.community_icon || subreddit.icon_img)}
                           alt={subreddit.display_name}
                           className="w-8 h-8 rounded-lg border border-gray-200 dark:border-slate-700"
                           loading="lazy"
