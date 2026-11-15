@@ -1,4 +1,4 @@
-import he from "he";
+import { decode } from "he";
 import type { Post } from "../types/post";
 import { isImage, parsePermalink } from "../utils/parser";
 import AuthorFlairText from "./AuthorFlairText";
@@ -20,7 +20,7 @@ import { useState } from "react";
 import { summarizeText as summarizeTextApi } from "../api/GeminiClient";
 
 const PostComponent = ({ post }: { post: Post }) => {
-  document.title = he.decode(post.title);
+  document.title = decode(post.title);
   const [summarizedText, setSummarizedText] = useState("");
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summarizationError, setSummarizationError] = useState("");
@@ -93,7 +93,7 @@ const PostComponent = ({ post }: { post: Post }) => {
           <UpvotePercentageLabel upvote_ratio={post.upvote_ratio} />
         </div>
 
-        <h2 className="text-lg font-bold dark:text-white my-2 group-hover:underline">{he.decode(post.title)}</h2>
+        <h2 className="text-lg font-bold dark:text-white my-2 group-hover:underline">{decode(post.title)}</h2>
 
         <LinkFlairText
           link_flair_richtext={post.link_flair_richtext}

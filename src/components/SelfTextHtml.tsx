@@ -1,4 +1,4 @@
-import he from "he";
+import { decode } from "he";
 import { parseInlineImagesFromHtml } from "../utils/parser";
 
 type SelfTextHtmlProps = {
@@ -9,7 +9,7 @@ type SelfTextHtmlProps = {
 const SelfTextHtml: React.FC<SelfTextHtmlProps> = ({ selftext_html, truncateLines }) => {
 
   const truncatedHtml = truncateLines ? truncateHtmlBody(selftext_html, truncateLines) : selftext_html;
-  const decodedHtml = he.decode(truncatedHtml.replace(/\n\n/g, "<br>"));
+  const decodedHtml = decode(truncatedHtml.replace(/\n\n/g, "<br>"));
   const modifiedHtml = parseInlineImagesFromHtml(decodedHtml);
 
   return (

@@ -1,4 +1,4 @@
-import he from "he";
+import { decode } from "he";
 import React from "react";
 
 export type SubredditIconProps = {
@@ -15,7 +15,7 @@ const SubredditIcon: React.FC<SubredditIconProps> = ({
 
   return src ? (
     <img
-      src={he.decode(src)}
+      src={decode(src)}
       alt={alt}
       className="w-8 h-8 rounded-lg mr-2"
     />

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import ReactPlayer from "react-player";
-import he from "he";
+import { decode } from "he";
 import { XEmbed, FacebookEmbed, PinterestEmbed, TikTokEmbed, InstagramEmbed } from "react-social-media-embed";
 import { TwitchClip } from "react-twitch-embed";
 
@@ -22,7 +22,7 @@ const SecureMediaEmbed: React.FC<SecureMediaEmbedProps> = ({
   playing = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const decodedContent = content ? he.decode(content) : null;
+  const decodedContent = content ? decode(content) : null;
   const aspectRatio = Math.min((height / width) * 100, 90);
   const containerRef = useRef<HTMLDivElement>(null);
 

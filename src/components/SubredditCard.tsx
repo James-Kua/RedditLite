@@ -1,5 +1,5 @@
 import React from "react";
-import he from "he";
+import { decode } from "he";
 
 export interface SubredditCardProps {
   subreddit: {
@@ -23,7 +23,7 @@ const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
     >
       <div
         style={{
-          backgroundImage: bannerImage ? `url(${he.decode(bannerImage)})` : undefined,
+          backgroundImage: bannerImage ? `url(${decode(bannerImage)})` : undefined,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -33,13 +33,13 @@ const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
         <div className="relative z-10 flex items-center w-full space-x-4">
           {subreddit.community_icon ? (
             <img
-              src={he.decode(subreddit.community_icon)}
+              src={decode(subreddit.community_icon)}
               alt="community_icon"
               className="w-8 h-8 rounded-full object-cover"
             />
           ) : subreddit.icon_img ? (
             <img
-              src={he.decode(subreddit.icon_img)}
+              src={decode(subreddit.icon_img)}
               alt="icon_img"
               className="w-8 h-8 rounded-full object-cover"
             />
@@ -57,7 +57,7 @@ const SubredditCard: React.FC<SubredditCardProps> = ({ subreddit }) => {
             <div
               className="rich-text-content text-white text-xs leading-relaxed overflow-hidden mb-2"
               dangerouslySetInnerHTML={{
-                __html: he.decode(subreddit.public_description_html ?? ""),
+                __html: decode(subreddit.public_description_html ?? ""),
               }}
             />
           </div>

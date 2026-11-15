@@ -1,6 +1,6 @@
 import React from "react";
 import { Post } from "../types/post";
-import he from "he";
+import { decode } from "he";
 import ReactPlayer from "react-player";
 
 export type PostPreviewProps = Pick<Post, "preview">;
@@ -41,7 +41,7 @@ const PostPreview: React.FC<PostPreviewProps> = ({ preview }) => {
       ) : (
         imageUrl && (
           <div className="w-full max-w-[95vw] max-h-[500px] h-auto flex justify-center">
-            <img src={he.decode(imageUrl)} alt="preview" className="object-contain w-full h-auto rounded-lg" />
+            <img src={decode(imageUrl)} alt="preview" className="object-contain w-full h-auto rounded-lg" />
           </div>
         )
       )}

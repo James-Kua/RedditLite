@@ -1,4 +1,4 @@
-import he from "he";
+import { decode } from "he";
 
 interface AvatarIconProps {
   iconImg: string;
@@ -6,7 +6,7 @@ interface AvatarIconProps {
 }
 
 const AvatarIcon: React.FC<AvatarIconProps> = ({ iconImg }) => {
-  return <img src={he.decode(iconImg)} className="h-12 w-12 rounded-lg" />;
+  return <img src={decode(iconImg)} className="h-12 w-12 rounded-lg" />;
 };
 
 export default AvatarIcon;
