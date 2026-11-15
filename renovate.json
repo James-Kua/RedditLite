@@ -8,6 +8,12 @@
     ":timezone(Asia/Singapore)",
     ":label(dependencies)"
   ],
+  "description": [
+    "Keep Renovate on npm 11 until npm 12 can generate package-lock.json for Tailwind without rejecting the bundled Oxide WASM tarball with EALLOWREMOTE. Track the fix at https://github.com/npm/cli/issues/9800."
+  ],
+  "constraints": {
+    "npm": "^11.19.0"
+  },
   "packageRules": [
     {
       "matchUpdateTypes": [
