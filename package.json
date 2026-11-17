@@ -46,6 +46,7 @@
     "@types/react-dom": "^19.0.3",
     "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^5.2.0",
+    "esbuild": "^0.28.2",
     "eslint": "^10.0.0",
     "storybook": "^10.6.7",
     "tailwindcss": "^4.0.0",
