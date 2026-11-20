@@ -31,6 +31,8 @@ import BackToTopButton from "./BackToTopButton";
 import TopPosterStatusBar from "./TopPosterStatusBar";
 import Masonry from "./Masonry";
 import { useMobileDetection } from "../utils/useMobileDetection";
+import PostStickied from "./PostStickied";
+import { isRecentStickied, prioritizeStickied, STICKIED_MAX_AGE_MS } from "../utils/stickied";
 
 const NUM_TOP_POSTERS = 6;
 
@@ -47,6 +49,8 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   const navigate = useNavigate();
 
   const [posts, setPosts] = useState<FeedPost[]>([]);
+  const [recentStickiedPosts, setRecentStickiedPosts] = useState<FeedPost[]>([]);
+  const [now, setNow] = useState(Date.now);
   const [subredditInfo, setSubredditInfo] = useState<Subreddit>();
   const [subredditRules, setSubredditRules] = useState<SubredditRules[]>([]);
   const [sort, setSort] = useState<string>(params.sort || initialSort);
@@ -69,6 +73,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
       return previous.map((item) => item.id === post.id ? { ...item, mediaUnavailable: true } : item);
     };
     setPosts(updateUnavailableMedia);
+    setRecentStickiedPosts(updateUnavailableMedia);
   }, []);
 
   const checkUnavailableMedia = async (event: SyntheticEvent<HTMLDivElement>, post: FeedPost) => {
@@ -98,11 +103,37 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
   };
 
   const filteredPosts = useMemo(() => {
+    const orderedPosts = prioritizeStickied(posts, recentStickiedPosts, now);
     if (postTypeFilter === "all") {
-      return posts;
+      return orderedPosts;
     }
-    return posts.filter((post) => getPostType(post) === postTypeFilter);
-  }, [posts, postTypeFilter]);
+    return orderedPosts.filter((post) => getPostType(post) === postTypeFilter);
+  }, [posts, recentStickiedPosts, postTypeFilter, now]);
+
+  useEffect(() => {
+    const currentTime = Date.now();
+    const expirations = [...posts, ...recentStickiedPosts]
+      .filter((post) => isRecentStickied(post, now))
+      .map((post) => post.created_utc * 1000 + STICKIED_MAX_AGE_MS);
+    if (!expirations.length) return;
+    const timer = window.setTimeout(() => setNow(Date.now()), Math.max(0, Math.min(...expirations) - currentTime));
+    return () => window.clearTimeout(timer);
+  }, [posts, recentStickiedPosts, now]);
+
+  useEffect(() => {
+    let active = true;
+    setRecentStickiedPosts([]);
+    setNow(Date.now());
+    RedditApiClient.getRecentStickiedPosts(subreddit)
+      .then((items) => {
+        if (active) {
+          setRecentStickiedPosts(items);
+          setNow(Date.now());
+        }
+      })
+      .catch(() => { /* RedditApiClient reports request failures. */ });
+    return () => { active = false; };
+  }, [subreddit]);
 
   useEffect(() => {
     const authorCounts: { [key: string]: number } = {};
@@ -134,6 +165,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
         const { items, nextCursor } = await RedditApiClient.getPosts({ subreddit, sort, time, cursor });
         if (!active) return;
 
+        setNow(Date.now());
         setPosts((previous) => {
           const existingIds = new Set(previous.map((post) => post.id));
           return [...previous, ...items.filter((post) => !existingIds.has(post.id))];
@@ -280,6 +312,7 @@ const Feed: React.FC<FeedProps> = memo(({ subreddit, initialTime, initialSort })
               className="bg-slate-200 dark:bg-neutral-800 shadow-md rounded-xl p-2 w-full mx-auto prose prose-sm text-gray-700 dark:text-gray-300 prose-headings:font-semibold prose-headings:text-xl"
             >
               <div>
+                <PostStickied post={post} />
                 <div className="flex items-center space-x-2 mb-2">
                   <img
                     src={

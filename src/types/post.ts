@@ -36,6 +36,7 @@ export type Post = {
   num_comments: number;
   gallery_data?: GalleryData
   locked: boolean
+  stickied?: boolean;
   crosspost_parent_list?: Post[]
   poll_data?: PollData
   sr_detail?: SrDetail;

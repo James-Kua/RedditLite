@@ -4,6 +4,7 @@ import { Comment } from "../types/comment";
 import { Post } from "../types/post";
 import { Subreddit, SubredditRules } from "../types/subreddit";
 import { UserProfile } from "../types/user";
+import { isRecentStickied, STICKIED_MAX_AGE_MS } from "../utils/stickied";
 
 const ARCTIC_SHIFT_BASE_URL = "https://arctic-shift.photon-reddit.com";
 const DEFAULT_PAGE_SIZE = 50;
@@ -265,6 +266,27 @@ export class RedditApiClient {
     const visibleItems = items.filter((post) => !this.isRemovedPost(post));
 
     return this.page(visibleItems, items, limit);
+  }
+
+  static async getRecentStickiedPosts(subreddit: string): Promise<Post[]> {
+    const now = Date.now();
+    const after = Math.floor((now - STICKIED_MAX_AGE_MS) / 1000);
+    const pinned: Post[] = [];
+    let before: number | undefined;
+
+    // Stickied is a response field, not a supported search filter. Scan only
+    // the last 24 hours, independently of the feed's selected sort and window.
+    while (true) {
+      const items = await this.request<Post>("/api/posts/search", {
+        subreddit, after, before, sort: "desc", limit: 100, md2html: true,
+      });
+      pinned.push(...items.filter((post) => isRecentStickied(post, now) && !this.isRemovedPost(post)));
+      const oldest = items[items.length - 1]?.created_utc;
+      if (items.length < 100 || oldest === undefined || oldest <= after || (before !== undefined && oldest >= before)) break;
+      before = oldest;
+    }
+
+    return [...new Map(pinned.map((post) => [post.id, post])).values()];
   }
 
   static async getPost(postId: string): Promise<Post | undefined> {
